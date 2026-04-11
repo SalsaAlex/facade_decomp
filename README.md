@@ -1,2 +1,9 @@
 # facade_decomp
-D:\hl2c\src\facade_decomp\
+
+decompilation of façade's binary files (.dlls)
+
+progress:
+
+animEngineDLL.dll - w.i.p
+animEngineStarter.exe - finished (i think)
+nativeaniminterface.dll - not started
