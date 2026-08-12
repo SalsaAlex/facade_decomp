@@ -47,6 +47,7 @@ bool g_bLockedInMSToSleep;
 bool g_bDoingFPSAdjustment;
 
 
+//UNDONE
 LRESULT mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	static HPALETTE s_hPalette = NULL;
