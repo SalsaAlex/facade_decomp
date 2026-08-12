@@ -6,6 +6,6 @@ progress:
 
 animEngineDLL.dll - w.i.p
 
-animEngineStarter.exe - finished (i think)
+animEngineStarter.exe - w.i.p (resources missing)
 
 nativeaniminterface.dll - not started
