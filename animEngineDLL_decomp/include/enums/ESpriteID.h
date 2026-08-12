@@ -1,0 +1,77 @@
+#ifndef ENUM_SPRITEID_H
+#define ENUM_SPRITEID_H
+
+enum ESpriteID
+{
+    eSpriteID_NOTASPRITE = -1,
+
+    eSpriteID_FIRST_OBJECT = 0,
+
+    eSpriteID_FIRST_AGENT = 0,
+
+    eSpriteID_FIRST_CHARACTER = 0,
+    eSpriteID_grace = 0,
+    eSpriteID_trip = 1,
+    eSpriteID_LAST_CHARACTER = 1,
+
+    eSpriteID_player = 2,
+    eSpriteID_LAST_AGENT = 2,
+    eSpriteID_ENUM_AGENTS = 3,
+
+    eSpriteID_FIRST_NONAGENT_OBJECT = 3,
+    eSpriteID_couch = 3,
+    eSpriteID_sideTable = 4,
+    eSpriteID_workTable = 5,
+    eSpriteID_cabinet = 6,
+    eSpriteID_bar = 7,
+    eSpriteID_luxTable = 8,
+    eSpriteID_ashtray = 9,
+    eSpriteID_phone = 10,
+    eSpriteID_answeringMachine = 11,
+
+    eSpriteID_FIRSTDRINKITEM = 12,
+    eSpriteID_redwinebottle = 12,
+    eSpriteID_whitewinebottle = 13,
+    eSpriteID_martiniDisplay1 = 14,
+    eSpriteID_martiniDisplay2 = 15,
+    eSpriteID_martiniDisplay3 = 16,
+    eSpriteID_martiniDisplay4 = 17,
+    eSpriteID_bar_redwinebottle = 18,
+    eSpriteID_bar_whitewinebottle = 19,
+    eSpriteID_playerDrink = 20,
+    eSpriteID_tripDrink = 21,
+    eSpriteID_graceDrink = 22,
+    eSpriteID_LASTDRINKITEM = 22,
+
+    eSpriteID_eightball = 23,
+    eSpriteID_brassbull = 24,
+    eSpriteID_trinket1 = 25,
+    eSpriteID_trinket2 = 26,
+    eSpriteID_trinket3 = 27,
+    eSpriteID_trinket4 = 28,
+    eSpriteID_trinket5 = 29,
+    eSpriteID_trinket6 = 30,
+    eSpriteID_trinket7 = 31,
+    eSpriteID_trinket8 = 32,
+    eSpriteID_plant = 33,
+    eSpriteID_bigAbstractPainting = 34,
+    eSpriteID_littleTreePainting = 35,
+    eSpriteID_maoPainting = 36,
+    eSpriteID_rug = 37,
+    eSpriteID_weddingPicture = 38,
+    eSpriteID_italyPicture = 39,
+    eSpriteID_gownsketch1 = 40,
+    eSpriteID_gownsketch2 = 41,
+    eSpriteID_gownsketch3 = 42,
+    eSpriteID_gownsketch4 = 43,
+    eSpriteID_tuxedosketch1 = 44,
+    eSpriteID_tuxedosketch2 = 45,
+    eSpriteID_viewWindow = 46,
+    eSpriteID_frontDoor = 47,
+    eSpriteID_elevatorButton = 48,
+    eSpriteID_LAST_OBJECT = 48,
+
+    eSpriteID_NUMOBJECTS = 49,
+};
+
+#endif // ENUM_SPRITEID_H

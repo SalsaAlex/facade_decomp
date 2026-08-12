@@ -1,0 +1,30 @@
+#ifndef ENUM_SETANIMENGINEINFO_H
+#define ENUM_SETANIMENGINEINFO_H
+
+enum ESetAnimEngineInfoType
+{
+	eSetAnimEngineInfo_setPlayerGenderID = 0,
+	eSetAnimEngineInfo_setPlayerNameID,
+	eSetAnimEngineInfo_startTitleSequence,
+	eSetAnimEngineInfo_choosePlayerName,
+	eSetAnimEngineInfo_setPlayerInputActive,
+	eSetAnimEngineInfo_startFade,
+	eSetAnimEngineInfo_ignoreNextWalkAbort,
+	eSetAnimEngineInfo_createNewPlayerDrink,
+	eSetAnimEngineInfo_createNewTripDrink,
+	eSetAnimEngineInfo_createNewGraceDrink,
+	eSetAnimEngineInfo_tripGrabsPlayer,
+	eSetAnimEngineInfo_tripThrowsPlayer,
+	eSetAnimEngineInfo_magicallyOpenDoor,
+	eSetAnimEngineInfo_magicallyCloseDoor,
+	eSetAnimEngineInfo_startFPSAdjustment,
+	eSetAnimEngineInfo_muteSounds,
+	eSetAnimEngineInfo_setDoSoundDropOff,
+	eSetAnimEngineInfo_doPhoneCallBehavior,
+	eSetAnimEngineInfo_warmUpNLP,
+	eSetAnimEngineInfo_dramaComplete,
+	eSetAnimEngineInfo_doBreakingGlassSfx,
+	eSetAnimEngineInfo_doBlenderSfx
+};
+
+#endif // ENUM_SETANIMENGINEINFO_H

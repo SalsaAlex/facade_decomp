@@ -1,0 +1,45 @@
+#ifndef ENUM_MISCLITTLEACTION_H
+#define ENUM_MISCLITTLEACTION_H
+
+enum EMiscLittleAction
+{
+	eMiscLittleAction_eyeLookAway = 0,
+	eMiscLittleAction_eyeLookAwayAndUp,
+	eMiscLittleAction_eyeLookAwayAndWayUp,
+	eMiscLittleAction_eyeLookAwayAndDown,
+	eMiscLittleAction_eyeLookAwayAndWayDown,
+	eMiscLittleAction_eyeLookUp,
+	eMiscLittleAction_eyeQuiver,
+	eMiscLittleAction_headQuiver,
+	eMiscLittleAction_briefEyelidHeight,
+	eMiscLittleAction_wink,
+	eMiscLittleAction_blinkTwice,
+	eMiscLittleAction_blinkFlutter,
+	eMiscLittleAction_blinkFaster,
+	eMiscLittleAction_raiseEyebrows,
+	eMiscLittleAction_lowerEyebrows,
+	eMiscLittleAction_facialModNone,
+	eMiscLittleAction_facialModSerious,
+	eMiscLittleAction_facialModHappy,
+	eMiscLittleAction_facialModAnxious,
+	eMiscLittleAction_facialModAnxiousMed,
+	eMiscLittleAction_facialModAnxiousHigh,
+	eMiscLittleAction_facialModAnnoyed,
+	eMiscLittleAction_facialModAngry,
+	eMiscLittleAction_facialModFurious,
+	eMiscLittleAction_facialModSurprised,
+	eMiscLittleAction_facialModImpatient,
+	eMiscLittleAction_turnHead,
+	eMiscLittleAction_turnHeadAndBriefHold,
+	eMiscLittleAction_turnHeadAndLongHold,
+	eMiscLittleAction_turnHeadAndVeryLongHold,
+	eMiscLittleAction_tiltHead,
+	eMiscLittleAction_tiltHeadAndBriefHold,
+	eMiscLittleAction_cockHead,
+	eMiscLittleAction_breathe,
+	eMiscLittleAction_lookAtEightball,
+	eMiscLittleAction_clearThroat,
+	eMiscLittleAction_temporaryAnnoyedSpouseGlance,
+};
+
+#endif // ENUM_MISCLITTLEACTION_H

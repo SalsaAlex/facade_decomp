@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\enums">
+      <UniqueIdentifier>{55921606-e8aa-4796-abaf-44c7478b4512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\classes">
+      <UniqueIdentifier>{6a136b56-5ef6-4137-84a8-4ce0637469ed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\facadecommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EAblRequestType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EDrink.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EEventLogType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EPhoneCallBehavior.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ESetAnimEngineInfo.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ESpriteID.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ETextureFilmstrip.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="src\eventLogging.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EPlayerGestureID.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EMusicAction.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EMusicName.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EMiscLittleAction.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EGlobalSounds.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sounddevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\keyboarddevice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\AblRequestBuffer.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\AnimatingSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\AnsweringMachineSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\CharacterSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Controller.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\DoorSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\DrinkSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\EightballMessageSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\GestureFxnMgr.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\HeadSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\PhoneSprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\SoundMgr.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\SoundSource.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Stack.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\XCursor.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ECursorType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="entrypoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\facadecommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\XCursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimAPI_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AblRequestBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\keyboarddevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sounddevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfuncs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
