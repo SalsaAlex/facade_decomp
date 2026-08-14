@@ -9,9 +9,10 @@
 #include "time.h"
 #include "stdio.h"
 #include "windows.h"
-#include "gl/GL.h"
 
 #include "enums/EAblRequestType.h"
+#include "enums/ECollidableType.h"
+#include "enums/EColor.h"
 #include "enums/ECursorType.h"
 #include "enums/EDrink.h"
 #include "enums/EEventLogType.h"
@@ -27,6 +28,8 @@
 
 #include "../../animEngineStarter_decomp/resource.h"
 
+#include "classes/Sprite.h"
+
 
 void dprintf(const char* format, ...);
 void animengine_assert(bool cond);
@@ -41,6 +44,9 @@ bool IsWhitespaceNewLineOrComma(char c);
 bool IsNumberCharacter(char c);
 bool IsLetterCharacter(char c);
 bool IsPunctuationCharacter(char c);
+
+float NormalizeNeg180to180(float ang);
+float Normalize0to360(float ang);
 
 
 
@@ -68,6 +74,23 @@ public:
 	T z;
 };
 
+class XZPointf
+{
+public:
+	float x;
+	float z;
+};
+
+class XZRectf
+{
+public:
+	float x1;
+	float z1;
+
+	float x2;
+	float z2;
+};
+
 typedef XYZPoint_template<float> XYZPointf;
 typedef XTPoint<int> XTPointi;
 
@@ -78,6 +101,28 @@ struct player_namegender_map_t
 };
 extern player_namegender_map_t g_PlayerNameStrings[95];
 
+struct gltexture_t
+{
+	char name[64];
+	uint32_t texid;
+};
+struct textureentry_t
+{
+	gltexture_t entries[20];
+	bool isalpha;
+	int width1;
+	int height1;
+	int width2;
+	int height2;
+	bool valid;
+	int numentries;
+	int unknown;
+};
+extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
+extern Sprite* g_PlayerSprite;
+extern Sprite* g_CursorSprite;
+
+
 #define GENDER_MALE 0
 #define GENDER_FEMALE 1
 extern int g_playerGender;
@@ -86,10 +131,14 @@ extern EPlayerGestureID g_playerGesture;
 extern ESpriteID g_playerGestureSpriteID;
 
 extern HWND g_hMainAppWindow;
+extern HINSTANCE g_hAppInstance;
 extern HDC g_hDeviceContext;
 extern HANDLE g_ablRequestBufferMutexHandle;
 
 extern uint32_t g_numFramesRun;
+extern uint32_t g_SkipFramesCounter;
+
+extern char g_launchErrorString[52];
 
 
 

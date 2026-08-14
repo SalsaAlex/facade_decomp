@@ -69,9 +69,10 @@ enum ESpriteID
     eSpriteID_viewWindow = 46,
     eSpriteID_frontDoor = 47,
     eSpriteID_elevatorButton = 48,
-    eSpriteID_LAST_OBJECT = 48,
+    eSpriteID_cursor = 49,
+    eSpriteID_LAST_OBJECT = eSpriteID_cursor,
 
-    eSpriteID_NUMOBJECTS = 49,
+    eSpriteID_NUMOBJECTS = eSpriteID_LAST_OBJECT,
 };
 
 #endif // ENUM_SPRITEID_H

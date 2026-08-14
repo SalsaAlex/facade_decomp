@@ -35,6 +35,8 @@
     <ClInclude Include="include\classes\Sprite.h" />
     <ClInclude Include="include\classes\Stack.h" />
     <ClInclude Include="include\classes\XCursor.h" />
+    <ClInclude Include="include\enums\ECollidableType.h" />
+    <ClInclude Include="include\enums\EColor.h" />
     <ClInclude Include="include\enums\ECursorType.h" />
     <ClInclude Include="include\enums\EGlobalSounds.h" />
     <ClInclude Include="include\enums\EMiscLittleAction.h" />
@@ -49,6 +51,7 @@
     <ClInclude Include="include\enums\ESetAnimEngineInfo.h" />
     <ClInclude Include="include\enums\ESpriteID.h" />
     <ClInclude Include="include\enums\ETextureFilmstrip.h" />
+    <ClInclude Include="include\glfuncs.h" />
     <ClInclude Include="include\keyboarddevice.h" />
     <ClInclude Include="include\sounddevice.h" />
     <ClInclude Include="src\eventLogging.cpp" />
@@ -62,6 +65,7 @@
     <ClCompile Include="src\keyboarddevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sounddevice.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\XCursor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -150,6 +154,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +169,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

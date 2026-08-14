@@ -257,3 +257,14 @@ bool IsPunctuationCharacter(char c) {
 		|| c == ')'
 		|| c == '-';
 }
+
+float NormalizeNeg180to180(float ang)
+{
+	while (ang > 180)	ang -= 180;
+	while (ang < -180)	ang += 180;
+}
+float Normalize0to360(float ang)
+{
+	while (ang > 360)	ang -= 360;
+	while (ang < - 360)	ang += 360;
+}

@@ -58,7 +58,7 @@ HRESULT Keyboard_Init(void)
 	hr = g_pKeyboard->SetCooperativeLevel(g_hMainAppWindow, dwCoopFlags);
 	if (hr == DIERR_UNSUPPORTED && !bForeground && bExclusive)
 	{
-		FreeDirectInput();
+		Keyboard_Shutdown();
 		dprintf("SetCooperativeLevel() returned DIERR_UNSUPPORTED.\n"
 			"For security reasons, background exclusive keyboard\n"
 			"access is not allowed.");
@@ -96,7 +96,7 @@ HRESULT Keyboard_Init(void)
 	return S_OK;
 }
 
-void FreeDirectInput()
+void Keyboard_Shutdown()
 {
 	// Unacquire the device one last time just in case 
 // the app tried to exit while the device is still acquired.

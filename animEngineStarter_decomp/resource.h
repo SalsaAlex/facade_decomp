@@ -3,9 +3,10 @@
 // Used by animEngineStarter.rc
 //
 
-#define IDI_WINDOWICON						131
+#define IDI_FACADEWINDOWICON				131
 
 //must match ECursorType.h
+//do i name this as icons instead?.. because all the used cursors are labeled as icons.... 
 #define IDC_HANDCURSOR_IDLE					1400
 #define IDC_HANDCURSOR_HOLDING   			1401
 #define IDC_HANDCURSOR_COMFORT   			1402
