@@ -1,7 +1,7 @@
 #ifndef ENUM_TEXTUREFILMSTRIP_H
 #define ENUM_TEXTUREFILMSTRIP_H
 
-enum ETextureFilmstrip
+enum ETextureFilmstrip : unsigned int
 {
 	eTextureFilmstrip_NOTATEXTURE = -1,
 	eTextureFilmstrip_Plant = 0,

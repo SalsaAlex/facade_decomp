@@ -4,7 +4,7 @@
 class Sprite
 {
 public:
-	virtual void InitSprite(ESpriteID spriteid, const char* name, bool, bool, int);
+	virtual void InitSprite(ESpriteID spriteid, const char* name, bool hasmodel, bool drawable, int nummodelpoints = -1);
 	virtual void UpdateSprite();
 	virtual bool GetIsAnimatingSprite();
 	virtual bool GetIsCharacterSprite();
@@ -54,7 +54,7 @@ public:
 	virtual bool GetAmIStillGrabDropAnimating();
 	//virtual Get2DBoundingBox(
 	//virtual Set2DBoundingBox(
-	//virtual AddSurface(
+	virtual void AddSurface(int i1, int i2, int i3, int i4, ESurfacePickupAngle surfpickangle);
 	//virtual GetSurfaceListPtr(
 	//virtual GetNumSurfaces(
 	//virtual AddSpriteToSurface(
@@ -64,6 +64,15 @@ public:
 	//virtual RemoveFromAnySurfaceIMayBeOn(
 	//virtual GetModelPointCursorIsOver(
 	//virtual GetModelPointXRect(
+
+	int unknown001;
+	char name[64];
+	void* modelframe;
+	void* modelinfo;
+	void* modelquadlines;
+	int unknown002[2];
+	void* modelquadpoly;
+	int unknown003[21005];
 
 private:
 

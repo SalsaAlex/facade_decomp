@@ -11,19 +11,24 @@
 #include "windows.h"
 
 #include "enums/EAblRequestType.h"
+#include "enums/EAlterHeadCock.h"
 #include "enums/ECollidableType.h"
 #include "enums/EColor.h"
 #include "enums/ECursorType.h"
 #include "enums/EDrink.h"
 #include "enums/EEventLogType.h"
+#include "enums/EGazeSpeed.h"
+#include "enums/EGazeType.h"
 #include "enums/EGlobalSounds.h"
 #include "enums/EMiscLittleAction.h"
+#include "enums/EObjectType.h"
 #include "enums/EMusicAction.h"
 #include "enums/EMusicName.h"
 #include "enums/EPhoneCallBehavior.h"
 #include "enums/EPlayerGestureID.h"
 #include "enums/ESetAnimEngineInfo.h"
 #include "enums/ESpriteID.h"
+#include "enums/ESurfacePickupAngle.h"
 #include "enums/ETextureFilmstrip.h"
 
 #include "../../animEngineStarter_decomp/resource.h"
@@ -48,6 +53,8 @@ bool IsPunctuationCharacter(char c);
 float NormalizeNeg180to180(float ang);
 float Normalize0to360(float ang);
 
+int rand2(int min, int max);
+
 
 
 #define WM_EDITGRACESCRIPT WM_USER
@@ -69,26 +76,27 @@ template<typename T>
 class XYZPoint_template
 {
 public:
-	T x;
-	T y;
-	T z;
+	XYZPoint_template(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
+	T m_x;
+	T m_y;
+	T m_z;
 };
 
 class XZPointf
 {
 public:
-	float x;
-	float z;
+	float m_x;
+	float m_z;
 };
 
 class XZRectf
 {
 public:
-	float x1;
-	float z1;
+	float m_x1;
+	float m_z1;
 
-	float x2;
-	float z2;
+	float m_x2;
+	float m_z2;
 };
 
 typedef XYZPoint_template<float> XYZPointf;
@@ -139,6 +147,8 @@ extern uint32_t g_numFramesRun;
 extern uint32_t g_SkipFramesCounter;
 
 extern char g_launchErrorString[52];
+extern char g_curTextInput[32];
+extern char g_curTextCharInput;
 
 
 

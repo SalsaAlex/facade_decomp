@@ -14,6 +14,8 @@
 IDirectInput8 *g_pDI;
 IDirectInputDevice8* g_pKeyboard;
 HKL g_keyboardlayout = GetKeyboardLayout(0);
+char g_curTextInput[32];
+char g_curTextCharInput;
 
 HRESULT Keyboard_Init(void)
 {
@@ -120,6 +122,8 @@ HRESULT ReadBufferedKeyboardData()
 	DWORD              i;
 	HRESULT            hr;
 
+	static int unknown = 67983; //?
+
 	if (NULL == g_pKeyboard)
 		return S_OK;
 
@@ -200,10 +204,16 @@ HRESULT ReadBufferedKeyboardData()
 
 	if (NewInput || !(GetAsyncKeyState(VK_BACK) & 0x8000) || strindex >= 32)
 	{
-
+		unknown = 0;
 	}
-
-	 
+	else if (++unknown > 15 && !(g_numFramesRun % 2))
+	{
+		g_curTextInput[strindex++] = '<';
+	}
+	g_curTextCharInput = g_curTextInput[0];
+	for (int i = 0; i < 31; ++i)
+		g_curTextInput[i] = g_curTextInput[i + 1];
+	g_curTextInput[31] = 0;
 
 	return S_OK;
 }

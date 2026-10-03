@@ -268,3 +268,10 @@ float Normalize0to360(float ang)
 	while (ang > 360)	ang -= 360;
 	while (ang < - 360)	ang += 360;
 }
+
+int rand2(int min, int max)
+{
+	if (max - min <= 0) return min;
+	
+	return min + rand() % (max - min + 1);
+}

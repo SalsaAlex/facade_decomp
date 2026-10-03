@@ -899,7 +899,7 @@ public:
 	bool CheckForCallbacksPending(EAblRequestType type, int unknown1, int unknown2);
 	bool DoesAnimNeedToWaitForLocomotionToFinish(ESpriteID sprite, int unknown);
 
-	void GetFreeRequestPtr(AblRequest*& out);
+	int GetFreeRequestPtr(AblRequest*& out);
 	void GetRequestPtrByIndex(int i, AblRequest*& out);
 	void DeactiveWalkstepCallbacks(ESpriteID spriteid);
 
@@ -931,6 +931,6 @@ private:
 static_assert(sizeof(AblRequestBuffer) == 48, "");
 
 
-extern AblRequestBuffer* g_aplrequestbuffer;
+extern AblRequestBuffer* g_ablrequestbuffer;
 
 #endif // ABLREQUESTBUFFER_H

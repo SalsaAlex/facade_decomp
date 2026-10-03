@@ -3,6 +3,8 @@
 
 enum EColor
 {
+	eColor_unknown = -2,
+	eColor_none = -1,
 	eColor_black = 0,
 	eColor_unnamed000,
 	eColor_unnamed001,

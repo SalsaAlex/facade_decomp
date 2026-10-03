@@ -70,7 +70,7 @@ enum ESpriteID
     eSpriteID_frontDoor = 47,
     eSpriteID_elevatorButton = 48,
     eSpriteID_cursor = 49,
-    eSpriteID_LAST_OBJECT = eSpriteID_cursor,
+    eSpriteID_LAST_OBJECT = eSpriteID_elevatorButton,
 
     eSpriteID_NUMOBJECTS = eSpriteID_LAST_OBJECT,
 };

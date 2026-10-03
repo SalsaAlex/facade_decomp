@@ -274,14 +274,14 @@ void DrawRedCurtain()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, g_TextureFilmstrips[eTextureFilmstrip_RedCurtain].entries[0].texid);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0);
-	glVertex3f(0.0, 0.0, 0.0);
-	glTexCoord2f(1.0, 0.0);
-	glVertex3f(200.0, 0.0, 0.0);
-	glTexCoord2f(1.0, 1.0);
-	glVertex3f(200.0, 150.0, 0.0);
-	glTexCoord2f(0.0, 1.0);
-	glVertex3f(0.0, 150.0, 0.0);
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(0.0, 0.0, 0.0);
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(200.0, 0.0, 0.0);
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(200.0, 150.0, 0.0);
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(0.0, 150.0, 0.0);
 	glEnd();
 	glLoadIdentity();
 	glDisable(GL_TEXTURE_2D);
@@ -309,18 +309,30 @@ void DrawExtraEnvironmentStuff()
 	glBegin(GL_QUADS);
 	for (int i = 0; i < 2; ++i)
 	{
+		float v9, v8, v7, v14;
+		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().z);
+		float v15 = (g_PlayerSprite->GetPosition().z + 500.0) / 50.0;
 
-		float playerz2 = (g_PlayerSprite->GetPosition().z + 500) / 50;
-		if (playerz2 >= 4.0)
-			v9 = 4.0;
-		else
-			v9 = v15;
-		v15 = v9;
-		if (v9 <= 2.0)
-			v8 = 2.0;
-		else
-			v8 = v15;
-		v16 = v16 * v8;
+		v9 = v15 >= 4.0 ? 4.0 : v15;
+
+		v8 = v9 <= 2.0 ? 2.0 : v9;
+
+
+		v16 *= v8;
+		v7 = i ? 1.0 : -1.0;
+		v14 = -playerz1 * (v16 / 180.0 + v7);
+
+		glTexCoord2f(0.0, 0.0);
+		glVertex3f(playerz1 + v14, -playerz1, -1300);
+
+		glTexCoord2f(1.0, 0.0);
+		glVertex3f(v14 - playerz1, -playerz1, -1300);
+
+		glTexCoord2f(1.0, 1.0);
+		glVertex3f(v14 - playerz1, playerz1, -1300);
+
+		glTexCoord2f(0.0, 1.0);
+		glVertex3f(playerz1 + v14, playerz1, -1300);
 	}
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
@@ -370,10 +382,10 @@ void UpdateFade()
 		glTranslatef(-150.0, -150.0, -7.0);
 		glColor4f(0.0, 0.0, 0.0, g_fadeAmount);
 		glBegin(GL_QUADS);
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(400.0, 0.0, 0.0);
-		glVertex3f(400.0, 250.0, 0.0);
-		glVertex3f(0.0, 250.0, 0.0);
+			glVertex3f(0.0, 0.0, 0.0);
+			glVertex3f(400.0, 0.0, 0.0);
+			glVertex3f(400.0, 250.0, 0.0);
+			glVertex3f(0.0, 250.0, 0.0);
 		glEnd();
 		glLoadIdentity();
 	}

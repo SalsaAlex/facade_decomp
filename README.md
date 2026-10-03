@@ -1,7 +1,7 @@
 # facade_decomp
 
 decompilation of façade's binary files (.dlls)
-ida pro project files are located in idapro/
+ida pro project files are located in "_idapro/"
 
 progress:
 
