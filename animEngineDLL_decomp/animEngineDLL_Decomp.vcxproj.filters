@@ -141,6 +141,9 @@
     <ClInclude Include="include\enums\EGazeType.h">
       <Filter>Header Files\enums</Filter>
     </ClInclude>
+    <ClInclude Include="include\enums\EAlterHeadCock.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\facadecommon.cpp">

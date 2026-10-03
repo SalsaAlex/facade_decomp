@@ -27,6 +27,7 @@
     <ClInclude Include="include\classes\Sprite.h" />
     <ClInclude Include="include\classes\Stack.h" />
     <ClInclude Include="include\classes\XCursor.h" />
+    <ClInclude Include="include\enums\EAlterHeadCock.h" />
     <ClInclude Include="include\enums\ECollidableType.h" />
     <ClInclude Include="include\enums\EColor.h" />
     <ClInclude Include="include\enums\ECursorType.h" />
