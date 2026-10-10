@@ -687,43 +687,43 @@ void DrawScreenMessage()
 void StartFade(float amnt) //amnt is 0.0-1.0
 {
 	g_fadeIncr = -amnt;
-	if (g_fadeIncr < 0.0)
+	if (g_fadeIncr < 0)
 	{
-		g_fadeAmount = 1.0;
+		g_fadeAmount = 1;
 	}
-	else if (g_fadeIncr == 0.0)
+	else if (g_fadeIncr == 0)
 	{
-		g_fadeAmount = 0.0;
+		g_fadeAmount = 0;
 	}
 }
 void CutToBlack()
 {
-	g_fadeAmount = 1.0;
-	g_fadeIncr = 0.0;
+	g_fadeAmount = 1;
+	g_fadeIncr = 0;
 }
 void UpdateFade()
 {
 	if (g_fadeIncr != 0.0 || g_fadeAmount != 0.0)
 	{
 		g_fadeAmount = g_fadeAmount + g_fadeIncr;
-		if (g_fadeAmount <= 0.0)
+		if (g_fadeAmount <= 0)
 		{
-			g_fadeAmount = 0.0;
-			g_fadeIncr = 0.0;
+			g_fadeAmount = 0;
+			g_fadeIncr = 0;
 		}
-		if (g_fadeAmount >= 1.0)
+		if (g_fadeAmount >= 1)
 		{
-			g_fadeAmount = 1.0;
-			g_fadeIncr = 0.0;
+			g_fadeAmount = 1;
+			g_fadeIncr = 0;
 		}
 		glLoadIdentity();
-		glTranslatef(-150.0, -150.0, -7.0);
-		glColor4f(0.0, 0.0, 0.0, g_fadeAmount);
+		glTranslatef(-150, -150, -7);
+		glColor4f(0, 0, 0, g_fadeAmount);
 		glBegin(GL_QUADS);
-			glVertex3f(0.0, 0.0, 0.0);
-			glVertex3f(400.0, 0.0, 0.0);
-			glVertex3f(400.0, 250.0, 0.0);
-			glVertex3f(0.0, 250.0, 0.0);
+			glVertex3f(0, 0, 0);
+			glVertex3f(400, 0, 0);
+			glVertex3f(400, 250, 0);
+			glVertex3f(0, 250, 0);
 		glEnd();
 		glLoadIdentity();
 	}
