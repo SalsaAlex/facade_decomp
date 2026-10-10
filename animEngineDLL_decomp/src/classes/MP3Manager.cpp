@@ -3,6 +3,8 @@
 #include <commctrl.h>
 #include <commdlg.h>
 
+// they also used a Direct™ sample for this..
+
 //
 // Macros
 //

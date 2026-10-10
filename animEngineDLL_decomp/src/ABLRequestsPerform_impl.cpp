@@ -292,7 +292,51 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 
 void PerformPushMultipleAnimationScripts(ESpriteID actor, int script1Index, int script2Index, int script3Index, int script4Index, EAnimLayer layer)
 {
-	//	undone
+	animengine_assert(layer < eNumAnimLayers);
+	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
+
+	CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
+	if (script1Index < 0 || script1Index >= character[4].data.unknown003[17762])
+	{
+		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script1Index = %d", actor, script1Index);
+		script1Index = 0;
+	}
+	if (script2Index < 0 || script2Index >= character[4].data.unknown003[17762])
+	{
+		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script2Index = %d", actor, script2Index);
+		script2Index = 0;
+	}
+	if (script3Index < 0 || script3Index >= character[4].data.unknown003[17762])
+	{
+		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script3Index = %d", actor, script3Index);
+		script3Index = 0;
+	}
+	if (script4Index < 0 || script4Index >= character[4].data.unknown003[17762])
+	{
+		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script4Index = %d", actor, script4Index);
+		script4Index = 0;
+	}
+	if (g_ablrequestbuffer->CheckForCallbacksPending(eAblRequestType_CallbackWhenAnimationDone, actor, layer))
+	{
+		dprintf("Error:  Abl wants to push anim on layer %d before a previous anim/pose is done", layer);
+		ShouldntBeHere("Error:  Abl wants to push anim before a previous anim/pose is done, see Winlog");
+	}
+	if (layer != eAnimLayer_base)
+	{
+		if (layer == eAnimLayer_dialog)
+		{
+			character->QueueDialogScript(script1Index, true);
+			if (script2Index >= 0) character->QueueDialogScript(script2Index, false);
+			if (script3Index >= 0) character->QueueDialogScript(script3Index, false);
+			if (script4Index >= 0) character->QueueDialogScript(script4Index, false);
+		}
+	}
+	else
+	{
+		if (character->GetAreWeBodyPosing())
+			ShouldntBeHere("Error: Abl is trying to push a base animation while posing!");
+		character->m_animMgr.PushScript(script1Index, -1);
+	}
 }
 void PerformPushPoseScript(ESpriteID spriteid, EBodyPoseConfig config)
 {

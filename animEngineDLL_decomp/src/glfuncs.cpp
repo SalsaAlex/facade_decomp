@@ -629,7 +629,7 @@ static void PlayerChoosesName() {
 	{
 		g_playerNameID = choice;
 		g_playerGender = strcmp("m", g_PlayerNameStrings[choice].gender) != 0;
-		strcpy(g_PlayerSprite->name, g_PlayerNameStrings[choice].name);
+		strcpy(g_PlayerSprite->m_name, g_PlayerNameStrings[choice].name);
 		g_bPlayerChoosingName = false;
 		return;
 	}

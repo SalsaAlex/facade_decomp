@@ -479,7 +479,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			Sprite* spr = g_spriteMgr.GetSpritePtr(i);
 			if (!spr)
 				continue;
-			spr->~Sprite(); //?
+			spr->~Sprite(); //? "delete spr" ?
 		}
 
 		CloseHandle(g_ablRequestBufferMutexHandle);
@@ -492,7 +492,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		if (s_hPalette)
 			DeleteObject(s_hPalette);
 
-		XCursor::theirCursor->~XCursor(); //?
+		XCursor::theirCursor->~XCursor(); //? "delete XCursor::theirCursor" ?
 
 		Keyboard_Shutdown();
 		CoUninitialize();
@@ -1282,15 +1282,11 @@ void InitCircleDrawing()
 	for (float i = 0; i < MATH_PIDOUBLE; i = MATH_PI / 10.f + i)
 	{
 		animengine_assert(itertri < TRICIRCLE_ITERATIONS);
-		if (itertri == 20)
-			g_triangleFanSineCache[itertri] = sin(0);
-		else
-			g_triangleFanSineCache[itertri] = sin(i);
+		if (itertri == 20)	g_triangleFanSineCache[itertri] = sin(0);
+		else				g_triangleFanSineCache[itertri] = sin(i);
 
-		if(itertri == 20)
-			g_triangleFanSineCache[itertri++] = cos(0);
-		else
-			g_triangleFanSineCache[itertri++] = cos(i);
+		if(itertri == 20)	g_triangleFanSineCache[itertri++] = cos(0);
+		else				g_triangleFanSineCache[itertri++] = cos(i);
 	}
 }
 void InitQueuedUpRequestedPerformance()
@@ -1345,7 +1341,7 @@ void InitGlobals()
 	XCursor::theirCursor->InitCursor();
 	XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
 
-	LoadIconA(g_hAppInstance, (LPCSTR)IDI_FACADEWINDOWICON);
+	LoadIcon(g_hAppInstance, (LPCSTR)IDI_FACADEWINDOWICON);
 
 	for (int i = 0; i < 32; i++)
 		g_curTextInput[i] = 0;
