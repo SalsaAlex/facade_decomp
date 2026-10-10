@@ -24,7 +24,7 @@ bool g_bFacadeHasBeenRunMultipleTimes;
 bool g_bIgnoreArmLSetPerf;
 bool g_bIgnoreArmRSetPerf;	
 bool g_bIgnoreGazeSetPerf;
-bool g_bIgnoreNextWalkAbort;
+bool g_bIgnoreNextWalkAbort[2];
 
 bool g_bIsAblConnected;
 bool g_bJimDoran;
@@ -274,4 +274,14 @@ int rand2(int min, int max)
 	if (max - min <= 0) return min;
 	
 	return min + rand() % (max - min + 1);
+}
+bool rand100(int val)
+{
+	animengine_assert(val <= 100);
+	return rand() % 100 < val;
+}
+
+float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
+{
+	return sqrt( (p1.m_x-p2.m_x)*(p1.m_x-p2.m_x) + (p1.m_y-p2.m_y)*(p1.m_y-p2.m_y) );
 }

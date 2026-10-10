@@ -13,6 +13,88 @@ float g_fadeAmount;
 GLYPHMETRICSFLOAT g_FontGlyphs[255];
 GLuint g_BitmapFontBase;
 
+#define DRAW_MSG(text, verticalcursor, amnt_to_move_cursor_down) \
+	DrawArbitraryScreenText(text, -58, verticalcursor, 350, 5, 0, eColor_white, eColor_black); \
+	verticalcursor -= amnt_to_move_cursor_down
+
+#define DRAWTEXTUREDBOX(pointx, pointy, pointz, sizex, sizey, filmstrip) \
+			glLoadIdentity(); \
+			glTranslatef(pointx, pointy, pointz); \
+			glBindTexture(GL_TEXTURE_2D, g_TextureFilmstrips[filmstrip].entries[0].texid); \
+				glBegin(GL_QUADS); \
+					glTexCoord2f(0, 0); \
+					glVertex3f(0, 0, 0); \
+					glTexCoord2f(1, 0); \
+					glVertex3f(sizex, 0, 0); \
+					glTexCoord2f(1, 1); \
+					glVertex3f(sizex, sizey, 0); \
+					glTexCoord2f(0, 1); \
+				glVertex3f(0, sizey, 0); \
+			glEnd(); \
+			glLoadIdentity()
+
+#define ISCURSORINBOUNDS(xmin, xmax, ymin, ymax) ( (g_CursorSprite->GetPosition().m_x < xmax) && \
+												 (g_CursorSprite->GetPosition().m_x > xmin) && \
+												 (g_CursorSprite->GetPosition().m_y < ymax) && \
+												 (g_CursorSprite->GetPosition().m_y > ymin) )
+
+
+void DrawArbitraryScreenText(const char* Str,
+	float arg_x, float arg_y,
+	int ifactor,
+	GLfloat scale,
+	float floatfactor,
+	EColor maincolor, EColor outlinecolor)
+{
+	int v9;
+	char stringchar[4];
+	int v18;
+
+	int stringlen = strlen(Str);
+	for (int i = 1; i < 2; ++i)
+	{
+		v18 = -1;
+		glLoadIdentity();
+		float v15 = 0;
+		if (i==1) SetColorFromIndex(maincolor); else SetColorFromIndex(outlinecolor);
+		for (int j = 0; j < stringlen; ++j)
+		{
+			bool changecursor = 0;
+			if (v18 == -1)
+			{
+				changecursor = true;
+			}
+			else if (j > 0 && Str[j - 1] == 32)
+			{
+				changecursor = (float)ifactor / 10.f <= v15;
+			}
+
+			if (changecursor)
+			{
+				++v18;
+				GLfloat x = arg_x - 25.0;
+				GLfloat y = arg_y - (float)v18 * scale * 0.7;
+				GLfloat z = floatfactor + -2.0;
+				if (!i)
+				{
+					x += 0.3;
+					y -= 0.3;
+					z -= 2.0;
+				}
+				glLoadIdentity();
+				glTranslatef(x, y, z);
+				v15 = 0;
+				glScalef(scale, scale, scale);
+			}
+			stringchar[0] = Str[j];
+			stringchar[1] = '\0';
+			float spacetaken = glPrintPolygonalFont(stringchar);
+			if (stringchar[0] != -25)
+				v15 = spacetaken + v15;
+		}
+	}
+	glLoadIdentity();
+}
 
 
 static void* LoadDIBitmap(const char* filename, BITMAPINFOHEADER** imginfo)
@@ -84,14 +166,12 @@ static float glPrintPolygonalFont(const char* text)
 	return spacetaken;
 }
 
-
-
 void BuildBitmapFont()
 {
 	int tickstart = GetTickCount();
 	dprintf("Building bitmap font...");
 	g_BitmapFontBase = glGenLists(256);
-	HFONT h = CreateFontA(-12, 0, 0, 0, 700, 0, 0, 0, 0, 4u, 0, 4u, 0, "Comic Sans MS");
+	HFONT h = CreateFontA(-12, 0, 0, 0, 700, 0, 0, 0, 0, 4, 0, 4, 0, "Comic Sans MS");
 	SelectObject(g_hDeviceContext, h);
 	wglUseFontOutlinesA(g_hDeviceContext, 0, 255, g_BitmapFontBase, 0.0, 0.0, 1, g_FontGlyphs);
 	dprintf("Done building bitmap font (%.3f seconds)", (GetTickCount() - tickstart) / 1000.0);
@@ -269,21 +349,9 @@ void SetColorFromIndex(EColor color)
 void DrawRedCurtain()
 {
 	SetColorFromIndex(eColor_white);
-	glLoadIdentity();
-	glTranslatef(-100.0, -100.0, -8.0);
+
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, g_TextureFilmstrips[eTextureFilmstrip_RedCurtain].entries[0].texid);
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 0.0);
-		glVertex3f(0.0, 0.0, 0.0);
-		glTexCoord2f(1.0, 0.0);
-		glVertex3f(200.0, 0.0, 0.0);
-		glTexCoord2f(1.0, 1.0);
-		glVertex3f(200.0, 150.0, 0.0);
-		glTexCoord2f(0.0, 1.0);
-		glVertex3f(0.0, 150.0, 0.0);
-	glEnd();
-	glLoadIdentity();
+	DRAWTEXTUREDBOX(-100, -100, -8, 200, 150, eTextureFilmstrip_RedCurtain);
 	glDisable(GL_TEXTURE_2D);
 }
 
@@ -293,7 +361,7 @@ void DrawExtraEnvironmentStuff()
 		return;
 
 	glLoadIdentity();
-	float playerz1 = (g_PlayerSprite->GetPosition().z / 20) + 100;
+	float playerz1 = (g_PlayerSprite->GetPosition().m_z / 20) + 100;
 
 	SetColorFromIndex(eColor_white);
 	textureentry_t* skytexture = &g_TextureFilmstrips[eTextureFilmstrip_NYC_Sky];
@@ -310,28 +378,30 @@ void DrawExtraEnvironmentStuff()
 	for (int i = 0; i < 2; ++i)
 	{
 		float v9, v8, v7, v14;
-		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().z);
-		float v15 = (g_PlayerSprite->GetPosition().z + 500.0) / 50.0;
+		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().m_z);
+		float v15 = (g_PlayerSprite->GetPosition().m_z + 500.0) / 50.0;
 
-		v9 = v15 >= 4.0 ? 4.0 : v15;
+		//v9 = v15 >= 4 ? 4 : v15;
+		//v8 = v9 <= 2 ? 2 : v9;
 
-		v8 = v9 <= 2.0 ? 2.0 : v9;
+		v9 = v15 >= 4 ? 4 : v15;
+		v8 = v9 <= 2 ? 2 : v9;
 
 
 		v16 *= v8;
-		v7 = i ? 1.0 : -1.0;
-		v14 = -playerz1 * (v16 / 180.0 + v7);
+		v7 = i != 0 ? 1 : -1;
+		v14 = -playerz1 * (v16 / 180 + v7);
 
-		glTexCoord2f(0.0, 0.0);
+		glTexCoord2f(0, 0);
 		glVertex3f(playerz1 + v14, -playerz1, -1300);
 
-		glTexCoord2f(1.0, 0.0);
+		glTexCoord2f(1, 0);
 		glVertex3f(v14 - playerz1, -playerz1, -1300);
 
-		glTexCoord2f(1.0, 1.0);
+		glTexCoord2f(1, 1);
 		glVertex3f(v14 - playerz1, playerz1, -1300);
 
-		glTexCoord2f(0.0, 1.0);
+		glTexCoord2f(0, 1);
 		glVertex3f(playerz1 + v14, playerz1, -1300);
 	}
 	glEnd();
@@ -342,8 +412,276 @@ void DrawExtraEnvironmentStuff()
 		glDisable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
 	}
+}
+static void InstructionsScreenMessage() {
+	if (g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_none;
+	g_bPlayerInputActive = false;
+
+	DrawArbitraryScreenText("Type to speak to the characters at any time",	-32, -15, 350, 7, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("Move around with arrow keys",					-60, -67, 350, 7, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("Pick up and use objects with the mouse",		 15, -85, 350, 7, 0, eColor_white, eColor_black);
+
+	glEnable(GL_TEXTURE_2D);
+	SetColorFromIndex(eColor_white);
+
+	DRAWTEXTUREDBOX(-35, -8, -4,	68, 35, eTextureFilmstrip_Instruct_Keyboard);
+	DRAWTEXTUREDBOX(-71, -60, -4,	36, 35, eTextureFilmstrip_Instruct_ArrowKeys);
+	DRAWTEXTUREDBOX(12, -77, -4,	54, 38, eTextureFilmstrip_Instruct_Mouse);
+
+	glDisable(GL_TEXTURE_2D);
+}
+static void HintsScreenMessage() {
+
+	if (g_bQuittingApp)
+		return;
+	float verticaltextcursor = 35;
+
+	DRAW_MSG("Grace and Trip are in a desperate situation - they need you.", verticaltextcursor, 6);
+	DRAW_MSG("You can influence them in several ways - exactly how is up to you.", verticaltextcursor, 6 * 2);
+	DRAW_MSG("One approach is to try to help them, to get them to work through their problems.", verticaltextcursor, 6);
+	DRAW_MSG("Or you could try to provoke and upset them, even be cruel if you want.", verticaltextcursor, 6);
+	DRAW_MSG("You can try to dig under the surface, to expose the secrets they're hiding.", verticaltextcursor, 6 * 2);
+	DRAW_MSG("Sometimes it's necessary to talk fast and interrupt Grace and Trip, to get a word in.", verticaltextcursor, 6);
+	DRAW_MSG("They tend to respond to agreement and disagreement, praise, criticism,", verticaltextcursor, 6);
+	DRAW_MSG("flirtation, references to relationship topics such as divorce and sex,", verticaltextcursor, 6);
+	DRAW_MSG("questions about their life, explanations and advice, and so on.", verticaltextcursor, 6 * 2);
+	DRAW_MSG("As the tension builds, they may try to force you to take sides.", verticaltextcursor, 6);
+	DRAW_MSG("Eventually they may seek your advice, to get you to tell them what's wrong with them.", verticaltextcursor, 6);
+	DRAW_MSG("Depending on what you say or do will determine if they stay together or not!", verticaltextcursor, 6 * 2);
+	DRAW_MSG("Façade needs to be replayed several times, to experience the variation in the drama.", verticaltextcursor, 6 * 2);
+	DRAW_MSG("For more detailed hints, and a complete description of what's ", verticaltextcursor, 6 * 2);
+	DRAW_MSG("really going on behind the Façade, visit our help page at", verticaltextcursor, 0);
+
+	bool cursoronlink = ISCURSORINBOUNDS(-25, 31, verticaltextcursor-8, verticaltextcursor);
+	if (cursoronlink && g_mouseLButtonClicked)
+	{
+		ShellExecuteA(g_hMainAppWindow, "open", "http://www.interactivestory.net/help", 0, 0, 1);
+		g_quitAppCountdown = 1;
+	}
+	DrawArbitraryScreenText(
+		"interactivestory.net/help.",
+		45,
+		verticaltextcursor,
+		200,
+		5,
+		0,
+		cursoronlink ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	verticaltextcursor -= 12;
+
+	bool cursoronbacktomenu = ISCURSORINBOUNDS(-20, 26, verticaltextcursor-8, verticaltextcursor);
+
+	if (cursoronbacktomenu && g_mouseLButtonClicked)	g_baseScreenMessage = eBaseScreenMessage_none;
+	DrawArbitraryScreenText("Back to Menu", 
+		8.0, verticaltextcursor, 
+		200, 
+		7, 
+		0, 
+		cursoronbacktomenu ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+}
+static void CreditsScreenMessage() {
+
+	static int whenClickedOnLogo = 0;
+
+	bool cursoronlink = ISCURSORINBOUNDS(72, 93, 13, 31);
+
+	if (g_mouseLButtonClicked)
+	{
+		if (g_bAtEndOfDrama && cursoronlink && (!whenClickedOnLogo || g_numFramesRun - whenClickedOnLogo > 150))
+		{
+			whenClickedOnLogo = g_numFramesRun;
+			ShellExecute(g_hMainAppWindow, "open", "http://www.auto-mata.org", NULL, NULL, TRUE);
+		}
+		g_baseScreenMessage = g_bAtEndOfDrama ? eBaseScreenMessage_About : eBaseScreenMessage_none;
+	}
+	if (!g_bAtEndOfDrama)
+		CutToBlack();
+
+	g_bPlayerInputActive = false;
+	float verticaltextcursor = 30;
+	DRAW_MSG("Façade", verticaltextcursor, 6);
+	DRAW_MSG("a one-act interactive drama", verticaltextcursor, 6);
+	DRAW_MSG("(c)opyright 2005-2006 Procedural Arts, www.interactivestory.net", verticaltextcursor, 6);
+	DRAW_MSG(" ", verticaltextcursor, 6);
+	DRAW_MSG("Design, engineering, writing, animation and production:  Michael Mateas and Andrew Stern", verticaltextcursor, 6);
+	DRAW_MSG(" ", verticaltextcursor, 6);
+	DRAW_MSG("Voice acting:  Chloe Johnston, Andy Bayiates", verticaltextcursor, 6);
+	DRAW_MSG("Music:  Billy Gomberg, Matt Ganucheau, Jim Doran, Aaron Acosta, Leo Caruso", verticaltextcursor, 6);
+	DRAW_MSG("Additional programming:  Mehmet Fidanboylu", verticaltextcursor, 6);
+	DRAW_MSG("Additional character animation and art:  John Rines, Andy Webster", verticaltextcursor, 6);
+	DRAW_MSG("Additional voice:  Mary McCann, Joel Bresler", verticaltextcursor, 6);
+	DRAW_MSG("Story consultant:  John Lavin", verticaltextcursor, 6);
+	DRAW_MSG(" ", verticaltextcursor, 6);
+	DRAW_MSG("Very special thanks:  Tania Vu and Anne Siegel", verticaltextcursor, 6);
+	DRAW_MSG(" ", verticaltextcursor, 6);
+	DRAW_MSG("Special thanks:  Paul Fowler, Joshua Jones, Bethany Benzur, Robin Hunicke, Rob Zubek,", verticaltextcursor, 6);
+	DRAW_MSG("  Andre Pluess, Adam Goldstein, Diana Slickman, Adam Chapman, Christine Egan, Mike Mare", verticaltextcursor, 6);
+	DRAW_MSG(" ", verticaltextcursor, 6);
+	DRAW_MSG("Additional Thanks:  Brenda Harger, Mary Poole, Kathy Buys, the Neo-Futurists, NeHe Productions, Marco Pinter,", verticaltextcursor, 5);
+	DRAW_MSG("  Greg Stern, Guy Whitmore, William Huber, Noah Wardrip-Fruin, Nick Montfort, Scott Rettberg,", verticaltextcursor, 5);
+	DRAW_MSG("  Jaime Carbonell, Jessica Hodgins, Ian Horswill, Marie-Laure Ryan", verticaltextcursor, 5);
+	
+#define CREDITS_DRAW_MSG(text) \
+	DrawArbitraryScreenText(text, -58, verticaltextcursor, 400, 4, 0, eColor_white, eColor_black); \
+	verticaltextcursor -= 5
+	
+	CREDITS_DRAW_MSG("Additional Thanks:  Brenda Harger, Mary Poole, Kathy Buys, the Neo-Futurists, NeHe Productions, Marco Pinter,");
+	CREDITS_DRAW_MSG("  Greg Stern, Guy Whitmore, William Huber, Noah Wardrip-Fruin, Nick Montfort, Scott Rettberg,");
+	CREDITS_DRAW_MSG("  Jaime Carbonell, Jessica Hodgins, Ian Horswill, Marie-Laure Ryan");
+	DrawArbitraryScreenText("v1.1", 105.0, verticaltextcursor + 5, 350, 4.0, 0.0, eColor_grey, eColor_black);
+	CREDITS_DRAW_MSG("Inspiration:  Brenda Laurel, Joseph Bates, Bryan Loyall, Peter Weyrauch, Scott Reilly, Chris Crawford, Janet Murray");
+
+#undef CREDITS_DRAW_MSG
+}
+static void EndGameMenuScreenMessage() {
+
+}
+static void ReplayScreenMessage() {
+	g_bPlayerInputActive = false;
+
+	float verticaltextcursor = 10;
+	DrawArbitraryScreenText("Façade is designed to be played many times,", 
+		-22.0, verticaltextcursor, 
+		200, 
+		6.0, 
+		0.0, 
+		eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	DrawArbitraryScreenText("in order to see the full variation in the drama.", 
+		-23.5, verticaltextcursor, 
+		200, 
+		6.0, 
+		0.0, 
+		eColor_white, eColor_black);
+	verticaltextcursor -= 6*2;
+	DrawArbitraryScreenText("To replay Façade, please exit and re-launch Façade.", 
+		-30.0, verticaltextcursor, 
+		200, 
+		6.0, 
+		0.0, 
+		eColor_white, eColor_black);
 
 
+	bool cursoronexit = ISCURSORINBOUNDS(-10, 16, -38, -30);
+	if (cursoronexit && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_TipJar;
+	DrawArbitraryScreenText("Exit", 19, -30, 200, 7, 0, cursoronexit ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+
+	bool cursoronbacktomenu = ISCURSORINBOUNDS(-20, 26, -53, -45);
+	if (cursoronbacktomenu && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;
+	DrawArbitraryScreenText("Back to Menu", 8.0, -45, 200, 7, 0, cursoronbacktomenu ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+}
+static void TipJarScreenMessage() {
+	g_bPlayerInputActive = false;
+	int verticaltextcursor = 30;
+	DrawArbitraryScreenText("Façade is freeware - please give copies to your friends!",
+		-34, verticaltextcursor,
+		300,
+		6,
+		0,
+		eColor_white, eColor_black);
+	verticaltextcursor -= 6*3;
+	DrawArbitraryScreenText("If you enjoyed Façade,", 
+		1, verticaltextcursor,
+		300, 
+		6, 
+		0, 
+		eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	DrawArbitraryScreenText("how about dropping a dollar in our Electronic Tip Jar?", 
+		-30, verticaltextcursor,
+		300, 
+		6, 
+		0, 
+		eColor_white, eColor_black);
+
+
+	//unfinished
+}
+static void LaunchingTipJarScreenMessage() {
+	if (g_bQuittingApp)
+		return;
+
+	static int ctr = 0;
+
+	g_bPlayerInputActive = false;
+	DrawArbitraryScreenText("Opening the Façade electronic tip jar in your browser...", -33, 7, 300, 6, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("Thanks for your support!", -1, -47, 300, 6, 0, eColor_white, eColor_black);
+
+	if (ctr == 1)
+		ShellExecute(g_hMainAppWindow, "open", "http://www.interactivestory.net/tipjar", NULL, NULL, TRUE);
+	if (++ctr >= 90)
+		g_quitAppCountdown = 1;
+
+	SetColorFromIndex(eColor_white);
+
+	glEnable(GL_TEXTURE_2D);
+	DRAWTEXTUREDBOX(-20, -35, -4,	40, 35, eTextureFilmstrip_TipJar);
+	glDisable(GL_TEXTURE_2D);
+}
+static void AboutScreenMessage() {
+
+}
+static void PlayerChoosesName() {
+	static int choice = 0;
+	if (g_curTextCharInput == '\r')
+	{
+		g_playerNameID = choice;
+		g_playerGender = strcmp("m", g_PlayerNameStrings[choice].gender) != 0;
+		strcpy(g_PlayerSprite->name, g_PlayerNameStrings[choice].name);
+		g_bPlayerChoosingName = false;
+		return;
+	}
+	DrawArbitraryScreenText("Please Choose a Name",			-15,  10,  75, 10, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("type the first letter",		 -2,  -2, 200,  7, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("scroll with the arrow keys",	 -8,  -8, 200,  7, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText("press enter to begin",			 -1, -14, 200,  7, 0, eColor_white, eColor_black);
+
+	bool cursorininstructionsbutton = ISCURSORINBOUNDS(-12, 18, -68, -60);
+	if (cursorininstructionsbutton) g_baseScreenMessage = eBaseScreenMessage_Instructions;
+	
+	//unfinished
+
+}
+
+void DrawScreenMessage()
+{
+	static int fadeCurtainInCtr = 0;
+
+	if (g_bAtEndOfDrama)
+	{
+		DrawRedCurtain();
+		if (!fadeCurtainInCtr)
+		{
+			CutToBlack();
+			StartFade(0.015);
+		}
+		if (fadeCurtainInCtr <= 59)
+		{
+			++fadeCurtainInCtr;
+		}
+	}
+	if (fadeCurtainInCtr <= 59)
+		return;
+	switch (g_baseScreenMessage)
+	{
+		case eBaseScreenMessage_Instructions:	InstructionsScreenMessage();	break;
+		case eBaseScreenMessage_Hints:			HintsScreenMessage();			break;
+		case eBaseScreenMessage_Credits:		CreditsScreenMessage();			break;
+		case eBaseScreenMessage_EndGameMenu:	EndGameMenuScreenMessage();		break;
+		case eBaseScreenMessage_Replay:			ReplayScreenMessage();			break;
+		case eBaseScreenMessage_TipJar:			TipJarScreenMessage();			break;
+		case eBaseScreenMessage_LaunchingTipJar:LaunchingTipJarScreenMessage();	break;
+		case eBaseScreenMessage_About:			AboutScreenMessage();			break;
+		default:
+			if (g_bPlayerChoosingName)
+			{
+				CutToBlack();
+				PlayerChoosesName();
+			}
+			break;
+	}
 }
 
 void StartFade(float amnt) //amnt is 0.0-1.0

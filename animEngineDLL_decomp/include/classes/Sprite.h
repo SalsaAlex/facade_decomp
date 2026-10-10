@@ -65,13 +65,14 @@ public:
 	//virtual GetModelPointCursorIsOver(
 	//virtual GetModelPointXRect(
 
-	int unknown001;
-	char name[64];
-	void* modelframe;
-	void* modelinfo;
-	void* modelquadlines;
-	int unknown002[2];
-	void* modelquadpoly;
+	ESpriteID m_eID;
+	char m_name[64];
+	void* m_modelframe;
+	void* m_modelinfo;
+	void* m_modelquadlines;
+	void* m_characterarms;
+	void* m_outlineconnectors;
+	void* m_modelquadpoly;
 	int unknown003[21005];
 
 private:

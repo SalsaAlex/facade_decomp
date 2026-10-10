@@ -9,7 +9,7 @@
 struct dsoundentry_t
 {
 	IDirectSoundBuffer* dsoundbuffer;
-	int validsound; //ida insists this is a integer but its only ever assigned 0 and 1.. sure
+	int validsound;
 	int unknown2;
 	uint32_t buffersize;
 	int index;
@@ -76,7 +76,7 @@ bool DSound_Delete_Sound(int soundindex)
 	{
 		g_SoundBuffers[soundindex].dsoundbuffer->Release();
 		g_SoundBuffers[soundindex].dsoundbuffer = NULL;
-		g_SoundBuffers[soundindex].validsound = 0;
+		g_SoundBuffers[soundindex].validsound = FALSE;
 	}
 	return 1;
 }
@@ -142,7 +142,7 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 	mmioClose(inputfile, NULL);
 	//g_SoundBuffers[soundindex].unknown2 = v2;// this local variable is never assigned a value..?
 	g_SoundBuffers[soundindex].buffersize = mminfo2.cksize;
-	g_SoundBuffers[soundindex].validsound = 1;
+	g_SoundBuffers[soundindex].validsound = TRUE;
 
 	s_waveformatdesc.wFormatTag = WAVE_FORMAT_PCM;
 	s_waveformatdesc.nChannels = 1;

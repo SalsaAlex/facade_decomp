@@ -3,11 +3,20 @@
 #include "sounddevice.h"
 #include "glfuncs.h"
 #include "classes/AblRequestBuffer.h"
+#include "classes/Sprite.h"
+#include "classes/AnimatingSprite.h"
+#include "classes/HeadSprite.h"
+#include "classes/CharacterSprite.h"
+#include "classes/XCursor.h"
+#include "classes/Controller.h"
+#include "classes/SoundMgr.h"
 
 int g_startTime;
 
 int g_mousePosition[2];
 bool g_mouseLButtonClicked;
+
+int g_quitAppCountdown = -1;
 
 HINSTANCE g_hAppInstance;
 HGLRC g_hGLContext;
@@ -15,6 +24,47 @@ HGLRC g_hGLContext;
 Sprite* g_PlayerSprite;
 Sprite* g_CursorSprite;
 
+float g_curFps = 30.0;
+int g_millisecondsToSleep = 30;
+int g_renderEveryNthFrame = 1;
+int g_cpuClockSpeed = 2000;
+
+CharacterSprite* g_GraceSprite;
+CharacterSprite* g_TripSprite;
+
+XYZPointf g_autoMovePlayerPt;
+float g_autoMovePlayerRot; //yaw
+
+#define TRICIRCLE_ITERATIONS 21
+
+float g_triangleFanSineCache[TRICIRCLE_ITERATIONS];
+float g_triangleFanCosineCache[TRICIRCLE_ITERATIONS + 10];
+
+float g_playerTransAmt;
+float g_playerRotAmt;
+int g_AutoMovePlayerStatus;
+
+int g_frameWhenLastCinematographyMove;
+int g_framePlayerLastMoved;
+
+
+bool g_bLockedInMSToSleep;
+bool g_bDoingFPSAdjustment;
+
+
+SpriteMgr g_spriteMgr;
+
+SoundMgr g_soundMgr;
+int g_soundSourceID;
+
+
+Controller g_PlayerXController;
+Controller g_PlayerYController;
+Controller g_PlayerZController;
+Controller g_PlayerRotController;
+
+Controller g_autoTurnController;
+float g_autoTurnAmount;
 
 
 
@@ -50,6 +100,12 @@ int DllMain(HINSTANCE instDLL, int reason)
 	}
 }
 
+
+void PlayGlobalSound(EGlobalSounds sound)
+{
+	g_soundMgr.PlaySound(g_soundSourceID, sound, true);
+}
+
 static void selectglpixelformat(HDC devicecontext)
 {
 	static PIXELFORMATDESCRIPTOR descript{
@@ -76,20 +132,179 @@ static void selectglpixelformat(HDC devicecontext)
 	SetPixelFormat(devicecontext, format, &descript);
 }
 
+static void FinishRoomInit()
+{
+	Sprite* worktable = g_spriteMgr.GetSpritePtrByName("work table");
+	Sprite* ashtray = g_spriteMgr.GetSpritePtrByName("ashtray");
 
-float g_curFps = 30.0;
-int g_millisecondsToSleep = 30;
-int g_renderEveryNthFrame = 1;
-int g_cpuClockSpeed = 2000;
+	//called but return value not used ?
+	g_spriteMgr.GetSpritePtrByName("phone");
+	g_spriteMgr.GetSpritePtrByName("answering machine");
+
+	worktable->AddSpriteToSurface(0, ashtray);
+
+	Sprite* bar = g_spriteMgr.GetSpritePtrByName("bar");
+	bar->AddSpriteToSurface(2, g_spriteMgr.GetSpritePtrByName("white wine bottle"));
+	bar->AddSpriteToSurface(2, g_spriteMgr.GetSpritePtrByName("red wine bottle"));
+	bar->AddSpriteToSurface(0, g_spriteMgr.GetSpritePtrByName("advice ball"));
+
+}
+static void LaunchAblIfNeeded()
+{
+	static bool launchedabl_gate = false;
+	if (!launchedabl_gate)
+	{
+		char parameters[500];
+		dprintf("\n### Launching ABL...\n");
+		sprintf(parameters,
+			"-Xms70m "
+			"-Xmx150m "
+			"-XX:NewSize=25m "
+			"-enableassertions "
+			"-Xfuture "
+			"-Xincgc "
+			"-showversion "
+			"-classpath "
+			"../../classes;"
+			"../../classes/jess.jar "
+			"facade.Main");
+		if (g_bPrintBetaInfo)
+			strcat(parameters, " generateEventLog");
+		HINSTANCE program = ShellExecute(NULL, "open", "..\\..\\j2re1.4.2_06\\bin\\java.exe", parameters, NULL, NULL);
+		if((int)program <= 32)
+			sprintf(g_launchErrorString, "ERROR launching ABL: %d", program);
+
+		launchedabl_gate = true;
+	}
+}
+
+static void UpdateTitleSequence()
+{
+
+}
+
+static void UpdateCursor()
+{
+
+}
+static void UpdateEnvironment()
+{
+
+}
+static void UpdateCinematography()
+{
+
+}
+static void UpdateAndRenderWorld()
+{
+	ChangeSize();
+	if (g_bBlackBackground)
+		glClearColor(0.0, 0.0, 0.0, 0.0);
+	else
+		glClearColor(0.4, 0.4, 0.5, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+	g_opacity = 1.0;
+	if (!g_bPlayerChoosingName && !g_bAtEndOfDrama)
+		UpdateAndRenderAllSprites(0);
+	DrawPlayerScreenText();
+	DrawNPCsScreenText();
+	DrawScreenMessage();
+	UpdateTitleSequence();
+	if (!g_bPlayerChoosingName && !g_bAtEndOfDrama)
+	{
+		DrawExtraEnvironmentStuff();
+		UpdateAndRenderAllSprites(1);
+	}
+	UpdateFade();
+	glFlush();
+	g_mouseLButtonClicked = 0;
+	//if (*(int*)dword_10180DB4 >= 0 && !(g_numFramesRun % 4))
+	//	sub_1000227F();
+}
+static void UpdateMP3Fades()
+{
+
+}
+static void LoadingMessage()
+{
+	static int fadeCurtainInCtr = 0;
+	static bool bFadeCurtainOut = false;
+	static int ctr = 0;
+
+	char uppertext[52];
+	char undertext[52];
+
+	if (g_ticksIntroStarted >= 0)
+		return;
+
+	DrawRedCurtain();
+	if (!fadeCurtainInCtr)
+	{
+		CutToBlack();
+		StartFade(0.015);
+	}
+
+	if (fadeCurtainInCtr < 60)
+	{
+		fadeCurtainInCtr++;
+		return;
+	}
+
+	if (g_bAtEndOfLoad && !bFadeCurtainOut)
+	{
+		bFadeCurtainOut = true;
+		StartFade(-0.015);
+		return;
+	}
+
+	strcpy(undertext, " ");
+	strcpy(uppertext, " ");
+
+	if (g_numFramesRun <= 90)
+	{
+		strcpy(undertext, "Loading Façade . . .");
+	}
+	else
+	{
+		if (ctr <= 30)
+			strcpy(undertext, "Loading Façade");
+		else if (ctr <= 45)
+			strcpy(undertext, "Loading Façade .");
+		else if (ctr <= 60)
+			strcpy(undertext, "Loading Façade . .");
+		else if (ctr <= 105)
+			strcpy(undertext, "Loading Façade . . .");
+
+		if (ctr == 105)
+			ctr = 0;
+	}
+	strcpy(uppertext, "(May take up to 60 seconds)");
+	if (g_launchErrorString[0] != '\0')
+	{
+		strcpy(undertext, "Load Error");
+		strcpy(uppertext, g_launchErrorString);
+	}
 
 
+	DrawArbitraryScreenText(undertext, -10, 0, 200, 10, 0, eColor_white, eColor_black);
+	DrawArbitraryScreenText(uppertext, 0, -10, 200, 5, 0, eColor_white, eColor_black);
 
-bool g_bLockedInMSToSleep;
-bool g_bDoingFPSAdjustment;
+	float verticaltextcursor = -50;
 
+	DrawArbitraryScreenText("www.interactivestory.net", 2, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	DrawArbitraryScreenText("(c)opyright 2005-2006 Procedural Arts", -11, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	DrawArbitraryScreenText("an [auto mata] release ", 4.5, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	DrawArbitraryScreenText("v1.1", 19.5, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 6;
+	if (g_bPrintBetaInfo)
+		DrawArbitraryScreenText("Debug", 18.5, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+}
 
 //UNDONE
-LRESULT mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	static HPALETTE s_hPalette = NULL;
 	static DWORD s_timeAtStartOfCounting = 0, s_frameTimeAccum = 0, s_framesSinceLastStatistic = 0;
@@ -944,11 +1159,33 @@ void InitEnvironment()
 }
 void InitCinematography()
 {
-
+	g_bCinematographyOn = false;
+	g_frameWhenLastCinematographyMove = 0;
+	g_framePlayerLastMoved = 0;
+	g_bRequestAutoFraming = false;
+	g_autoTurnController.InitController(&g_autoTurnAmount, -1000, 1000, true);
+}
+static void InitPlayerNavigationVars()
+{
+	g_playerTransAmt = 0;
+	g_playerRotAmt = 0;
+	g_bPlayerRotateLeft = false;
+	g_bPlayerRotateRight = false;
+	g_bPlayerMoveForwards = false;
+	g_bPlayerMoveBackwards = false;
+	g_bPlayerMoveUpwards = false;
+	g_bPlayerMoveDownwards = false;
+	g_AutoMovePlayerStatus = 0;
+	g_bSeatedOnCouch = false;
+	g_bTripCarry = false;
 }
 void InitPlayerNavigation()
 {
-
+	InitPlayerNavigationVars();
+	g_PlayerXController.InitController(&g_autoMovePlayerPt.m_x, -10000, 10000, false);
+	g_PlayerYController.InitController(&g_autoMovePlayerPt.m_y, -10000, 10000, false);
+	g_PlayerZController.InitController(&g_autoMovePlayerPt.m_z, -10000, 10000, false);
+	g_PlayerRotController.InitController(&g_autoMovePlayerRot, -1000, 1000, false);
 }
 Sprite* CreateCursorSprite()
 {
@@ -956,29 +1193,105 @@ Sprite* CreateCursorSprite()
 	spr->InitSprite(eSpriteID_cursor, "cursor", false, true, -1);
 	return spr;
 }
+CharacterSprite* CreateGraceSprite()
+{
+	CharacterSprite* character = new CharacterSprite();
+	character->m_modelinfo = &g_Grace_modelInfo;
+	character->m_modelquadlines = &g_Grace_modelQuadLines;
+	character->m_modelquadpoly = &g_Grace_modelQuadPolys;
+	character->m_characterarms = &g_Grace_modelArms;
+	character->m_outlineconnectors = &g_Grace_modelOutlineConnectors;
+	HIBYTE(character->unknown003[9]) = true;
+	LOBYTE(character->unknown003[0]) = true;
+	character->InitAnimatingSprite(eSpriteID_grace, "grace", 76, 4533, -5, 5, 35);
+	character->SetVolume(XYZPointf(30, 100, 50));
+	character->SetCollidableType(eCollidableType_AABB);
+	return character;
+}
+CharacterSprite* CreateTripSprite()
+{
+	CharacterSprite* character = new CharacterSprite();
+	character->m_modelinfo = &g_Trip_modelInfo;
+	character->m_modelquadlines = &g_Trip_modelQuadLines;
+	character->m_modelquadpoly = &g_Trip_modelQuadPolys;
+	character->m_characterarms = &g_Trip_modelArms;
+	character->m_outlineconnectors = &g_Trip_modelOutlineConnectors;
+	HIBYTE(character->unknown003[9]) = true;
+	LOBYTE(character->unknown003[0]) = true;
+	character->InitAnimatingSprite(eSpriteID_trip, "trip", 73, 7616, -5, 5, 64);
+	character->SetVolume(XYZPointf(30, 100, 50));
+	character->SetCollidableType(eCollidableType_AABB);
+	return character;
+}
+HeadSprite* CreateGraceHeadSprite(CharacterSprite* grace)
+{
+	HeadSprite* head = new HeadSprite();
+	head->m_modelframe = &g_GraceHeadModel_modelFrame;
+	head->m_modelinfo = &g_GraceHeadModel_modelInfo;
+	head->m_modelquadlines = &g_GraceHeadModel_modelQuadLines;
+	head->m_characterarms = &g_GraceHeadModel_modelArms;
+	head->m_modelquadpoly = &g_GraceHeadModel_modelQuadPolys;
+	HIBYTE(head->unknown003[9]) = true;
+	LOBYTE(head->unknown003[0]) = false;
+	head->InitSprite((ESpriteID)50, "GraceHead", true, true);
+	head->SetVolume(XYZPointf(1, 1, 1));
+}
+HeadSprite* CreateTripHeadSprite(CharacterSprite* trip)
+{
+	HeadSprite* head = new HeadSprite();
+	head->m_modelframe = &g_TripHeadModel_modelFrame;
+	head->m_modelinfo = &g_TripHeadModel_modelInfo;
+	head->m_modelquadlines = &g_TripHeadModel_modelQuadLines;
+	head->m_characterarms = &g_TripHeadModel_modelArms;
+	head->m_modelquadpoly = &gTripHeadModel_modelQuadPolys;
+	HIBYTE(head->unknown003[9]) = true;
+	LOBYTE(head->unknown003[0]) = false;
+	head->InitSprite((ESpriteID)52, "TripHead", true, true);
+	head->SetVolume(XYZPointf(1, 1, 1));
+}
 void InitGraceSprite()
 {
-
+	g_GraceSprite = CreateGraceSprite();
+	g_GraceSprite->m_pHeadSprite = CreateGraceHeadSprite(g_GraceSprite);
+	g_GraceSprite->unknown003[1] = 75;
 }
 void InitTripSprite()
 {
+	g_TripSprite = CreateTripSprite();
+	g_TripSprite->m_pHeadSprite = CreateTripHeadSprite(g_TripSprite);
+	g_TripSprite->unknown003[1] = 44;
+}
+void InitTransRotScale(CharacterSprite* spr, bool b1)
+{
 
 }
-//void InitTransRotScale(CharacterSprite* spr = nullptr, int a2 = 0)
-//{
-//
-//}
 void InitCollisionZonesAndPathPlanGrid()
 {
 
 }
 void InitPathPlanning()
 {
-
+	SetupSqrtTable();
+	SetupDirOffsets();
+	SetupHeuristicTable();
+	SetupTurnTable();
 }
 void InitCircleDrawing()
 {
+	int itertri = 0;
+	for (float i = 0; i < MATH_PIDOUBLE; i = MATH_PI / 10.f + i)
+	{
+		animengine_assert(itertri < TRICIRCLE_ITERATIONS);
+		if (itertri == 20)
+			g_triangleFanSineCache[itertri] = sin(0);
+		else
+			g_triangleFanSineCache[itertri] = sin(i);
 
+		if(itertri == 20)
+			g_triangleFanSineCache[itertri++] = cos(0);
+		else
+			g_triangleFanSineCache[itertri++] = cos(i);
+	}
 }
 void InitQueuedUpRequestedPerformance()
 {
@@ -992,12 +1305,12 @@ void InitGlobals()
 
 	g_startTime = GetTickCount();
 	g_numFramesRun = 0;
-	g_bShouldRenderThisFrame = 1;
+	g_bShouldRenderThisFrame = true;
 	g_SkipFramesCounter = 0;
-	g_bAssertionThrown = 0;
+	g_bAssertionThrown = false;
 	g_launchErrorString[0] = '\0';
-	g_bAllQuadLineOutline = 0;
-	g_bAllCircleOutline = 0;
+	g_bAllQuadLineOutline = false;
+	g_bAllCircleOutline = false;
 
 	for (int i = eTextureFilmstrip_YellowFont1; i <= eTextureFilmstrip_TipJar; ++i)
 		LoadTextureFilmstrip((ETextureFilmstrip)i);
@@ -1031,6 +1344,7 @@ void InitGlobals()
 	XCursor::theirCursor = new XCursor();
 	XCursor::theirCursor->InitCursor();
 	XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
+
 	LoadIconA(g_hAppInstance, (LPCSTR)IDI_FACADEWINDOWICON);
 
 	for (int i = 0; i < 32; i++)

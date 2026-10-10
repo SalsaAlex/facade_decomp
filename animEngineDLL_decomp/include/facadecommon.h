@@ -5,62 +5,60 @@
 #include "stddef.h"
 #include "stdint.h"
 #include "stdarg.h"
+#include "math.h"
 
 #include "time.h"
 #include "stdio.h"
+
+
 #include "windows.h"
 
 #include "enums/EAblRequestType.h"
 #include "enums/EAlterHeadCock.h"
+#include "enums/EAnimLayer.h"
+#include "enums/EBaseScreenMessage.h"
+#include "enums/EBodyPoseConfig.h"
 #include "enums/ECollidableType.h"
 #include "enums/EColor.h"
+#include "enums/EControllerType.h"
 #include "enums/ECursorType.h"
 #include "enums/EDrink.h"
 #include "enums/EEventLogType.h"
+#include "enums/EFullExpressionBase.h"
+#include "enums/EFullExpressionMood.h"
 #include "enums/EGazeSpeed.h"
 #include "enums/EGazeType.h"
+#include "enums/EGestureBodyPart.h"
 #include "enums/EGlobalSounds.h"
 #include "enums/EMiscLittleAction.h"
-#include "enums/EObjectType.h"
 #include "enums/EMusicAction.h"
 #include "enums/EMusicName.h"
+#include "enums/EObjectType.h"
 #include "enums/EPhoneCallBehavior.h"
 #include "enums/EPlayerGestureID.h"
 #include "enums/ESetAnimEngineInfo.h"
 #include "enums/ESpriteID.h"
 #include "enums/ESurfacePickupAngle.h"
 #include "enums/ETextureFilmstrip.h"
+#include "enums/EWalkType.h"
 
 #include "../../animEngineStarter_decomp/resource.h"
 
+
 #include "classes/Sprite.h"
-
-
-void dprintf(const char* format, ...);
-void animengine_assert(bool cond);
-
-void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator,
-	const char* text, bool speechinterrupted,
-	ESpriteID victim, uint32_t tick);
-void OutputEventLog(bool stageplay);
-void ShouldntBeHere(const char* asserttext);
-
-bool IsWhitespaceNewLineOrComma(char c);
-bool IsNumberCharacter(char c);
-bool IsLetterCharacter(char c);
-bool IsPunctuationCharacter(char c);
-
-float NormalizeNeg180to180(float ang);
-float Normalize0to360(float ang);
-
-int rand2(int min, int max);
-
+#include "classes/AnimatingSprite.h"
+#include "classes/CharacterSprite.h"
+#include "classes/HeadSprite.h"
+#include "classes/SpriteMgr.h"
 
 
 #define WM_EDITGRACESCRIPT WM_USER
 #define WM_EDITGRACEFACE WM_USER + 1
 #define WM_EDITTRIPSCRIPT WM_USER + 2
 #define WM_EDITTRIPFACE WM_USER + 3
+
+#define MATH_PI 3.1415
+#define MATH_PIDOUBLE 6.283
 
 
 
@@ -76,6 +74,7 @@ template<typename T>
 class XYZPoint_template
 {
 public:
+	XYZPoint_template() : m_x(0), m_y(0), m_z(0) {}
 	XYZPoint_template(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
 	T m_x;
 	T m_y;
@@ -102,6 +101,37 @@ public:
 typedef XYZPoint_template<float> XYZPointf;
 typedef XTPoint<int> XTPointi;
 
+
+struct ObjSensePacket
+{
+	ESpriteID objectID;
+	float x;
+	float y;
+	float z;
+};
+struct ObjStateSensePacket
+{
+	ESpriteID objectID;
+	int state;
+};
+struct ObjectActivationSensePacket
+{
+	int activation;
+	ESpriteID activatorid;
+};
+struct HeldObjectSensePacket
+{
+	ESpriteID objectID;
+	ESpriteID characterID;
+	int attachPointID;
+	int objectCategory;
+};
+struct AnimCueSensePacket
+{
+	int unknown[3][8];
+};
+
+
 struct player_namegender_map_t
 {
 	const char* name;
@@ -127,9 +157,13 @@ struct textureentry_t
 	int unknown;
 };
 extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
+
 extern Sprite* g_PlayerSprite;
 extern Sprite* g_CursorSprite;
 
+extern SpriteMgr g_spriteMgr;
+
+extern EBaseScreenMessage g_baseScreenMessage;
 
 #define GENDER_MALE 0
 #define GENDER_FEMALE 1
@@ -150,7 +184,11 @@ extern char g_launchErrorString[52];
 extern char g_curTextInput[32];
 extern char g_curTextCharInput;
 
+extern float g_playerTransAmt;
+extern float g_playerRotAmt;
+extern int g_AutoMovePlayerStatus;
 
+extern int g_quitAppCountdown;
 
 extern bool g_bAblRequestingFPSAdjustment;
 
@@ -176,7 +214,7 @@ extern bool g_bFacadeHasBeenRunMultipleTimes;
 extern bool g_bIgnoreArmLSetPerf;
 extern bool g_bIgnoreArmRSetPerf;
 extern bool g_bIgnoreGazeSetPerf;
-extern bool g_bIgnoreNextWalkAbort;
+extern bool g_bIgnoreNextWalkAbort[2];
 
 extern bool g_bIsAblConnected;
 extern bool g_bJimDoran;
@@ -205,6 +243,38 @@ extern bool g_bTextCharWasPressed;
 extern bool g_bTripCarry;
 extern bool g_bVeryNearCharacter;
 extern bool g_bWriteOutput;
+
+extern bool g_mouseLButtonClicked;
+
+
+
+
+
+
+
+void dprintf(const char* format, ...);
+void animengine_assert(bool cond);
+
+void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator,
+	const char* text, bool speechinterrupted,
+	ESpriteID victim, uint32_t tick);
+void OutputEventLog(bool stageplay);
+void ShouldntBeHere(const char* asserttext);
+
+bool IsWhitespaceNewLineOrComma(char c);
+bool IsNumberCharacter(char c);
+bool IsLetterCharacter(char c);
+bool IsPunctuationCharacter(char c);
+
+float NormalizeNeg180to180(float ang);
+float Normalize0to360(float ang);
+
+int rand2(int min, int max);
+bool rand100(int val);
+
+float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
+
+void PlayGlobalSound(EGlobalSounds sound);
 
 
 #endif // FACADECOMMON_H

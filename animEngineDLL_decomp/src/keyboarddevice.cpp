@@ -211,7 +211,7 @@ HRESULT ReadBufferedKeyboardData()
 		g_curTextInput[strindex++] = '<';
 	}
 	g_curTextCharInput = g_curTextInput[0];
-	for (int i = 0; i < 31; ++i)
+	for (int i = 0; i < sizeof(g_curTextInput)-1; ++i)
 		g_curTextInput[i] = g_curTextInput[i + 1];
 	g_curTextInput[31] = 0;
 

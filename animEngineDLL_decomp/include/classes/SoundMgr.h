@@ -1,6 +1,7 @@
 #ifndef SOUNDMGR_H
 #define SOUNDMGR_H
 
+#undef PlaySound
 #include "enums/EGlobalSounds.h"
 
 class SoundSource;

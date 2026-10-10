@@ -4,7 +4,9 @@
 #include "sounddevice.h"
 
 //main.cpp
-extern WNDPROC mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+extern LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+extern void InitGlobals();
 
 WPARAM AnimEngineWinMain(HINSTANCE p1, HINSTANCE p2, char* p3, int p4)
 {
@@ -17,11 +19,13 @@ WPARAM AnimEngineWinMain(HINSTANCE p1, HINSTANCE p2, char* p3, int p4)
 	}
 	if (GetAsyncKeyState(VK_CONTROL) & 0x08000)
 	{
+		char buildname[256];
+		sprintf(buildname, "Beta build %s", "8 (7.9.05)");
 		g_bPrintBetaInfo = true;
 		AddEventInfoToLog(
 			eEventLogType_unknown00,
 			eSpriteID_NOTASPRITE,
-			"Beta build 8 (7.9.05)",
+			buildname,
 			false,
 			eSpriteID_NOTASPRITE,
 			GetTickCount());

@@ -19,6 +19,9 @@
     <Filter Include="Header Files\classes">
       <UniqueIdentifier>{6a136b56-5ef6-4137-84a8-4ce0637469ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\classes">
+      <UniqueIdentifier>{ebd49ed7-4b10-43d2-a3a7-601c57abc7af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\facadecommon.h">
@@ -144,21 +147,48 @@
     <ClInclude Include="include\enums\EAlterHeadCock.h">
       <Filter>Header Files\enums</Filter>
     </ClInclude>
+    <ClInclude Include="include\enums\EBaseScreenMessage.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\MP3Manager.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EControllerType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EAnimLayer.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EBodyPoseConfig.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EWalkType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EFullExpressionMood.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EFullExpressionBase.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EGestureBodyPart.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ABLRequestsPerform_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\SpriteMgr.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\facadecommon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\XCursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\AnimAPI_interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AblRequestBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\keyboarddevice.cpp">
@@ -170,11 +200,26 @@
     <ClCompile Include="src\glfuncs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\entrypoint.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\AblRequestBuffer.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\MP3Manager.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\XCursor.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ABLRequestsPerform_impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\SpriteMgr.cpp">
+      <Filter>Source Files\classes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

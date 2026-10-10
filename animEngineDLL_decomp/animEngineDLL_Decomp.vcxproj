@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ABLRequestsPerform_impl.h" />
     <ClInclude Include="include\classes\AblRequestBuffer.h" />
     <ClInclude Include="include\classes\AnimatingSprite.h" />
     <ClInclude Include="include\classes\AnsweringMachineSprite.h" />
@@ -21,24 +22,34 @@
     <ClInclude Include="include\classes\EightballMessageSprite.h" />
     <ClInclude Include="include\classes\GestureFxnMgr.h" />
     <ClInclude Include="include\classes\HeadSprite.h" />
+    <ClInclude Include="include\classes\MP3Manager.h" />
     <ClInclude Include="include\classes\PhoneSprite.h" />
     <ClInclude Include="include\classes\SoundMgr.h" />
     <ClInclude Include="include\classes\SoundSource.h" />
     <ClInclude Include="include\classes\Sprite.h" />
+    <ClInclude Include="include\classes\SpriteMgr.h" />
     <ClInclude Include="include\classes\Stack.h" />
     <ClInclude Include="include\classes\XCursor.h" />
     <ClInclude Include="include\enums\EAlterHeadCock.h" />
+    <ClInclude Include="include\enums\EAnimLayer.h" />
+    <ClInclude Include="include\enums\EBaseScreenMessage.h" />
+    <ClInclude Include="include\enums\EBodyPoseConfig.h" />
     <ClInclude Include="include\enums\ECollidableType.h" />
     <ClInclude Include="include\enums\EColor.h" />
+    <ClInclude Include="include\enums\EControllerType.h" />
     <ClInclude Include="include\enums\ECursorType.h" />
+    <ClInclude Include="include\enums\EFullExpressionBase.h" />
+    <ClInclude Include="include\enums\EFullExpressionMood.h" />
     <ClInclude Include="include\enums\EGazeSpeed.h" />
     <ClInclude Include="include\enums\EGazeType.h" />
+    <ClInclude Include="include\enums\EGestureBodyPart.h" />
     <ClInclude Include="include\enums\EGlobalSounds.h" />
     <ClInclude Include="include\enums\EMiscLittleAction.h" />
     <ClInclude Include="include\enums\EMusicAction.h" />
     <ClInclude Include="include\enums\EMusicName.h" />
     <ClInclude Include="include\enums\EObjectType.h" />
     <ClInclude Include="include\enums\ESurfacePickupAngle.h" />
+    <ClInclude Include="include\enums\EWalkType.h" />
     <ClInclude Include="include\facadecommon.h" />
     <ClInclude Include="include\enums\EAblRequestType.h" />
     <ClInclude Include="include\enums\EDrink.h" />
@@ -54,16 +65,19 @@
     <ClInclude Include="src\eventLogging.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AblRequestBuffer.cpp" />
     <ClCompile Include="src\AnimAPI_interface.cpp" />
+    <ClCompile Include="src\ABLRequestsPerform_impl.cpp" />
+    <ClCompile Include="src\classes\AblRequestBuffer.cpp" />
+    <ClCompile Include="src\classes\MP3Manager.cpp" />
+    <ClCompile Include="src\classes\Sprite.cpp" />
+    <ClCompile Include="src\classes\SpriteMgr.cpp" />
+    <ClCompile Include="src\classes\XCursor.cpp" />
     <ClCompile Include="src\entrypoint.cpp" />
     <ClCompile Include="src\facadecommon.cpp" />
     <ClCompile Include="src\glfuncs.cpp" />
     <ClCompile Include="src\keyboarddevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sounddevice.cpp" />
-    <ClCompile Include="src\Sprite.cpp" />
-    <ClCompile Include="src\XCursor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

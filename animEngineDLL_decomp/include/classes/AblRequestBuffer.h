@@ -888,11 +888,11 @@ struct unknownablstructure2
 class AblRequestBuffer
 {
 public:
-	virtual ~AblRequestBuffer(void) = default;
+	virtual ~AblRequestBuffer() = default;
 
 	void InitBuffer(void* mappedmemptr, bool resetmemory);
 
-	int PerformAllRequests(void);
+	int PerformAllRequests();
 
 
 	bool CheckForBaseAnimRequestsQueuedUp(int unknown);
@@ -904,9 +904,9 @@ public:
 	void DeactiveWalkstepCallbacks(ESpriteID spriteid);
 
 	void PerformAnyRequestedCueTriggeredPerformance(ESpriteID spriteid);
-	void PerformRequest(int unknown1, bool unknown2);
+	int PerformRequest(int reqindex, bool abortonly);
 
-	void PrintTraceBuffer(void);
+	void PrintTraceBuffer();
 	void SaveRequestInTrace(AblRequest* req);
 
 	void QueueUpRequestedPerformance(ESpriteID spriteid, /*PerformanceInfo*/void* performanceinfo, int randomnum);
