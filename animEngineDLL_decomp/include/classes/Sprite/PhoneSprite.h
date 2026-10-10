@@ -6,8 +6,19 @@
 class PhoneSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:00206840
 {
 public:
+	PhoneSprite();
+	void InitPhoneSprite();
+
+	void UpdateSprite() override;
+
+	void Speak(const char* speech, EGlobalSounds sound);
+
+	void SetBehavior(EPhoneCallBehavior behavior);
+
 
 private:
+	EPhoneCallBehavior m_eBehavior;
+	int unknown;
 
 protected:
 

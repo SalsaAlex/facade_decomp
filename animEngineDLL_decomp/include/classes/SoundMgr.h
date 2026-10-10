@@ -20,7 +20,7 @@ class SoundMgr
 public:
 	virtual ~SoundMgr() = default;
 
-	void PlaySound(int, EGlobalSounds gsoundindex , bool);
+	bool PlaySound(int, EGlobalSounds gsoundindex , bool);
 	int AddSoundSource(SoundSource* src);
 
 	void SetSoundPan(int sourceid, int pan, int);

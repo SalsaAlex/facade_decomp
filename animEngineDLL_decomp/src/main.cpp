@@ -3,13 +3,12 @@
 #include "sounddevice.h"
 #include "glfuncs.h"
 #include "classes/AblRequestBuffer.h"
-#include "classes/Sprite.h"
-#include "classes/AnimatingSprite.h"
-#include "classes/HeadSprite.h"
-#include "classes/CharacterSprite.h"
+#include "classes/Sprite/CharacterSprite.h"
 #include "classes/XCursor.h"
 #include "classes/Controller.h"
 #include "classes/SoundMgr.h"
+
+#define MAX_PANELS 200
 
 int g_startTime;
 
@@ -17,6 +16,8 @@ int g_mousePosition[2];
 bool g_mouseLButtonClicked;
 
 int g_quitAppCountdown = -1;
+
+int g_numPanels = 0;
 
 HINSTANCE g_hAppInstance;
 HGLRC g_hGLContext;
@@ -101,9 +102,9 @@ int DllMain(HINSTANCE instDLL, int reason)
 }
 
 
-void PlayGlobalSound(EGlobalSounds sound)
+bool PlayGlobalSound(EGlobalSounds sound)
 {
-	g_soundMgr.PlaySound(g_soundSourceID, sound, true);
+	return g_soundMgr.PlaySound(g_soundSourceID, sound, true);
 }
 
 static void selectglpixelformat(HDC devicecontext)
@@ -319,10 +320,10 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			UpdateColors(g_hDeviceContext);
 		}
 		return 0;
-	case WM_EDITGRACESCRIPT: EditCharacterScript(g_GraceSprite); return 0;
-	case WM_EDITGRACEFACE: EditCharacterFace(g_GraceSprite); return 0;
-	case WM_EDITTRIPSCRIPT: EditCharacterScript(g_TripSprite); return 0;
-	case WM_EDITTRIPFACE: EditCharacterFace(g_TripSprite); return 0;
+	case WM_EDITGRACESCRIPT:	EditCharacterScript(g_GraceSprite); return 0;
+	case WM_EDITGRACEFACE:		EditCharacterFace(g_GraceSprite); return 0;
+	case WM_EDITTRIPSCRIPT:		EditCharacterScript(g_TripSprite); return 0;
+	case WM_EDITTRIPFACE:		EditCharacterFace(g_TripSprite); return 0;
 	case WM_QUERYNEWPALETTE:
 		HRESULT returncode = S_OK;
 		if (s_hPalette)
@@ -918,6 +919,23 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	XYZPointf pos,
 	bool collide, bool b3)
 {
+	static int s_panelID = 0;
+	if (g_numPanels >= MAX_PANELS)
+	{
+		ShouldntBeHere("need to allocate more memory for panels");
+		return nullptr;
+	}
+
+	bool unknownbool001 = false;
+
+	if (sprid == eSpriteID_NOTASPRITE)
+	{
+		sprid = (ESpriteID)++s_panelID;
+		unknownbool001 = f1 < 20;
+	}
+
+	//undone
+
 }
 
 void CreateRoom()
@@ -949,23 +967,23 @@ void CreateRoom()
 	spr = CreatePanel(eSpriteID_martiniDisplay1,					"martini glass 1",			true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniEmpty,	eColor_none,	XYZPointf(-184,   41, -274),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																																								  	    
-		spr->unknown003[6] = 2.0;																																																											  	    
-		spr->unknown003[20599] = 0;																																																											  	    
+		spr->a1_unknown00007 = 2.0;																																																											  	    
+		spr->c1_unknown00001 = 0;																																																											  	    
 	spr = CreatePanel(eSpriteID_martiniDisplay2,					"martini glass 2",			true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniEmpty,	eColor_none,	XYZPointf(-183,   41, -286),	false,	false);
 		spr->SetGrabable(true);																																											  																	  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																							  																	  	    
-		spr->unknown003[6] = 2.0;																																										  																	  	    
-		spr->unknown003[20599] = 0;																																										  																	  	    
+		spr->a1_unknown00007 = 2.0;																																										  																	  	    
+		spr->c1_unknown00001 = 0;																																										  																	  	    
 	spr = CreatePanel(eSpriteID_martiniDisplay3,					"martini glass 3",			true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniEmpty,	eColor_none,	XYZPointf(-183.5, 41, -297),	false,	false);
 		spr->SetGrabable(true);																																											  																	  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																							  																	  	    
-		spr->unknown003[6] = 2.0;																																										  																	  	    
-		spr->unknown003[20599] = 0;																																										  																	  	    
+		spr->a1_unknown00007 = 2.0;																																										  																	  	    
+		spr->c1_unknown00001 = 0;																																										  																	  	    
 	spr = CreatePanel(eSpriteID_martiniDisplay4,					"martini glass 4",			true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniEmpty,	eColor_none,	XYZPointf(-183,   41, -308),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																																								  	    
-		spr->unknown003[6] = 2.0;																																																											  	    
-		spr->unknown003[20599] = 0;																																																											  	    
+		spr->a1_unknown00007 = 2.0;																																																											  	    
+		spr->c1_unknown00001 = 0;																																																											  	    
 	spr = CreatePanel(eSpriteID_bar_redwinebottle,					"bar_redwinebottle",       false,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		eTextureFilmstrip_RedWineBottle,	eColor_none,	XYZPointf(-100, -100, -100),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(10, 25, 10));																																																								  	    
@@ -975,18 +993,18 @@ void CreateRoom()
 	spr = CreatePanel(eSpriteID_playerDrink,						"player's drink",          false,				eObjectType_Drink,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniCosmo,	eColor_none,	XYZPointf(-170,   73, -110),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																																								  	    
-		spr->unknown003[6] = 2.0;																																																											  	    
-		spr->unknown003[20599] = GetFullDrinkLevel(true);																																																					  	    
+		spr->a1_unknown00007 = 2.0;																																																											  	    
+		spr->c1_unknown00001 = GetFullDrinkLevel(true);																																																					  	    
 	spr = CreatePanel(eSpriteID_tripDrink,							"Trip's drink",            false,				eObjectType_Drink,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,		 eTextureFilmstrip_MartiniCosmo,	eColor_none,	XYZPointf( 100, -100, -100),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																																								  	    
-		spr->unknown003[6] = 2.0;																																																											  	    
-		spr->unknown003[20599] = GetFullDrinkLevel(false);																																																					  	    
+		spr->a1_unknown00007 = 2.0;																																																											  	    
+		spr->c1_unknown00001 = GetFullDrinkLevel(false);																																																					  	    
 	spr = CreatePanel(eSpriteID_graceDrink,							"Grace's drink",		   false,				eObjectType_Drink,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,	   eTextureFilmstrip_MartiniClassic,	eColor_none,	XYZPointf( 100, -100, -100),	false,	false);
 		spr->SetGrabable(true);																																																												  	    
 		spr->SetVolume(XYZPointf(12, 12, 12));																																																								  	    
-		spr->unknown003[6] = 2.0;																																																											  	    
-		spr->unknown003[20599] = GetFullDrinkLevel(false);																																																					  	    
+		spr->a1_unknown00007 = 2.0;																																																											  	    
+		spr->c1_unknown00001 = GetFullDrinkLevel(false);																																																					  	    
 	spr = CreatePanel(eSpriteID_bigAbstractPainting,				"big abstract painting",	true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	  eColor_white,			 eTextureFilmstrip_Painting,	eColor_black,	XYZPointf( 190,  100, -380),	false,	false);
 		spr->SetVolume(XYZPointf(50, 50, 70));																																																								  	    
 		spr->SetClickable(true);																																																											  	    
@@ -1022,8 +1040,8 @@ void CreateRoom()
 	spr = CreatePanel(eSpriteID_eightball,							"advice ball",				true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,			eTextureFilmstrip_EightBall,	eColor_none,	XYZPointf(-149,   71, -170),	false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(8, 8, 8));
-		spr->unknown003[5] = 1.0;
-		spr->unknown003[6] = 6.0;
+		spr->a1_unknown00006 = 1.0;
+		spr->a1_unknown00007 = 6.0;
 	spr = CreatePanel((ESpriteID)(54) /*??*/,						"advice ball message",	   false,	 eObjectType_EightballMessage,	  5,	  5,	0,	0,	0, true,	true,	eColor_unknown,    eTextureFilmstrip_EightBallAnims,	eColor_none,	XYZPointf(   0,    0,    0),	false,	false);
 		spr->SetVolume(XYZPointf(4, 4, 1));
 	spr = CreatePanel(eSpriteID_brassbull,							"brass bull",				true,				 eObjectType_Misc,	120,	120,	0,	0,	0, true,	true,	eColor_unknown,			eTextureFilmstrip_Brassbull,	eColor_none,	XYZPointf(-185,   75, -300),	false,	false);
@@ -1073,11 +1091,11 @@ void CreateRoom()
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall4",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,		   eColor_black,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 200,   80, -350),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall5",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,		   eColor_black,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 200,   80, -450),		 true,	false);
     spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow1",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(-101,   77, -498),		 true,	false);
-		spr->unknown003[10] = true;
+		spr->a1_unknown00011 = true;
 	spr = CreatePanel(eSpriteID_viewWindow,		"LR_backwindow2",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( -30,   77, -498),		 true,	false);
-		spr->unknown003[10] = true;
+		spr->a1_unknown00011 = true;
 	spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow3",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(  41,   77, -498),		 true,	false);
-		spr->unknown003[10] = true;
+		spr->a1_unknown00011 = true;
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallL",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 170,   80,   98),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(  17,   80,   98),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1_real",				true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(   2,   80,  108),		 true,	false);
@@ -1085,7 +1103,7 @@ void CreateRoom()
     CreatePanel(eSpriteID_NOTASPRITE,			"FY_leftwall1",						true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(-225,   80,   72),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"FY_rightwall1",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(-110,   80,  140),		 true,	false);
     spr = CreatePanel(eSpriteID_frontDoor,		"front door",						true,	eObjectType_Door,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed015,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(-190,   65,  130),		 true,	false);
-		spr->unknown003[1] = 1;
+		spr->a1_unknown00002 = 1;
 		spr->SetClickable(true);
 		spr->SetVolume(XYZPointf(60, 130, 5));
 		spr->SetRotation(XYZPointf(0, 30, 0));
@@ -1201,8 +1219,8 @@ CharacterSprite* CreateGraceSprite()
 	character->m_modelquadpoly = &g_Grace_modelQuadPolys;
 	character->m_characterarms = &g_Grace_modelArms;
 	character->m_outlineconnectors = &g_Grace_modelOutlineConnectors;
-	HIBYTE(character->unknown003[9]) = true;
-	LOBYTE(character->unknown003[0]) = true;
+	character->a1_unknown00010d = true;
+	character->a1_unknown00001 = true;
 	character->InitAnimatingSprite(eSpriteID_grace, "grace", 76, 4533, -5, 5, 35);
 	character->SetVolume(XYZPointf(30, 100, 50));
 	character->SetCollidableType(eCollidableType_AABB);
@@ -1216,8 +1234,8 @@ CharacterSprite* CreateTripSprite()
 	character->m_modelquadpoly = &g_Trip_modelQuadPolys;
 	character->m_characterarms = &g_Trip_modelArms;
 	character->m_outlineconnectors = &g_Trip_modelOutlineConnectors;
-	HIBYTE(character->unknown003[9]) = true;
-	LOBYTE(character->unknown003[0]) = true;
+	character->a1_unknown00010d = true;
+	character->a1_unknown00001 = true;
 	character->InitAnimatingSprite(eSpriteID_trip, "trip", 73, 7616, -5, 5, 64);
 	character->SetVolume(XYZPointf(30, 100, 50));
 	character->SetCollidableType(eCollidableType_AABB);
@@ -1231,8 +1249,8 @@ HeadSprite* CreateGraceHeadSprite(CharacterSprite* grace)
 	head->m_modelquadlines = &g_GraceHeadModel_modelQuadLines;
 	head->m_characterarms = &g_GraceHeadModel_modelArms;
 	head->m_modelquadpoly = &g_GraceHeadModel_modelQuadPolys;
-	HIBYTE(head->unknown003[9]) = true;
-	LOBYTE(head->unknown003[0]) = false;
+	head->a1_unknown00010d = true;
+	head->a1_unknown00001 = false;
 	head->InitSprite((ESpriteID)50, "GraceHead", true, true);
 	head->SetVolume(XYZPointf(1, 1, 1));
 }
@@ -1244,8 +1262,8 @@ HeadSprite* CreateTripHeadSprite(CharacterSprite* trip)
 	head->m_modelquadlines = &g_TripHeadModel_modelQuadLines;
 	head->m_characterarms = &g_TripHeadModel_modelArms;
 	head->m_modelquadpoly = &gTripHeadModel_modelQuadPolys;
-	HIBYTE(head->unknown003[9]) = true;
-	LOBYTE(head->unknown003[0]) = false;
+	head->a1_unknown00010d = true;
+	head->a1_unknown00001 = false;
 	head->InitSprite((ESpriteID)52, "TripHead", true, true);
 	head->SetVolume(XYZPointf(1, 1, 1));
 }
@@ -1253,21 +1271,65 @@ void InitGraceSprite()
 {
 	g_GraceSprite = CreateGraceSprite();
 	g_GraceSprite->m_pHeadSprite = CreateGraceHeadSprite(g_GraceSprite);
-	g_GraceSprite->unknown003[1] = 75;
+	g_GraceSprite->a1_unknown00002 = 75;
+	g_GraceSprite->unknown001 = 75;
+	g_GraceSprite->unknown005 = 30;
+	g_GraceSprite->unknown006 = -3;
+	g_GraceSprite->unknown007 = 8;
+	g_GraceSprite->unknown008 = 9;
+	g_GraceSprite->InitCharacterSprite(
+		-65, 65,
+		-20, 35,
+		-30, 30,
+		-35, 35,
+		0.25, 0.75,
+		0.25, 0.75,
+		0, 1,
+		(ESpriteID)51);
+	g_GraceSprite->SetEyelidHeight(0.85, true, true, true);
+	g_GraceSprite->unknown039.InitLayerController(eAnimLayer_breathe, g_GraceSprite);  
+	g_GraceSprite->unknown039.SetLayerAlt(0, "breathe",			-1, -1, 2, -1, -1, -1, true,	1, -1);
+	g_GraceSprite->unknown039.SetLayerAlt(1, "breatheMed",		-1, -1, 3, -1, -1, -1, false,	8,  0);
+	g_GraceSprite->unknown039.SetLayerAlt(2, "breatheMedHi",	-1, -1, 4, -1, -1, -1, false,	8,  1);
+	g_GraceSprite->unknown039.SetLayerAlt(3, "breatheHeavy",	-1, -1, 5, -1, -1, -1, false,	8,  2);
+
+	//undone
 }
 void InitTripSprite()
 {
 	g_TripSprite = CreateTripSprite();
 	g_TripSprite->m_pHeadSprite = CreateTripHeadSprite(g_TripSprite);
-	g_TripSprite->unknown003[1] = 44;
+	g_TripSprite->a1_unknown00002 = 44;
+	g_TripSprite->unknown001 = 44;
+	g_TripSprite->unknown005 = 30;
+	g_TripSprite->unknown006 = -3;
+	g_TripSprite->unknown007 = 8;
+	g_TripSprite->unknown008 = 9;
+	g_TripSprite->InitCharacterSprite(
+		-65, 65,
+		-20, 35,
+		-30, 30,
+		-35, 35,
+		0.25, 0.75,
+		0.25, 0.75,
+		0, 1,
+		(ESpriteID)53);
+	g_TripSprite->SetEyelidHeight(0.85, true, true, true);
+	g_TripSprite->unknown039.InitLayerController(eAnimLayer_breathe, g_TripSprite);
+	g_TripSprite->unknown039.SetLayerAlt(0, "breathe",		-1, -1, 1, -1, -1, -1, true,	1, -1);
+	g_TripSprite->unknown039.SetLayerAlt(1, "breatheMed",	-1, -1, 2, -1, -1, -1, false,	8,  0);
+	g_TripSprite->unknown039.SetLayerAlt(2, "breatheMedHi", -1, -1, 3, -1, -1, -1, false,	8,  1);
+	g_TripSprite->unknown039.SetLayerAlt(3, "breatheHeavy", -1, -1, 4, -1, -1, -1, false,	8,  2);
+
+	//undone
 }
 void InitTransRotScale(CharacterSprite* spr, bool b1)
 {
-
+	//undone
 }
 void InitCollisionZonesAndPathPlanGrid()
 {
-
+	//undone
 }
 void InitPathPlanning()
 {
@@ -1291,7 +1353,7 @@ void InitCircleDrawing()
 }
 void InitQueuedUpRequestedPerformance()
 {
-
+	//undone
 }
 
 void InitGlobals()

@@ -1,7 +1,7 @@
 #ifndef ENUM_PHONECALLBEHAVIOR_H
 #define ENUM_PHONECALLBEHAVIOR_H
 
-enum PhoneCallBehavior 
+enum EPhoneCallBehavior //is originally just PhoneCallBehavior but will keep the E for consistency
 {
 	ePhoneCallBehavior_none = -1,
 	ePhoneCallBehavior_ringPhone = 0,

@@ -173,7 +173,7 @@ void BuildBitmapFont()
 	g_BitmapFontBase = glGenLists(256);
 	HFONT h = CreateFontA(-12, 0, 0, 0, 700, 0, 0, 0, 0, 4, 0, 4, 0, "Comic Sans MS");
 	SelectObject(g_hDeviceContext, h);
-	wglUseFontOutlinesA(g_hDeviceContext, 0, 255, g_BitmapFontBase, 0.0, 0.0, 1, g_FontGlyphs);
+	wglUseFontOutlinesA(g_hDeviceContext, 0, 255, g_BitmapFontBase, 0, 0, 1, g_FontGlyphs);
 	dprintf("Done building bitmap font (%.3f seconds)", (GetTickCount() - tickstart) / 1000.0);
 }
 void KillPolygonalFont()
@@ -269,7 +269,7 @@ void ChangeSize()
 	glViewport(0, 0, 1016, 1016);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-100.0, 100.0, -100.0, 100.0, 0.0, 100.0 * 20.0);
+	glOrtho(-100, 100, -100, 100, 0, 100 * 20);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	g_windowWidth = 1016;
@@ -381,16 +381,13 @@ void DrawExtraEnvironmentStuff()
 		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().m_z);
 		float v15 = (g_PlayerSprite->GetPosition().m_z + 500.0) / 50.0;
 
-		//v9 = v15 >= 4 ? 4 : v15;
-		//v8 = v9 <= 2 ? 2 : v9;
-
 		v9 = v15 >= 4 ? 4 : v15;
 		v8 = v9 <= 2 ? 2 : v9;
 
 
 		v16 *= v8;
 		v7 = i != 0 ? 1 : -1;
-		v14 = -playerz1 * (v16 / 180 + v7);
+		v14 = -playerz1 * (v16 / 180.f + v7);
 
 		glTexCoord2f(0, 0);
 		glVertex3f(playerz1 + v14, -playerz1, -1300);
@@ -657,10 +654,9 @@ void DrawScreenMessage()
 			CutToBlack();
 			StartFade(0.015);
 		}
+
 		if (fadeCurtainInCtr <= 59)
-		{
 			++fadeCurtainInCtr;
-		}
 	}
 	if (fadeCurtainInCtr <= 59)
 		return;
@@ -708,8 +704,7 @@ void UpdateFade()
 		g_fadeAmount = g_fadeAmount + g_fadeIncr;
 		if (g_fadeAmount <= 0)
 		{
-			g_fadeAmount = 0;
-			g_fadeIncr = 0;
+			g_fadeAmount = g_fadeIncr = 0;
 		}
 		if (g_fadeAmount >= 1)
 		{

@@ -6,8 +6,17 @@
 class DrinkSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:00206800
 {
 public:
+	DrinkSprite();
+	void InitDrinkSprite();
+
+
+	void SetDrinkFilmstrip(ETextureFilmstrip filmstrip);
+	void SetDrinkType(EDrink type);
+
+	void PlayerSipDrink();
 
 private:
+	int unknown;
 
 protected:
 

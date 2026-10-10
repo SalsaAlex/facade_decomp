@@ -1,6 +1,12 @@
 #include "facadecommon.h"
 #include "classes/AblRequestBuffer.h"
 
+#include "classes/Sprite/Sprite.h"
+#include "classes/Sprite/DoorSprite.h"
+#include "classes/Sprite/DrinkSprite.h"
+#include "classes/Sprite/AnsweringMachineSprite.h"
+#include "classes/Sprite/PhoneSprite.h"
+
 static int g_whichSoundtrack = -1;
 static EMusicName g_curMusicType;
 static bool g_bUnused;
@@ -136,8 +142,8 @@ void PerformSetObjectRotation(ESpriteID spriteid, float x, float y, float z)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_OBJECT);
 	Sprite* spr = g_spriteMgr.GetSpritePtrByID(spriteid);
-	if (spr->unknown003[20311].GetIsMoving())
-		spr->unknown003[20311].StopMoving();
+	if (spr->b1_unknown20299.GetIsMoving())
+		spr->b1_unknown20299.StopMoving();
 	spr->SetRotation(XYZPointf(x, y, z));
 }
 
@@ -217,7 +223,7 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 {
 #define MAKEDRINK(spriteid, drinktype) \
 	animengine_assert(drinktype > eDrink_NOTADRINK && drinktype <= eDrink_lastDrink); \
-	((DrinkSprite*)g_spriteMgr.GetSpritePtrByID(spriteid))->SetDrinkType(drinktype)
+	((DrinkSprite*)g_spriteMgr.GetSpritePtrByID(spriteid))->SetDrinkType((EDrink)drinktype)
 
 	switch (type)
 	{
@@ -243,34 +249,34 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 		case eSetAnimEngineInfo_tripThrowsPlayer:		EndTripCarryingPlayer();					break;
 		case eSetAnimEngineInfo_magicallyOpenDoor:
 			animengine_assert(info <= eSpriteID_LAST_CHARACTER);
-			CharacterSprite* character = g_SpriteMgr->GetSpriteByID(info);
-			((DoorSprite*)g_spriteMgr->GetSpritePtrByID(eSpriteID_frontDoor))->OpenDoor(character, 3.0);
+			CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
+			((DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor))->OpenDoor(character, 3);
 			break;
 		case eSetAnimEngineInfo_magicallyCloseDoor:
 			animengine_assert(info <= eSpriteID_LAST_CHARACTER);
-			CharacterSprite* character = g_SpriteMgr->GetSpriteByID(info);
-			((DoorSprite*)g_spriteMgr->GetSpritePtrByID(eSpriteID_frontDoor))->CloseDoor(character, 3.0);
+			CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
+			((DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor))->CloseDoor(character, 3);
 			break;
 		case eSetAnimEngineInfo_startFPSAdjustment:		g_bAblRequestingFPSAdjustment = true;		break;
 		case eSetAnimEngineInfo_muteSounds:				g_bMuteSounds = info;						break;
 		case eSetAnimEngineInfo_setDoSoundDropOff:		g_bDoSoundDropOff = info;					break;
 		case eSetAnimEngineInfo_doPhoneCallBehavior:
-			PhoneSprite* phone = g_spriteMgr.GetSpritePtrByName("phone");
-			AnsweringMachineSprite* answeringmachine = g_spriteMgr.GetSpritePtrByName("answering machine");
+			PhoneSprite* phone = (PhoneSprite*)g_spriteMgr.GetSpritePtrByName("phone");
+			AnsweringMachineSprite* answeringmachine = (AnsweringMachineSprite*)g_spriteMgr.GetSpritePtrByName("answering machine");
 			if (info <= ePhoneCallBehavior_none)
 			{
-				phone->SetBehaviour(-1);
-				answeringmachine->SetBehaviour(-1);
+				phone->SetBehavior(ePhoneCallBehavior_none);
+				answeringmachine->SetBehavior(ePhoneCallBehavior_none);
 			}
 			else if (info >= ePhoneCallBehavior_answeringMachineOutgoing)
 			{
-				phone->SetBehaviour(-1);
-				answeringmachine->SetBehaviour(info);
+				phone->SetBehavior(ePhoneCallBehavior_none);
+				answeringmachine->SetBehavior((EPhoneCallBehavior)info);
 			}
 			else
 			{
-				phone->SetBehaviour(info);
-				answeringmachine->SetBehaviour(-1);
+				phone->SetBehavior((EPhoneCallBehavior)info);
+				answeringmachine->SetBehavior(ePhoneCallBehavior_none);
 			}
 			break;
 		case eSetAnimEngineInfo_warmUpNLP:
@@ -279,7 +285,7 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 			break;
 		case eSetAnimEngineInfo_dramaComplete:
 			g_bAtEndOfDrama = true;
-			strcpy((char*)&g_PlayerSprite->unknown003[20335], "q");
+			strcpy((char*)&g_PlayerSprite->b1_unknown20323, "q");
 			PlayerEnteredText();
 			OutputEventLog(true);
 			g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;
@@ -296,22 +302,22 @@ void PerformPushMultipleAnimationScripts(ESpriteID actor, int script1Index, int 
 	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
 
 	CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
-	if (script1Index < 0 || script1Index >= character[4].data.unknown003[17762])
+	if (script1Index < 0 || script1Index >= character->m_animMgr.unknown[80872])
 	{
 		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script1Index = %d", actor, script1Index);
 		script1Index = 0;
 	}
-	if (script2Index < 0 || script2Index >= character[4].data.unknown003[17762])
+	if (script2Index < 0 || script2Index >= character->m_animMgr.unknown[80872])
 	{
 		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script2Index = %d", actor, script2Index);
 		script2Index = 0;
 	}
-	if (script3Index < 0 || script3Index >= character[4].data.unknown003[17762])
+	if (script3Index < 0 || script3Index >= character->m_animMgr.unknown[80872])
 	{
 		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script3Index = %d", actor, script3Index);
 		script3Index = 0;
 	}
-	if (script4Index < 0 || script4Index >= character[4].data.unknown003[17762])
+	if (script4Index < 0 || script4Index >= character->m_animMgr.unknown[80872])
 	{
 		dprintf("###/n### ERROR for char %d in PerformPushMultipleAnimationScripts: script4Index = %d", actor, script4Index);
 		script4Index = 0;

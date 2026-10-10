@@ -45,10 +45,10 @@
 #include "../../animEngineStarter_decomp/resource.h"
 
 
-#include "classes/Sprite.h"
-#include "classes/AnimatingSprite.h"
-#include "classes/CharacterSprite.h"
-#include "classes/HeadSprite.h"
+#include "classes/Sprite/Sprite.h"
+#include "classes/Sprite/AnimatingSprite.h"
+#include "classes/Sprite/CharacterSprite.h"
+#include "classes/Sprite/HeadSprite.h"
 #include "classes/SpriteMgr.h"
 
 
@@ -274,7 +274,7 @@ bool rand100(int val);
 
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 
-void PlayGlobalSound(EGlobalSounds sound);
+bool PlayGlobalSound(EGlobalSounds sound);
 
 
 #endif // FACADECOMMON_H

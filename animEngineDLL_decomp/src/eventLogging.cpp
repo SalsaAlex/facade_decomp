@@ -127,10 +127,8 @@ void OutputEventLog(bool stageplay)
 	char filepath[100];
 	strcpy(filepath, "..\\..\\..\\stageplays\\");
 
-	if(stageplay)
-		strcat(filepath, "Facade Stageplay ");
-	else
-		strcat(filepath, "Facade Event Log ");
+	if(stageplay)	strcat(filepath, "Facade Stageplay ");
+	else			strcat(filepath, "Facade Event Log ");
 
 	strcat(filepath, timestring);
 	strcat(filepath, ".txt");
@@ -144,10 +142,8 @@ void OutputEventLog(bool stageplay)
 	}
 
 	char datastream[100];
-	if(stageplay)
-		sprintf(datastream, "\nFACADE STAGEPLAY\n%s\n", timestring);
-	else
-		sprintf(datastream, "\nFACADE LOG\n%s\n", timestring);
+	if(stageplay)	sprintf(datastream, "\nFACADE STAGEPLAY\n%s\n", timestring);
+	else			sprintf(datastream, "\nFACADE LOG\n%s\n", timestring);
 
 	fwrite(datastream, 1, strlen(datastream), hfile);
 
@@ -204,8 +200,8 @@ void OutputEventLog(bool stageplay)
 		const char* playername = g_PlayerSprite->GetName();
 		switch (g_eventLog[logindex].perpetrator)
 		{
-			case eSpriteID_trip: strcpy(perpetratorname, "Trip"); strcpy(perpetratorpronoun, "his"); break;
-			case eSpriteID_grace: strcpy(perpetratorname, "Grace"); strcpy(perpetratorpronoun, "her"); break;
+			case eSpriteID_trip:	strcpy(perpetratorname, "Trip");	strcpy(perpetratorpronoun, "his"); break;
+			case eSpriteID_grace:	strcpy(perpetratorname, "Grace");	strcpy(perpetratorpronoun, "her"); break;
 			case eSpriteID_player: 
 				strcpy(perpetratorname, playername);
 				strcpy(perpetratorpronoun, "her");
@@ -214,9 +210,7 @@ void OutputEventLog(bool stageplay)
 				else
 					strcpy(perpetratorpronoun, "her");
 				break;
-			default:
-				strcpy(perpetratorname, "???");
-				strcpy(perpetratorpronoun, "their");
+			default:	strcpy(perpetratorname, "???");	strcpy(perpetratorpronoun, "their");
 				break;
 		}
 
@@ -225,9 +219,7 @@ void OutputEventLog(bool stageplay)
 		switch (g_eventLog[logindex].logtype)
 		{
 			case eEventLogType_unknown00:
-			case eEventLogType_Miscellaneous:
-				sprintf(datastream, "%s", g_eventLog[logindex].buffer);
-				break;
+			case eEventLogType_Miscellaneous:	sprintf(datastream, "%s", g_eventLog[logindex].buffer);	break;
 			case eEventLogType_Speech:
 				switch (g_eventLog[logindex].perpetrator)
 				{
@@ -270,7 +262,7 @@ void OutputEventLog(bool stageplay)
 					case eSpriteID_eightball: strcpy(action, "shakes"); break;
 					case eSpriteID_frontDoor: strcpy(action, "knocks on"); break;
 					default:
-						if(g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->unknown003[9])
+						if(g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->a1_unknown00010)
 							strcpy(action, "points to");
 						else
 							strcpy(action, "uses");
@@ -284,7 +276,7 @@ void OutputEventLog(bool stageplay)
 				else
 				{
 					GetArticleForSpriteType(g_eventLog[logindex].victim, article);
-					if (g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->unknown003[20598] == 1) //if drink is not empty ?
+					if (g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->m_eObjectType == eObjectType_Drink) //if drink is not empty ?
 					{
 						strcpy(action, "sips");
 						strcpy(article, perpetratorpronoun);
@@ -293,21 +285,11 @@ void OutputEventLog(bool stageplay)
 				}
 				break;
 
-			case eEventLogType_Hug:
-				sprintf(datastream, "(%s hugs %s.)\n", perpetratorname, obj->GetName());
-				break;
-			case eEventLogType_Comfort:
-				sprintf(datastream, "(%s comforts %s.)\n", perpetratorname, obj->GetName());
-				break;
-			case eEventLogType_Kiss:
-				sprintf(datastream, "(%s kisses %s.)\n", perpetratorname, obj->GetName());
-				break;
-			case eEventLogType_ThrowDrink:
-				sprintf(datastream, "(%s throws drink at %s.)\n", perpetratorname, obj->GetName());
-				break;
-			case eEventLogType_PlayerExit:
-				sprintf(datastream, "(%s quits the experience.)\n", perpetratorname);
-				break;
+			case eEventLogType_Hug:			sprintf(datastream, "(%s hugs %s.)\n", perpetratorname, obj->GetName());			break;
+			case eEventLogType_Comfort:		sprintf(datastream, "(%s comforts %s.)\n", perpetratorname, obj->GetName());		break;
+			case eEventLogType_Kiss:		sprintf(datastream, "(%s kisses %s.)\n", perpetratorname, obj->GetName());			break;
+			case eEventLogType_ThrowDrink:	sprintf(datastream, "(%s throws drink at %s.)\n", perpetratorname, obj->GetName());	break;
+			case eEventLogType_PlayerExit:	sprintf(datastream, "(%s quits the experience.)\n", perpetratorname);				break;
 		}
 		fwrite(datastream, 1, strlen(datastream), hfile);
 	}

@@ -6,8 +6,14 @@
 class EightballMessageSprite : public Sprite					//proof: libnativeAnimInterface.jnilib:__const_coal:00206820
 {
 public:
+	EightballMessageSprite();
+	void InitEightballMessageSprite();
+
+	void UpdateSprite() override;
 
 private:
+	int unknown001;
+	int unknown002;
 
 protected:
 

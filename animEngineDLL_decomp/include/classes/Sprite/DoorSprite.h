@@ -6,8 +6,23 @@
 class DoorSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:002067E0
 {
 public:
+	DoorSprite();
+	void InitDoorSprite();
+
+	void UpdateSprite() override;
+
+	void OpenDoor(Sprite* actor, float speed);
+	void CloseDoor(Sprite* actor, float speed);
+
+	bool IsKnockOccurring();
+	bool IsKnockPossible();
+	bool IsDoorOpen();
+
 
 private:
+	int unknown001 = 0;
+	bool unknown002 = false;
+	bool unknown003 = false;
 
 protected:
 

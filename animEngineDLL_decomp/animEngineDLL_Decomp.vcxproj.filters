@@ -22,6 +22,12 @@
     <Filter Include="Source Files\classes">
       <UniqueIdentifier>{ebd49ed7-4b10-43d2-a3a7-601c57abc7af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\classes\Sprite">
+      <UniqueIdentifier>{3eb71c85-24e2-4f4c-9b50-70c02e780db3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\classes\Sprite">
+      <UniqueIdentifier>{e935def7-ce22-435c-83d8-c3a3f17df073}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\facadecommon.h">
@@ -75,43 +81,16 @@
     <ClInclude Include="include\classes\AblRequestBuffer.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
-    <ClInclude Include="include\classes\AnimatingSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\AnsweringMachineSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\CharacterSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
     <ClInclude Include="include\classes\Controller.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
-    <ClInclude Include="include\classes\DoorSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\DrinkSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\EightballMessageSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
     <ClInclude Include="include\classes\GestureFxnMgr.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\HeadSprite.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\PhoneSprite.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
     <ClInclude Include="include\classes\SoundMgr.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
     <ClInclude Include="include\classes\SoundSource.h">
-      <Filter>Header Files\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="include\classes\Sprite.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
     <ClInclude Include="include\classes\Stack.h">
@@ -180,6 +159,36 @@
     <ClInclude Include="include\classes\SpriteMgr.h">
       <Filter>Header Files\classes</Filter>
     </ClInclude>
+    <ClInclude Include="include\classes\AnimMgr.h">
+      <Filter>Header Files\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\AnimatingSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\AnsweringMachineSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\CharacterSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\DoorSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\DrinkSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\EightballMessageSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\HeadSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\PhoneSprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="include\classes\Sprite\Sprite.h">
+      <Filter>Header Files\classes\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\facadecommon.cpp">
@@ -209,9 +218,6 @@
     <ClCompile Include="src\classes\MP3Manager.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
-    <ClCompile Include="src\classes\Sprite.cpp">
-      <Filter>Source Files\classes</Filter>
-    </ClCompile>
     <ClCompile Include="src\classes\XCursor.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
@@ -220,6 +226,24 @@
     </ClCompile>
     <ClCompile Include="src\classes\SpriteMgr.cpp">
       <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\AnsweringMachineSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\DoorSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\DrinkSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\EightballMessageSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\PhoneSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\Sprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
