@@ -34,7 +34,10 @@
     <ClInclude Include="include\enums\EAlterHeadCock.h" />
     <ClInclude Include="include\enums\EAnimLayer.h" />
     <ClInclude Include="include\enums\EBaseScreenMessage.h" />
+    <ClInclude Include="include\enums\EBlinkBehavior.h" />
+    <ClInclude Include="include\enums\EBlinkType.h" />
     <ClInclude Include="include\enums\EBodyPoseConfig.h" />
+    <ClInclude Include="include\enums\ECinematographyFraming.h" />
     <ClInclude Include="include\enums\ECollidableType.h" />
     <ClInclude Include="include\enums\EColor.h" />
     <ClInclude Include="include\enums\EControllerType.h" />
@@ -45,11 +48,13 @@
     <ClInclude Include="include\enums\EGazeType.h" />
     <ClInclude Include="include\enums\EGestureBodyPart.h" />
     <ClInclude Include="include\enums\EGlobalSounds.h" />
+    <ClInclude Include="include\enums\ELayerAltIndex.h" />
     <ClInclude Include="include\enums\EMiscLittleAction.h" />
     <ClInclude Include="include\enums\EMusicAction.h" />
     <ClInclude Include="include\enums\EMusicName.h" />
     <ClInclude Include="include\enums\EObjectType.h" />
     <ClInclude Include="include\enums\ESurfacePickupAngle.h" />
+    <ClInclude Include="include\enums\EUScript.h" />
     <ClInclude Include="include\enums\EWalkType.h" />
     <ClInclude Include="include\facadecommon.h" />
     <ClInclude Include="include\enums\EAblRequestType.h" />
@@ -84,6 +89,7 @@
     <ClCompile Include="src\keyboarddevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sounddevice.cpp" />
+    <ClCompile Include="src\SoundSource.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

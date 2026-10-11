@@ -189,6 +189,21 @@
     <ClInclude Include="include\classes\Sprite\Sprite.h">
       <Filter>Header Files\classes\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="include\enums\EBlinkBehavior.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EBlinkType.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ELayerAltIndex.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\ECinematographyFraming.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\enums\EUScript.h">
+      <Filter>Header Files\enums</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\facadecommon.cpp">
@@ -244,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="src\classes\Sprite\Sprite.cpp">
       <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundSource.cpp">
+      <Filter>Source Files\classes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
