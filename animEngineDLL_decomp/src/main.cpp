@@ -1552,9 +1552,9 @@ START_SPRITECREATE(Couch,
 
 END_SPRITECREATE()
 START_SPRITECREATE(Cabinet,
-	&g_Cabinet_modelFrame,
-	&g_Cabinet_modelInfo,
-	&g_Cabinet_modelQuadPolys,
+	g_Cabinet_modelFrame,
+	g_Cabinet_modelInfo,
+	g_Cabinet_modelQuadPolys,
 	nullptr)
 
 	sprite->AddSurface(14, 15, 16, 17, eSurfacePickupAngle_unknown004);
@@ -1567,27 +1567,27 @@ START_SPRITECREATE(Cabinet,
 
 END_SPRITECREATE()
 START_SPRITECREATE(SideTable,
-	&g_SideTable_modelFrame,
-	&g_SideTable_modelInfo,
-	&g_SideTable_modelQuadPolys,
+	g_SideTable_modelFrame,
+	g_SideTable_modelInfo,
+	g_SideTable_modelQuadPolys,
 	nullptr)
 
 	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
 
 END_SPRITECREATE()
 START_SPRITECREATE(WorkTable,
-	&g_WorkTable_modelFrame,
-	&g_WorkTable_modelInfo,
-	&g_WorkTable_modelQuadPolys,
+	g_WorkTable_modelFrame,
+	g_WorkTable_modelInfo,
+	g_WorkTable_modelQuadPolys,
 	nullptr)
 
 	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
 
 END_SPRITECREATE()
 START_SPRITECREATE(Bar,
-	&g_Bar_modelFrame,
-	&g_Bar_modelInfo,
-	&g_Bar_modelQuadPolys,
+	g_Bar_modelFrame,
+	g_Bar_modelInfo,
+	g_Bar_modelQuadPolys,
 	nullptr)
 
 	sprite->AddSurface(4, 10, 9, 6, eSurfacePickupAngle_unknown004);
@@ -1596,9 +1596,9 @@ START_SPRITECREATE(Bar,
 
 END_SPRITECREATE()
 START_SPRITECREATE(LuxTable,
-	&g_SideTable_modelFrame,
-	&g_SideTable_modelInfo,
-	&g_SideTable_modelQuadPolys,
+	g_SideTable_modelFrame,
+	g_SideTable_modelInfo,
+	g_SideTable_modelQuadPolys,
 	nullptr)
 
 	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
@@ -1948,7 +1948,7 @@ CharacterSprite* CreateTripSprite()
 HeadSprite* CreateGraceHeadSprite(CharacterSprite* grace)
 {
 	HeadSprite* head = new HeadSprite();
-	head->m_modelframe = &g_GraceHeadModel_modelFrame;
+	head->m_modelframe = g_GraceHeadModel_modelFrame;
 	head->m_modelinfo = &g_GraceHeadModel_modelInfo;
 	head->m_modelquadlines = &g_GraceHeadModel_modelQuadLines;
 	head->m_characterarms = &g_GraceHeadModel_modelArms;
@@ -1961,7 +1961,7 @@ HeadSprite* CreateGraceHeadSprite(CharacterSprite* grace)
 HeadSprite* CreateTripHeadSprite(CharacterSprite* trip)
 {
 	HeadSprite* head = new HeadSprite();
-	head->m_modelframe = &g_TripHeadModel_modelFrame;
+	head->m_modelframe = g_TripHeadModel_modelFrame;
 	head->m_modelinfo = &g_TripHeadModel_modelInfo;
 	head->m_modelquadlines = &g_TripHeadModel_modelQuadLines;
 	head->m_characterarms = &g_TripHeadModel_modelArms;
