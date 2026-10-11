@@ -2,6 +2,8 @@
 #include "keyboarddevice.h"
 #include "sounddevice.h"
 #include "glfuncs.h"
+
+#include "classes/SoundSource.h"
 #include "classes/AblRequestBuffer.h"
 #include "classes/Sprite/CharacterSprite.h"
 #include "classes/XCursor.h"
@@ -24,6 +26,7 @@ HGLRC g_hGLContext;
 
 Sprite* g_PlayerSprite;
 Sprite* g_CursorSprite;
+Sprite* g_cursorContextSprite;
 
 float g_curFps = 30.0;
 int g_millisecondsToSleep = 30;
@@ -32,6 +35,9 @@ int g_cpuClockSpeed = 2000;
 
 CharacterSprite* g_GraceSprite;
 CharacterSprite* g_TripSprite;
+
+XYZPointf g_prevPlayerPosition;
+XYZPointf g_prevPlayerRotation;
 
 XYZPointf g_autoMovePlayerPt;
 float g_autoMovePlayerRot; //yaw
@@ -47,15 +53,35 @@ int g_AutoMovePlayerStatus;
 
 int g_frameWhenLastCinematographyMove;
 int g_framePlayerLastMoved;
+int g_numFramesStillAtFoyerWallEdge;
+
+int g_ticksIntroStarted;
 
 
 bool g_bLockedInMSToSleep;
 bool g_bDoingFPSAdjustment;
 
+bool g_bAllowCursorKeysInEditor = false;
+
+bool g_bF1Pressed = false;
+bool g_bF2Pressed = false;
+bool g_bF3Pressed = false;
+bool g_bF4Pressed = false;
+bool g_bF6Pressed = false;
+bool g_bF7Pressed = false;
+bool g_bF8Pressed = false;
+bool g_bF9Pressed = false;
+bool g_bF12Pressed = false;
+bool g_bEscapePressed = false;
+bool g_bSpacePressed = false;
+
+static bool g_bAblDisconnect = false;
+
 
 SpriteMgr g_spriteMgr;
 
 SoundMgr g_soundMgr;
+SoundSource g_soundSource;
 int g_soundSourceID;
 
 
@@ -67,6 +93,368 @@ Controller g_PlayerRotController;
 Controller g_autoTurnController;
 float g_autoTurnAmount;
 
+#define MDLFACE_BEGIN \
+		{ \
+			{
+#define MDLFACE_END \
+			} \
+		},\
+
+
+/////////////////////MODEL FRAME/////////////////////
+mdlframe_t g_GraceHeadModel_modelFrame[] = {
+	{}//undone
+};
+mdlframe_t g_TripHeadModel_modelFrame[] = {
+	{}//undone
+};
+mdlframe_t g_Couch_modelFrame[] = {
+	{} //undone
+};
+mdlframe_t g_SideTable_modelFrame[] = {
+	MDLFACE_BEGIN
+		{-16.0, 0.0, -16.0},
+		{-16.0, 30.0, -16.0},
+		{-16.0, 30.0, -12.0},
+		{-16.0, 0.0, -12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-12.0, 30.0, -16.0},
+		{-12.0, 0.0, -16.0},
+		{-12.0, 30.0, -12.0},
+		{-12.0, 0.0, -12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-16.0, 0.0, 16.0},
+		{-16.0, 30.0, 16.0},
+		{-16.0, 30.0, 12.0},
+		{-16.0, 0.0, 12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-12.0, 30.0, 16.0},
+		{-12.0, 0.0, 16.0},
+		{-12.0, 30.0, 12.0},
+		{-12.0, 0.0, 12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{12.0, 0.0, -16.0},
+		{12.0, 30.0, -16.0},
+		{12.0, 30.0, -12.0},
+		{12.0, 0.0, -12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{16.0, 30.0, -16.0},
+		{16.0, 0.0, -16.0},
+		{16.0, 30.0, -12.0},
+		{16.0, 0.0, -12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{12.0, 0.0, 16.0},
+		{12.0, 30.0, 16.0},
+		{12.0, 30.0, 12.0},
+		{12.0, 0.0, 12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{16.0, 30.0, 16.0},
+		{16.0, 0.0, 16.0},
+		{16.0, 30.0, 12.0},
+		{16.0, 0.0, 12.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 29.0, -20.0},
+		{-20.0, 32.0, -20.0},
+		{-20.0, 32.0,20.0},
+		{-20.0, 29.0, 20.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{20.0, 32.0, -20.0},
+		{20.0, 29.0, -20.0},
+		{20.0, 32.0, 20.0},
+		{20.0, 29.0, 20.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{666.0, 666.0, 666.0},
+		{666.0, 0.0, 0.0},
+		{0, 0, 0},
+		{0, 0, 0}
+	MDLFACE_END
+};
+mdlframe_t g_WorkTable_modelFrame[] = {
+	MDLFACE_BEGIN
+		{-16.0, 0.0, -51.0},
+		{-16.0, 52.0, -51.0},
+		{-16.0, 52.0, -47.0},
+		{-16.0, 0.0, -47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-12.0, 52.0, -51.0},
+		{-12.0, 0.0, -51.0},
+		{-12.0, 52.0, -47.0},
+		{-12.0, 0.0, -47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-16.0, 0.0, 51.0},
+		{-16.0, 52.0, 51.0},
+		{-16.0, 52.0, 47.0},
+		{-16.0, 0.0, 47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-12.0, 52.0, 51.0},
+		{-12.0, 0.0, 51.0},
+		{-12.0, 52.0, 47.0},
+		{-12.0, 0.0, 47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{12.0, 0.0, -51.0},
+		{12.0, 52.0, -51.0},
+		{12.0, 52.0, -47.0},
+		{12.0, 0.0, -47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{16.0, 52.0, -51.0},
+		{16.0, 0.0, -51.0},
+		{16.0, 52.0, -47.0},
+		{16.0, 0.0, -47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{12.0, 0.0, 51.0},
+		{12.0, 52.0, 51.0},
+		{12.0, 52.0, 47.0},
+		{12.0, 0.0, 47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{16.0, 52.0, 51.0},
+		{16.0, 0.0, 51.0},
+		{16.0, 52.0, 47.0},
+		{16.0, 0.0, 47.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 54.0, -55.0},
+		{-20.0, 57.0, -55.0},
+		{-20.0, 57.0,55.0},
+		{-20.0, 54.0, 55.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{20.0, 57.0, -55.0},
+		{20.0, 54.0, -55.0},
+		{20.0, 57.0, 55.0},
+		{20.0, 54.0, 55.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 57.0, 0.0},
+		{20.0, 57.0, 0.0},
+		{666.0, 666.0, 666.0},
+		{666.0, 0.0, 0.0}
+	MDLFACE_END
+};
+mdlframe_t g_Cabinet_modelFrame[] = {
+	MDLFACE_BEGIN
+		{0.0, 0.0, 90.0},
+		{-20.0, 0.0, 90.0},
+		{-20.0, 0.0, 30.0},
+		{0.0, 0.0, 30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{0.0, 20.0, 30.0},
+		{0.0, 20.0, -30.0},
+		{0.0, 0.0, -30.0},
+		{-20.0, 0.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 0.0, -120.0},
+		{0.0, 0.0, -120.0},
+		{0.0, 25.0, 90.0},
+		{-20.0, 25.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 25.0, 30.0},
+		{0.0, 25.0, 30.0},
+		{0.0, 35.0, 90.0},
+		{-20.0, 35.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 35.0, 30.0},
+		{0.0, 35.0, 30.0},
+		{0.0, 67.0, 90.0},
+		{-20.0, 67.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 67.0, 30.0},
+		{0.0, 67.0, 30.0},
+		{0.0, 100.0, 90.0},
+		{-20.0, 100.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 100.0, 30.0},
+		{0.0, 100.0, 30.0},
+		{0.0, 20.0, -30.0},
+		{-20.0, 20.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 20.0, -120.0},
+		{0.0, 20.0, -120.0},
+		{0.0, 35.0, -30.0},
+		{-20.0, 35.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 35.0, -120.0},
+		{0.0, 35.0, -120.0},
+		{0.0, 67.0, -30.0},
+		{-20.0, 67.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 67.0, -120.0},
+		{0.0, 67.0, -120.0},
+		{0.0, 88.0, -30.0},
+		{-20.0, 88.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 88.0, -120.0},
+		{0.0, 88.0, -120.0},
+		{0.0, 116.0, -30.0},
+		{-20.0, 116.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 116.0, -120.0},
+		{0.0, 116.0, -120.0},
+		{0.0, 134.0, -30.0},
+		{-20.0, 134.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-20.0, 134.0, -120.0},
+		{0.0, 134.0, -120.0},
+		{0.0, 100.0, 30.0},
+		{0.0, 100.0, 0.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{0.0, 20.0, 0.0},
+		{0.0, 100.0, -30.0},
+		{0.0, 134.0, 30.0},
+		{0.0, 134.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{0.0, 134.0, 90.0},
+		{0.0, 134.0, 60.0},
+		{0.0, 100.0, 60.0},
+		{-20.0, 134.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{666.0, 666.0, 666.0},
+		{666.0, 0.0, 0.0},
+		{0, 0, 0},
+		{0, 0, 0}
+	MDLFACE_END
+};
+mdlframe_t g_Bar_modelFrame[] = {
+	MDLFACE_BEGIN
+		{-40.0, 0.0, 20.0},
+		{-40.0, 67.0, 20.0},
+		{-5.0, 67.0, 20.0},
+		{-5.0, 0.0, 20.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{20.0, 67.0, 0.0},
+		{20.0, 0.0, 0.0},
+		{20.0, 67.0, -70.0},
+		{0.0, 0.0, -70.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{20.0, 0.0, -70.0},
+		{0.0, 67.0, -70.0},
+		{0.0, 67.0, -10.0},
+		{-5.0, 67.0, 0.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-40.0, 67.0, 0.0},
+		{-40.0, 0.0, 0.0},
+		{666.0, 666.0, 666.0},
+		{666.0, 0.0, 0.0}
+	MDLFACE_END
+};
+mdlframe_t g_panelModelFrames[] = {
+	{}
+};
+mdlframe_t g_unknown1_modelFrame[] = {
+	MDLFACE_BEGIN
+		{40, 0, -40}, 
+		{40, 80, -40}, 
+		{40, 80, 40}, 
+		{40, 0, 40} 
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-40, 0, -40}, 
+		{-40, 80, -40}, 
+		{-40, 80, 40}, 
+		{-40, 0, 40} 
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{38, 60, -40}, 
+		{-38, 60, -40}, 
+		{-38, 50, 40}, 
+		{38, 50, 40} 
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{38, 120, 60}, 
+		{-38, 120, 60}, 
+		{38, 114, 66}, 
+		{-38, 114, 66} 
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{666, 666, 666}, 
+		{666, 0, 0}, 
+		{0, 0, 0}, 
+		{0, 0, 0} 
+	MDLFACE_END
+};
+mdlframe_t g_unknown2_modelFrame[] = {
+	MDLFACE_BEGIN
+		{0, 0, 5},
+		{0, 0, 4},
+		{0, 0, 0},
+		{666, 666, 666}
+	MDLFACE_END
+};
+mdlframe_t g_unknown3_modelFrame[] = {
+	MDLFACE_BEGIN
+		{-15, 0, -15},
+		{-15, 60, -15},
+		{-15, 60, 15},
+		{-15, 0, 15}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{15, 0, -15},
+		{15, 60, -15},
+		{15, 60, 15},
+		{15, 0, 15}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{666, 666, 666},
+		{666, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0}
+	MDLFACE_END
+};
+mdlframe_t g_unknown4_modelFrame[] = {
+	MDLFACE_BEGIN
+		{-10, 0, -10},
+		{-10, 40, -10},
+		{-10, 40, 10},
+		{-10, 0, 10}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{10, 0, -10},
+		{10, 40, -10},
+		{10, 40, 10},
+		{10, 0, 10}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{666, 666, 666},
+		{666, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0}
+	MDLFACE_END
+};
+/////////////////////////////////////////////////////
 
 
 int DllMain(HINSTANCE instDLL, int reason)
@@ -101,6 +489,57 @@ int DllMain(HINSTANCE instDLL, int reason)
 	}
 }
 
+static bool IsEditorActive() {
+	return g_scriptDialogHWnd || g_faceDialogHWnd;
+}
+
+static void ProcessAblRequests(bool clear) {
+
+	static int timeAtStart = 0;
+	static int whenLastPrint = 0;
+	static int numIndivAblRequestsProcessedThisPeriod = 0;
+	static int performAllRequestsTicksAccum = 0;
+	static int numPerformAllRequestsSinceLastStatistic = 0;
+	static bool lastPrintGuard = false;
+
+	if (g_bQuittingApp)
+		return;
+	if (g_lastFrameGotAblRequest > 0 && !g_bAtEndOfDrama && g_numFramesRun > g_lastFrameGotAblRequest + 600)
+	{
+		g_bQuittingApp = true;
+		g_bAblDisconnect = true;
+		SendMessage(g_hMainAppWindow, WM_CLOSE, 0, 0);
+		return;
+	}
+
+	if (!lastPrintGuard)
+	{
+		lastPrintGuard = true;
+		whenLastPrint = timeAtStart;
+	}
+
+	if (WaitForSingleObject(g_ablRequestBufferMutexHandle, 10000))
+	{
+		dprintf("Anim engine timed out waiting for access to abl request buffer; owner %s", g_ablrequestbuffer->unknown001->name);
+	}
+	else
+	{
+		strcpy(g_ablrequestbuffer->unknown001->name, "ProcessAblRequests");
+		numIndivAblRequestsProcessedThisPeriod += g_ablrequestbuffer->PerformAllRequests();
+		g_ablrequestbuffer->unknown001->name[0] = '\0';
+		ReleaseMutex(g_ablRequestBufferMutexHandle);
+		performAllRequestsTicksAccum += GetTickCount() - timeAtStart;
+		++numPerformAllRequestsSinceLastStatistic;
+		if (clear)
+		{
+			performAllRequestsTicksAccum = 0;
+			numPerformAllRequestsSinceLastStatistic = 0;
+			numIndivAblRequestsProcessedThisPeriod = 0;
+			whenLastPrint = GetTickCount();
+		}
+	}
+
+}
 
 bool PlayGlobalSound(EGlobalSounds sound)
 {
@@ -179,23 +618,89 @@ static void LaunchAblIfNeeded()
 	}
 }
 
+static bool IsPlayerMoving() {
+	if (g_prevPlayerPosition == g_PlayerSprite->GetPosition())
+		return true;
+	if (g_prevPlayerRotation == g_PlayerSprite->GetRotation())
+		return true;
+
+	return false;
+}
+static int GetSecondsSinceFrame(int frame) {
+	return (int)((g_numFramesRun - frame) / 30.f);
+}
+
 static void UpdateTitleSequence()
 {
+	static bool g_bTitleMusicStarted = false;
+	if (g_introEventCtr == -1)
+		return;
+	if (g_curTextCharInput && g_introEventCtr < 9)
+	{
+		StopAllGlobalSounds();
+		g_introEventCtr = 9;
+		g_ticksIntroStarted = (int)((float)GetTickCount() - (g_startTitleFadeIn - 3.f) * 1000.f);
+		if (!g_bTitleMusicStarted)
+		{
+			PerformMusic(eMusicAction_start, eMusicName_title);
+			g_bTitleMusicStarted = true;
+		}
+	}
+	if (g_introEventCtr)
+	{
 
+	}
+	else
+	{
+		g_introEventCtr = 1;
+		g_bPlayerInputActive = 0;
+		StartFade(-1.0);
+		InitTransRotScale(nullptr, false);
+		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39), -1);
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y = 24;
+		g_PlayerSprite->SetRotation(playerrot);
+		g_ticksIntroStarted = GetTickCount();
+	}
 }
 
 static void UpdateCursor()
 {
-
+	//undone
 }
 static void UpdateEnvironment()
 {
-
+	//undone
 }
 static void UpdateCinematography()
 {
+	g_autoTurnController.UpdateController();
+
+	if (IsPlayerMoving())
+		g_framePlayerLastMoved = g_numFramesRun;
+
+	if (!g_bCinematographyOn || IsEditorActive())
+		return;
+
+	if (g_autoTurnController.GetIsMoving())
+	{
+		//undone
+	}
+	else if (g_bRequestAutoFraming && !IsPlayerMoving()
+		|| GetSecondsSinceFrame(g_frameWhenLastCinematographyMove) >= 5
+		&& GetSecondsSinceFrame(g_framePlayerLastMoved) >= 2
+		&& !(g_numFramesRun % 30))
+	{
+		//undone
+	}
+	g_bRequestAutoFraming = false;
+}
+
+static void UpdateAndRenderAllSprites(bool option)
+{
 
 }
+
 static void UpdateAndRenderWorld()
 {
 	ChangeSize();
@@ -206,7 +711,7 @@ static void UpdateAndRenderWorld()
 	glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	g_opacity = 1.0;
 	if (!g_bPlayerChoosingName && !g_bAtEndOfDrama)
-		UpdateAndRenderAllSprites(0);
+		UpdateAndRenderAllSprites(false);
 	DrawPlayerScreenText();
 	DrawNPCsScreenText();
 	DrawScreenMessage();
@@ -214,7 +719,7 @@ static void UpdateAndRenderWorld()
 	if (!g_bPlayerChoosingName && !g_bAtEndOfDrama)
 	{
 		DrawExtraEnvironmentStuff();
-		UpdateAndRenderAllSprites(1);
+		UpdateAndRenderAllSprites(true);
 	}
 	UpdateFade();
 	glFlush();
@@ -302,6 +807,205 @@ static void LoadingMessage()
 	verticaltextcursor -= 6;
 	if (g_bPrintBetaInfo)
 		DrawArbitraryScreenText("Debug", 18.5, verticaltextcursor, 350, 5, 0, eColor_white, eColor_black);
+}
+
+static void EditCharacterScript(CharacterSprite* spr) {
+	
+}
+static void EditCharacterFace(CharacterSprite* spr) {
+
+}
+static void GetRotationKeyPresses()
+{
+	if (!g_bQuittingApp)
+	{
+		if (g_quitAppCountdown <= 0 || (--g_quitAppCountdown, g_quitAppCountdown > 0))
+		{
+			if (GetForegroundWindow() == g_hMainAppWindow
+				|| GetForegroundWindow() == g_scriptDialogHWnd
+				|| GetForegroundWindow() == g_faceDialogHWnd)
+			{
+				if ((GetAsyncKeyState(VK_F1) & 0x8000) == 0)
+					g_bF1Pressed = 0;
+				if ((GetAsyncKeyState(VK_F2) & 0x8000) == 0)
+					g_bF2Pressed = 0;
+				if ((GetAsyncKeyState(VK_F3) & 0x8000) == 0)
+					g_bF3Pressed = 0;
+				if ((GetAsyncKeyState(VK_F4) & 0x8000) == 0)
+					g_bF4Pressed = 0;
+				if ((GetAsyncKeyState(VK_F6) & 0x8000) == 0)
+					g_bF6Pressed = 0;
+				if ((GetAsyncKeyState(VK_F7) & 0x8000) == 0)
+					g_bF7Pressed = 0;
+				if ((GetAsyncKeyState(VK_F8) & 0x8000) == 0)
+					g_bF8Pressed = 0;
+				if ((GetAsyncKeyState(VK_F9) & 0x8000) == 0)
+					g_bF9Pressed = 0;
+				if ((GetAsyncKeyState(VK_F12) & 0x8000) == 0)
+					g_bF12Pressed = 0;
+				if ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) == 0)
+					g_bEscapePressed = 0;
+				if ((GetAsyncKeyState(VK_SPACE) & 0x8000) == 0)
+					g_bSpacePressed = 0;
+				if (g_faceDialogHWnd)
+				{
+					//sub_100015A5();
+				}
+				else if (!g_scriptDialogHWnd || g_bAllowCursorKeysInEditor)
+				{
+					//if (g_cursorKeysControllingSprite)
+					//	(*(int(__thiscall**)(int))(*(_DWORD*)g_cursorKeysControllingSprite + 16))(g_cursorKeysControllingSprite);
+					if ((GetAsyncKeyState(VK_LEFT) < 0 || GetAsyncKeyState(VK_RIGHT) < 0) /*&&!g_cursorKeysControllingSprite*/)
+					{
+						g_bPlayerRotateLeft = GetAsyncKeyState(VK_LEFT) < 0;
+						g_bPlayerRotateRight = GetAsyncKeyState(VK_RIGHT) < 0;
+					}
+					if (GetAsyncKeyState(VK_UP) < 0 || GetAsyncKeyState(VK_DOWN) < 0)
+					{
+						if (/*g_cursorKeysControllingSprite ||*/ (GetAsyncKeyState(VK_UP) & 0x8000) == 0)
+						{
+							if (/*!g_cursorKeysControllingSprite &&*/ GetAsyncKeyState(VK_DOWN) < 0)
+								g_bPlayerMoveBackwards = true;
+						}
+						else
+						{
+							g_bPlayerMoveForwards = true;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			dprintf("quitAppCountdown quitting app!");
+			g_bQuittingApp = 1;
+			SendMessageA(g_hMainAppWindow, WM_CLOSE, 0, 0);
+		}
+	}
+}
+static bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option) {
+	//undone
+}
+static void ClearNavigationFlags() {
+	g_bPlayerRotateLeft = 0;
+	g_bPlayerRotateRight = 0;
+	g_bPlayerMoveForwards = 0;
+	g_bPlayerMoveBackwards = 0;
+	g_bPlayerMoveUpwards = 0;
+	g_bPlayerMoveDownwards = 0;
+}
+static void DoHugComfortKissPlayerMotion(Sprite* spr, float f1) {
+	//undone
+}
+static void EndPlayerAutoMove(bool option) {
+	bool b1 = false;
+	switch (g_AutoMovePlayerStatus)
+	{
+	case 1:	g_bSeatedOnCouch = !g_bSeatedOnCouch;	break;
+	case 2:	g_bTripCarry = !g_bTripCarry;			break;
+	case 4:
+		XYZPointf cursorpos = g_cursorContextSprite->GetPosition();
+		XYZPointf playerpos = g_PlayerSprite->GetPosition();
+		if (GetXZDistanceBetweenPoints(playerpos, cursorpos) < 30)
+			b1 = 1;
+		break;
+	}
+	g_AutoMovePlayerStatus = 0;
+	g_playerTransAmt = 0.0;
+	g_playerRotAmt = 0.0;
+	ClearNavigationFlags();
+	if (b1 && !option)
+		DoHugComfortKissPlayerMotion(g_cursorContextSprite, 30);
+}
+static bool HackToFixStuckPlayerAtFoyerWallEdge(XYZPointf point) {
+	if (point.m_x <= -134 || point.m_x >= -102 || point.m_z <= 86 || point.m_z >= 138)
+	{
+		g_numFramesStillAtFoyerWallEdge = 0;
+		return false;
+	}
+	if (++g_numFramesStillAtFoyerWallEdge <= 600)
+		return 0;
+	dprintf("## Repositioning player away from foyer wall\n");
+	g_PlayerSprite->SetPosition(XYZPointf(-172, point.m_y, 107), -1);
+}
+static void UpdatePlayerNavigation() {
+	if (g_bQuittingApp || !g_bPlayerInputActive)
+		return;
+
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf playerrot = g_PlayerSprite->GetRotation();
+
+	if (HackToFixStuckPlayerAtFoyerWallEdge(playerpos))
+		return;
+
+	if (g_AutoMovePlayerStatus)
+	{
+		if (g_PlayerXController.GetIsMoving()
+			|| g_PlayerYController.GetIsMoving()
+			|| g_PlayerZController.GetIsMoving()
+			|| g_PlayerRotController.GetIsMoving())
+		{
+			g_PlayerXController.UpdateController();
+			g_PlayerYController.UpdateController();
+			g_PlayerZController.UpdateController();
+			g_PlayerRotController.UpdateController();
+
+			if (g_PlayerXController.GetIsMoving())		playerpos.m_x = g_PlayerXController.GetVal();
+			if (g_PlayerYController.GetIsMoving())		playerpos.m_y = g_PlayerYController.GetVal();
+			if (g_PlayerZController.GetIsMoving())		playerpos.m_z = g_PlayerZController.GetVal();
+			if (g_PlayerRotController.GetIsMoving())	playerrot.m_y = g_PlayerRotController.GetVal();
+
+			if (!CollisionTestWithWorld(g_PlayerSprite, playerpos, 10, false)
+				|| g_AutoMovePlayerStatus == 1)
+			{
+				g_PlayerSprite->SetPosition(playerpos, -1);
+				g_PlayerSprite->SetRotation(playerrot);
+			}
+			else
+			{
+				EndPlayerAutoMove(true);
+			}
+		}
+		else
+		{
+			EndPlayerAutoMove(false);
+		}
+	}
+	else
+	{
+		//undone
+	}
+}
+
+static HPALETTE CreateWinGLPalette(HDC devicecontext)
+{
+	PIXELFORMATDESCRIPTOR description;
+	DescribePixelFormat(devicecontext, GetPixelFormat(devicecontext), sizeof(description), &description);
+	if ((description.dwFlags & 0x80) == 0)
+		return NULL;
+
+	int numpaletteentries = 1 << description.cColorBits;
+	LOGPALETTE *paletteinfo = (LOGPALETTE*)malloc(4 * numpaletteentries + 8);
+	paletteinfo->palVersion = 768;
+	paletteinfo->palNumEntries = numpaletteentries;
+
+	int regionred = (1 << description.cRedBits) - 1;
+	int regiongreen = (1 << description.cGreenBits) - 1;
+	int regionblue = (1 << description.cBlueBits) - 1;
+
+	for (int i = 0; i < numpaletteentries; ++i)
+	{
+		paletteinfo->palPalEntry[i].peRed = (regionred & (i>>description.cRedShift)) * 255.0 / regionred;
+		paletteinfo->palPalEntry[i].peGreen = (regiongreen & (i >> description.cGreenShift)) * 255.0 / regiongreen;
+		paletteinfo->palPalEntry[i].peBlue = (regionblue & (i >> description.cBlueShift)) * 255.0 / regionblue;
+	}
+
+	HPALETTE hpal = CreatePalette(paletteinfo);
+	SelectPalette(devicecontext, hpal, FALSE);
+	RealizePalette(devicecontext);
+	free(paletteinfo);
+	return hpal;
+
 }
 
 //UNDONE
@@ -398,7 +1102,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			s_frameTimeAccum += GetTickCount() - tickcount_atstart;
 			s_framesSinceLastStatistic++;
 
-			bool unknown = false;
+			bool clear = false;
 			if (s_framesSinceLastStatistic == 90)
 			{
 				g_curFps = 90.f / ((float)(GetTickCount() - s_timeAtStartOfCounting) / 1000.f);
@@ -406,7 +1110,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 				s_frameTimeAccum = s_framesSinceLastStatistic = 0;
 				s_timeAtStartOfCounting = GetTickCount();
 
-				unknown = true;
+				clear = true;
 				if (!g_bLockedInMSToSleep)
 				{
 					if (g_bDoingFPSAdjustment)
@@ -433,7 +1137,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 					}
 				}
 			}
-			ProcessAblRequests(unknown);
+			ProcessAblRequests(clear);
 			if (g_millisecondsToSleep > 0)
 				Sleep(g_millisecondsToSleep);
 			if (haventrenderedyet)
@@ -457,7 +1161,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		g_hDeviceContext = GetDC(hwnd);
 		g_hGLContext = wglCreateContext(g_hDeviceContext);
 		wglMakeCurrent(g_hDeviceContext, g_hGLContext);
-		s_hPalette = createglpalette(g_hDeviceContext);
+		s_hPalette = CreateWinGLPalette(g_hDeviceContext);
 		SetupRC();
 		break;
 	case WM_DESTROY:
@@ -825,10 +1529,10 @@ void LoadTextureFilmstrip(ETextureFilmstrip filmstrip)
 #define START_SPRITECREATE(name, mdlframe, mdlinfo, mdlquadpoly, mdlquadlines) \
 	static void Create##name##Sprite(ESpriteID spriteid, const char* spritename){ \
 		Sprite* sprite = new Sprite(); \
-		sprite->modelframe = mdlframe; \
-		sprite->modelinfo = mdlinfo; \
-		sprite->modelquadpoly = mdlquadpoly; \
-		sprite->modelquadlines = mdlquadlines; \
+		sprite->m_modelframe = mdlframe; \
+		sprite->m_modelinfo = mdlinfo; \
+		sprite->m_modelquadpoly = mdlquadpoly; \
+		sprite->m_modelquadlines = mdlquadlines; \
 		sprite->InitSprite(spriteid, spritename, true, true); \
 		sprite->SetVolume(XYZPointf(1, 1, 1)); 
 
@@ -837,10 +1541,10 @@ void LoadTextureFilmstrip(ETextureFilmstrip filmstrip)
 	}
 
 START_SPRITECREATE(Couch, 
-	&g_Couch_modelFrame, 
-	&g_Couch_modelInfo, 
-	&g_Couch_modelQuadPolys, 
-	&g_Couch_modelQuadLines)
+	g_Couch_modelFrame, 
+	g_Couch_modelInfo, 
+	g_Couch_modelQuadPolys, 
+	g_Couch_modelQuadLines)
 
 	sprite->AddSurface(14, 20, 23, 19, eSurfacePickupAngle_unknown002);
 	sprite->AddSurface(4, 10, 25, 5, eSurfacePickupAngle_unknown002);
@@ -1331,6 +2035,18 @@ void InitCollisionZonesAndPathPlanGrid()
 {
 	//undone
 }
+static void SetupSqrtTable() {
+	//undone
+}
+static void SetupDirOffsets() {
+	//undone
+}
+static void SetupHeuristicTable() {
+	//undone
+}
+static void SetupTurnTable() {
+	//undone
+}
 void InitPathPlanning()
 {
 	SetupSqrtTable();
@@ -1395,7 +2111,7 @@ void InitGlobals()
 	InitQueuedUpRequestedPerformance();
 
 	g_soundSource.InitSoundSource("sounds\\global\\globalsnd.txt");
-	g_soundSourceID = g_soundMgr.AddSoundSource(g_soundSource);
+	g_soundSourceID = g_soundMgr.AddSoundSource(&g_soundSource);
 
 	BuildBitmapFont();
 

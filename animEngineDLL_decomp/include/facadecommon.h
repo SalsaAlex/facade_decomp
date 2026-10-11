@@ -17,7 +17,10 @@
 #include "enums/EAlterHeadCock.h"
 #include "enums/EAnimLayer.h"
 #include "enums/EBaseScreenMessage.h"
+#include "enums/EBlinkBehavior.h"
+#include "enums/EBlinkType.h"
 #include "enums/EBodyPoseConfig.h"
+#include "enums/ECinematographyFraming.h"
 #include "enums/ECollidableType.h"
 #include "enums/EColor.h"
 #include "enums/EControllerType.h"
@@ -30,6 +33,7 @@
 #include "enums/EGazeType.h"
 #include "enums/EGestureBodyPart.h"
 #include "enums/EGlobalSounds.h"
+#include "enums/ELayerAltINdex.h"
 #include "enums/EMiscLittleAction.h"
 #include "enums/EMusicAction.h"
 #include "enums/EMusicName.h"
@@ -40,6 +44,7 @@
 #include "enums/ESpriteID.h"
 #include "enums/ESurfacePickupAngle.h"
 #include "enums/ETextureFilmstrip.h"
+#include "enums/EUScript.h"
 #include "enums/EWalkType.h"
 
 #include "../../animEngineStarter_decomp/resource.h"
@@ -76,6 +81,10 @@ class XYZPoint_template
 public:
 	XYZPoint_template() : m_x(0), m_y(0), m_z(0) {}
 	XYZPoint_template(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
+
+	bool operator!=(const XYZPoint_template<T>& point) { return m_x != point.m_x && m_y != point.m_y && m_z != point.m_z; }
+	bool operator==(const XYZPoint_template<T>& point) { return m_x == point.m_x && m_y == point.m_y && m_z == point.m_z; }
+
 	T m_x;
 	T m_y;
 	T m_z;
@@ -173,6 +182,9 @@ extern EPlayerGestureID g_playerGesture;
 extern ESpriteID g_playerGestureSpriteID;
 
 extern HWND g_hMainAppWindow;
+extern HWND g_scriptDialogHWnd;
+extern HWND g_faceDialogHWnd;
+
 extern HINSTANCE g_hAppInstance;
 extern HDC g_hDeviceContext;
 extern HANDLE g_ablRequestBufferMutexHandle;
@@ -260,6 +272,8 @@ void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator,
 	ESpriteID victim, uint32_t tick);
 void OutputEventLog(bool stageplay);
 void ShouldntBeHere(const char* asserttext);
+
+int FloatToInt(float f);
 
 bool IsWhitespaceNewLineOrComma(char c);
 bool IsNumberCharacter(char c);

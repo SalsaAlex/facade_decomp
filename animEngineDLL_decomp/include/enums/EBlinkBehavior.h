@@ -1,0 +1,9 @@
+#ifndef ENUM_BLINKBEHAVIOR_H
+#define ENUM_BLINKBEHAVIOR_H
+
+enum EBlinkBehavior
+{
+    eBlinkBehavior_unknown = 0,
+};
+
+#endif // ENUM_BLINKBEHAVIOR_H

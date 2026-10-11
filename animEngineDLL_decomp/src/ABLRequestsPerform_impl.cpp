@@ -11,6 +11,9 @@ static int g_whichSoundtrack = -1;
 static EMusicName g_curMusicType;
 static bool g_bUnused;
 
+extern void GetAccessToRequestBuffer(const char* name);
+extern void AblBufferPostSemaphore();
+
 bool PerformCallbackWhenFullExpressionMoodDone(ESpriteID actor, AblRequest* request)
 {
 
@@ -63,53 +66,77 @@ bool PerformCallbackWhenWalkIsDone(uint32_t unused, ESpriteID actor, bool b1, Ab
 
 void PerformGetMouthShape(ESpriteID spriteid, int& mouthshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetMouthShape(ESpriteID spriteid, int mouthshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 
 void PerformGetEyelidHeightR(ESpriteID spriteid, float& height)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformGetEyelidHeightL(ESpriteID spriteid, float& height)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetEyelidHeightR(ESpriteID spriteid, float height)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetEyelidHeightL(ESpriteID spriteid, float height)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 
 void PerformGetBrowShapeR(ESpriteID spriteid, int& browshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformGetBrowShapeL(ESpriteID spriteid, int& browshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetBrowShapeR(ESpriteID spriteid, int browshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetBrowShapeL(ESpriteID spriteid, int browshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 
 void PerformGetEyesShape(ESpriteID spriteid, int& eyeshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 void PerformSetEyesShape(ESpriteID spriteid, int eyeshape)
 {
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
 	//	undone
 }
 

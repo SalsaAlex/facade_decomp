@@ -3,6 +3,64 @@
 
 #include "classes/Controller.h"
 
+struct mdlquadpoly_t
+{
+	int mdlinfoindex_1;
+    int mdlinfoindex_2;
+    int mdlinfoindex_3;
+    int mdlinfoindex_4;
+    int unknown005;
+    EColor facecolor;
+    EColor linecolor1;
+    EColor linecolor2;
+    EColor linecolor3;
+    EColor linecolor4;
+    float linewidth1;
+    float linewidth2;
+    float linewidth3;
+    float linewidth4;
+    ETextureFilmstrip m_eFilmstrip;
+};
+struct mdlinfo_t
+{
+    int unknown001;
+    float color;
+    int unknown003;
+    int unknown004;
+    int unknown005;
+    int unknown006;
+    float unknown007;
+};
+
+struct mdloutlineconnector_t
+{
+    int unknown001;
+    int unknown002;
+    int unknown003;
+    int unknown004;
+    int unknown005;
+    int unknown006;
+    int unknown007;
+    int unknown008;
+};
+
+struct mdlline_t
+{
+    int unknown001;
+    int unknown002;
+    int unknown003;
+    int unknown004;
+    int unknown005;
+    int unknown006;
+    int linewidth;
+    int unknown008;
+};
+
+struct mdlframe_t
+{
+    XYZPointf facepoints[4];
+};
+
 class Sprite
 {
 public:
@@ -69,13 +127,14 @@ public:
 
 	ESpriteID m_eID;
 	char m_name[64];
-	void* m_modelframe;
-	void* m_modelinfo;
-	void* m_modelquadlines;
+	mdlframe_t* m_modelframe;
+	mdlinfo_t* m_modelinfo;
+	mdlline_t* m_modelquadlines;
 	void* m_characterarms;
-	void* m_outlineconnectors;
-	void* m_modelquadpoly;
-	int a1_unknown00001;
+	mdloutlineconnector_t* m_outlineconnectors;
+	mdlquadpoly_t* m_modelquadpoly;
+	bool a1_unknown00001;
+	bool boolean1;
 	int a1_unknown00002;
 	float a1_unknown00003;
 	int a1_unknown00004;
@@ -91,9 +150,9 @@ public:
 	int a1_unknown00011;
 	int a1_unknown00012;
 	int m_iNumModelPoints;
-	int b1_unknown00001;
-	int b1_unknown00002;
-	int b1_unknown00003;
+	int m_iNumQuadLines;
+	int m_iNumQuadPolys;
+	int m_iNumArms;
 	int b1_unknown00004;
 	int b1_unknown00005;
 	int b1_unknown00006;
@@ -109,7 +168,7 @@ public:
 	int b1_unknown00016;
 	int b1_unknown00017;
 	int b1_unknown00018;
-	int b1_unknown00019;
+	int m_iNumOutlineConnectors;
 	int b1_unknown00020;
 	int b1_unknown00021;
 	int b1_unknown00022;
@@ -20663,28 +20722,24 @@ public:
 	int b1_unknown20585;
 	EObjectType m_eObjectType;
 	int c1_unknown00001;
-	int c1_unknown00002;
-	int c1_unknown00003;
-	int c1_unknown00004;
-	XYZPointf c1_unknown00005;
-	XYZPointf c1_unknown00008;
-	float c1_unknown00011;
-	XYZPointf c1_unknown00012;
-	int c1_unknown00015;
-	int c1_unknown00016;
-	int c1_unknown00017;
-	int c1_unknown00018;
-	int c1_unknown00019;
-	int c1_unknown00020;
-	int c1_unknown00021;
-	int c1_unknown00022;
-	int c1_unknown00023;
-	int c1_unknown00024;
-	int c1_unknown00025;
-	int c1_unknown00026;
-	int c1_unknown00027;
-	int c1_unknown00028;
-	int c1_unknown00029;
+	bool m_bUpdateMe;
+	bool m_bDrawMe;
+	bool m_bGrabable;
+	bool m_bClickable;
+	bool m_bClickedThisFrame;
+	bool boolean3;
+	bool boolean4;
+	bool boolean5;
+	ECollidableType m_eCollidableType;
+	XYZPointf m_Pos;
+	XYZPointf m_Rot;
+	float m_fScale;
+	XYZPointf m_Volume;
+	XYZPointf m_attachPos;
+	XYZPointf c1_unknown00018;
+	XYZPointf c1_unknown00021;
+	XYZPointf c1_unknown00024;
+	XYZPointf c1_unknown00027;
 	int c1_unknown00030;
 	int c1_unknown00031;
 	int c1_unknown00032;
@@ -21051,7 +21106,7 @@ public:
 	int c1_unknown00393;
 	int c1_unknown00394;
 	int c1_unknown00395;
-	int c1_unknown00396;
+	Sprite* m_pSpriteHoldingMe;
 	int c1_unknown00397;
 	int c1_unknown00398;
 	int c1_unknown00399;

@@ -48,7 +48,7 @@
 
 
 
-static void GetAccessToRequestBuffer(const char* name)
+void GetAccessToRequestBuffer(const char* name)
 {
 	animengine_assert(name != nullptr);
 	animengine_assert(strlen(name) < 100);
@@ -66,7 +66,7 @@ static void GetAccessToRequestBuffer(const char* name)
 	strcpy(g_ablrequestbuffer->unknown001->name, name);
 }
 
-static void AblBufferPostSemaphore()
+void AblBufferPostSemaphore()
 {
 	g_ablrequestbuffer->unknown001->name[0] = '\0';
 	ReleaseMutex(g_ablRequestBufferMutexHandle);

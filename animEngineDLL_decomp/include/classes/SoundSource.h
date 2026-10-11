@@ -6,21 +6,23 @@ struct soundsrc_nameentry_t
 	char name[256];
 };
 
+#define MAX_SOUNDENTRIES 5000
+
 class SoundSource
 {
 public:
 	virtual ~SoundSource() = default;
 
 	int GetNumSounds() { return m_iNumSounds; }
-	void GetSoundFilename(int, char* outbuffer, bool listpath);
+	void GetSoundFilename(int soundindex, char* outbuffer, bool listpath);
 	void InitSoundSource(const char* filepath);
 
 
 private:
 
-	char listname[256];
-	char listpath[256];
-	soundsrc_nameentry_t soundentries[5000];
+	char m_listname[256];
+	char m_listpath[256];
+	soundsrc_nameentry_t soundentries[MAX_SOUNDENTRIES];
 	int m_iNumSounds;
 
 protected:

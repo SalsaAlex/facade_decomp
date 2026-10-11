@@ -58,6 +58,8 @@ uint32_t g_numFramesRun = 0;
 
 
 HWND g_hMainAppWindow;
+HWND g_scriptDialogHWnd;
+HWND g_faceDialogHWnd;
 
 
 
@@ -228,6 +230,30 @@ void animengine_assert(bool cond)
 	g_bAssertionThrown = false;
 }
 
+int FloatToInt(float f)
+{
+	int i = f;
+	float roundingfloat;
+	int roundingint;
+	if (f < 0.0)
+		roundingfloat = -f;
+	else
+		roundingfloat = f;
+	if (i < 0)
+		roundingint = -i;
+	else
+		roundingint = f;
+	float roundfinal =  roundingfloat - roundingint;
+	animengine_assert(roundfinal >= 0.0);
+	if (roundfinal > 0.5)
+	{
+		if (f > 0.0)
+			++i;
+		if (f < 0.0)
+			--i;
+	}
+	return i;
+}
 
 
 bool IsWhitespaceNewLineOrComma(char c){
