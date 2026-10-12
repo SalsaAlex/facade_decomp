@@ -103,13 +103,90 @@ float g_autoTurnAmount;
 
 /////////////////////MODEL FRAME/////////////////////
 mdlframe_t g_GraceHeadModel_modelFrame[] = {
-	{}//undone
+	{}//empty ?
 };
 mdlframe_t g_TripHeadModel_modelFrame[] = {
-	{}//undone
+	{}//empty ?
 };
 mdlframe_t g_Couch_modelFrame[] = {
-	{} //undone
+	MDLFACE_BEGIN
+		{0.0, 0.0, -90.0},
+		{0.0, 12.0, -90.0},
+		{0.0, 12.0, 105.0},
+		{0.0, 0.0, 105.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-55.0, 34.0, -90.0},
+		{-40.0, 34.0, -90.0},
+		{0.0, 12.0, -90.0},
+		{0.0, 34.0, 105.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{0.0, 34.0, 90.0},
+		{0.0, 12.0, 90.0},
+		{-55.0, 34.0, -135.0},
+		{-55.0, 0.0, -135.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{45.0, 34.0, 105.0},
+		{45.0, 0.0, 105.0},
+		{0.0, 24.0, -90.0},
+		{0.0, 24.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{0.0, 12.0, -30.0},
+		{0.0, 24.0, 30.0},
+		{0.0, 12.0, 30.0},
+		{0.0, 24.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{30.0, 24.0, -90.0},
+		{30.0, 24.0, -30.0},
+		{30.0, 24.0, 30.0},
+		{30.0, 24.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-40.0, 34.0, -135.0},
+		{-40.0, 34.0, -90.0},
+		{45.0, 24.0,90.0},
+		{45.0, 34.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{40.0, 55.0, -120.0},
+		{40.0, 55.0, -30.0},
+		{40.0, 55.0, 30.0},
+		{40.0, 55.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-40.0, 52.0, -140.0},
+		{-45.0, 21.0, -135.0},
+		{45.0, 52.0, 90.0},
+		{40.0, 21.0, 90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{30.0, 24.0, -120.0},
+		{-40.0, 24.0, -120.0},
+		{-40.0, 24.0, -90.0},
+		{-40.0, 12.0, -90.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{-55.0, 0.0, -90.0},
+		{-55.0, 12.0, -90.0},
+		{-40.0, 24.0, -135.0},
+		{-40.0, 55.0, -135.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{30.0, 55.0, -135.0},
+		{40.0, 55.0, -135.0},
+		{45.0, 52.0, 30.0},
+		{45.0, 52.0, -30.0}
+	MDLFACE_END
+	MDLFACE_BEGIN
+		{45.0, 52.0, -90.0},
+		{-40.0, 52.0, -140.0},
+		{666.0, 666.0, 666.0},
+		{0, 0, 0}
+	MDLFACE_END
 };
 mdlframe_t g_SideTable_modelFrame[] = {
 	MDLFACE_BEGIN
@@ -456,6 +533,661 @@ mdlframe_t g_unknown4_modelFrame[] = {
 };
 /////////////////////////////////////////////////////
 
+/////////////////////MODEL INFO/////////////////////
+mdlinfo_t g_GraceHeadModel_modelInfo[] = {
+	{} //undone
+};
+mdlinfo_t g_TripHeadModel_modelInfo[] = {
+	{} //undone
+};
+mdlinfo_t g_Couch_modelInfo[] = {
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 666.0},
+};
+mdlinfo_t g_SideTable_modelInfo[] = {
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 18.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 19.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 18.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 18.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+mdlinfo_t g_WorkTable_modelInfo[] = {
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 37.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 0.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+mdlinfo_t g_Cabinet_modelInfo[] = {
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 18.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 18.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+mdlinfo_t g_Bar_modelInfo[] = {
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 2.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 2.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 3.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 4.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 4.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 4.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 4.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+mdlinfo_t g_panelModelInfo[] = {
+	{}
+};
+mdlinfo_t g_unknown1_modelInfo[] = {
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, 7.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 11.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 11.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 10.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 666.0},
+};
+mdlinfo_t g_unknown2_modelInfo[] = {
+	{0.5, 10.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{0.5, 7.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{0.5, 13.0, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 666.0},
+};
+mdlinfo_t g_unknown3_modelInfo[] = {
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+mdlinfo_t g_unknown4_modelInfo[] = {
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, 1.0, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+};
+/////////////////////////////////////////////////////
+
+/////////////////////MODEL QUADPOLY/////////////////////
+mdlquadpoly_t g_GraceHeadModel_modelQuadPolys[] = {
+	{} //undone
+};
+mdlquadpoly_t g_TripHeadModel_modelQuadPolys[] = {
+	{} //undone
+};
+mdlquadpoly_t g_Couch_modelQuadPolys[] = {
+	//undone
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_SideTable_modelQuadPolys[] = {
+	//undone
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_WorkTable_modelQuadPolys[] = {
+	//undone
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
+	{
+		3, 4, 5, 6,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		0, 1, 2, 3,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		14, 15, 16, 17,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		18, 19, 32, 21,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		22, 23, 24, 25,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		6, 7, 8, 9,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		30, 31, 32, 33,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		34, 35, 36, 37,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		38, 39, 40, 41,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		42, 43, 44, 45,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		46, 47, 48, 31,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		50, 51, 52, 4,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor2
+	},
+	{
+		5, 52, 51, 53,
+		2,
+		eColor_none,
+		eColor_none, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor2
+	},
+	{
+		50, 54, 55, 53,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		56, 57, 58, 22,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor1
+	},
+	{
+		50, 58, 57, 54,
+		2,
+		eColor_none,
+		eColor_none, eColor_none, eColor_grey, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor1
+	},
+	{
+		23, 59, 56, 22,
+		2,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		2, 24, 25, 3,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		7, 47, 46, 6,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		0, 22, 22, 0,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		1, 23, 23, 1,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		9, 49, 49, 9,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		8, 48, 48, 8,
+		2,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_Bar_modelQuadPolys[] = {
+	{
+		0, 1, 2, 3,
+		2,
+		eColor_unnamed036,
+		eColor_black, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		3, 2, 4, 5,
+		2,
+		eColor_unnamed037,
+		eColor_none, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		5, 4, 6, 8,
+		2,
+		eColor_unnamed038,
+		eColor_none, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		6, 9, 7, 8,
+		2,
+		eColor_unnamed037,
+		eColor_none, eColor_black, eColor_black, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		4, 10, 9, 6,
+		2,
+		eColor_unnamed039,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		2, 11, 10, 4,
+		2,
+		eColor_unnamed039,
+		eColor_none, eColor_black, eColor_none, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		1, 2, 11, 12,
+		2,
+		eColor_unnamed039,
+		eColor_black, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		1, 12, 13, 0,
+		2,
+		eColor_unnamed037,
+		eColor_none, eColor_none, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_panelModelQuadPolys[] = {
+	{}
+};
+mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
+	{
+		8, 9, 10, 11, 
+		1,
+		eColor_black,
+		eColor_black, eColor_black, eColor_black, eColor_unnamed010,
+		12, 12, 12, -1,
+		eTextureFilmstrip_LiquorScotch
+	},
+	{
+		10, 11, 12, 1, 
+		0,
+		eColor_black,
+		eColor_black, eColor_black, eColor_unnamed010, eColor_unnamed010,
+		12, 12, 12, 12,
+		eTextureFilmstrip_Water
+	},
+	{
+		15, 14, 1, 0, 
+		0,
+		eColor_black,
+		eColor_black, eColor_unnamed010, eColor_unnamed010, eColor_unnamed010,
+		12, -1, 666, 666,
+		(ETextureFilmstrip)666
+	},
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 0, 0, 0, (ETextureFilmstrip)0 },
+};
+mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
+	{
+		0, 1, 2, 3, 
+		2,
+		eColor_unnamed041,
+		eColor_black, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		0, 1, 5, 4, 
+		2,
+		eColor_unnamed040,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		3, 2, 6, 7, 
+		2,
+		eColor_unnamed042,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		1, 5, 6, 2, 
+		2,
+		eColor_unnamed043,
+		eColor_none, eColor_black, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
+	{
+		0, 1, 2, 3, 
+		2,
+		eColor_greyshade_20, 
+		eColor_black, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		0, 1, 5, 4, 
+		2,
+		eColor_greyshade_15, 
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		3, 2, 6, 7, 
+		2,
+		eColor_greyshade_25, 
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		1, 5, 6, 2, 
+		2,
+		eColor_greyshade_30, 
+		eColor_none, eColor_black, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{666, 666, 666, 666, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+};
+/////////////////////////////////////////////////////
+
 
 int DllMain(HINSTANCE instDLL, int reason)
 {
@@ -698,7 +1430,63 @@ static void UpdateCinematography()
 
 static void UpdateAndRenderAllSprites(bool option)
 {
+	static bool bDrawKitchenCabinets = false;
 
+	bool playerinkitchen = g_PlayerSprite->GetPosition().m_x > -140.0;
+
+	if (bDrawKitchenCabinets != playerinkitchen || g_numFramesRun < 5)
+	{
+		bDrawKitchenCabinets = playerinkitchen;
+
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabfront1")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabfront2")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabfront3")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabfront4")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabtop1")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabtop2")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabtop3")->SetDrawMe(bDrawKitchenCabinets);
+		g_spriteMgr.GetSpritePtrByName("KI_longwallcabtop4")->SetDrawMe(bDrawKitchenCabinets);
+	}
+
+	//LOBYTE(g_GraceSprite->data.inherit.inherit.b1_unknown20292) = false;
+	//LOBYTE(g_TripSprite->data.inherit.inherit.b1_unknown20292) = false;
+
+	for (int i = 0; i < g_spriteMgr.GetNumSprites(); i++)
+	{
+		Sprite* sprite = g_spriteMgr.GetSpritePtr(i);
+		Sprite* holder = sprite->GetSpriteHoldingMe();
+
+		sprite->boolean1 = false;
+
+		bool shouldupdate = sprite->GetUpdateMe() 
+			&& !holder 
+			&& !sprite->a1_unknown00005
+			/*&& option == BYTE1(SpritePtr->data.a1_unknown00011)*/;
+
+		bool shoulddraw = shouldupdate && sprite->GetDrawMe();
+
+		if (sprite->a1_unknown00012 != -1)
+		{
+			//ZoneIDForRoomZone = GetZoneIDForRoomZone(SpritePtr->data.a1_unknown00012);
+			//v11 = ((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetPosition)(g_PlayerSprite, v35);
+			//shoulddraw = IsPointWithinZone(*(float*)v11, *(_DWORD*)(v11 + 4), *(float*)(v11 + 8), ZoneIDForRoomZone);
+		}
+		if (sprite->GetIsHeadSprite()
+			/*&& !BYTE1(SpritePtr[1].vftable->GetModelPointPosition)*/)
+		{
+			shouldupdate = 0;
+			shoulddraw = 0;
+		}
+
+
+		if (shouldupdate)	sprite->UpdateSprite();
+		if (shoulddraw)		DrawSprite(sprite, false);
+
+	}
+	for (int i = 0; i < g_spriteMgr.GetNumSprites(); i++)
+	{
+		Sprite* sprite = g_spriteMgr.GetSpritePtr(i);
+	}
 }
 
 static void UpdateAndRenderWorld()
@@ -1949,10 +2737,10 @@ HeadSprite* CreateGraceHeadSprite(CharacterSprite* grace)
 {
 	HeadSprite* head = new HeadSprite();
 	head->m_modelframe = g_GraceHeadModel_modelFrame;
-	head->m_modelinfo = &g_GraceHeadModel_modelInfo;
+	head->m_modelinfo = g_GraceHeadModel_modelInfo;
 	head->m_modelquadlines = &g_GraceHeadModel_modelQuadLines;
 	head->m_characterarms = &g_GraceHeadModel_modelArms;
-	head->m_modelquadpoly = &g_GraceHeadModel_modelQuadPolys;
+	head->m_modelquadpoly = g_GraceHeadModel_modelQuadPolys;
 	head->a1_unknown00010d = true;
 	head->a1_unknown00001 = false;
 	head->InitSprite((ESpriteID)50, "GraceHead", true, true);
@@ -1962,10 +2750,10 @@ HeadSprite* CreateTripHeadSprite(CharacterSprite* trip)
 {
 	HeadSprite* head = new HeadSprite();
 	head->m_modelframe = g_TripHeadModel_modelFrame;
-	head->m_modelinfo = &g_TripHeadModel_modelInfo;
+	head->m_modelinfo = g_TripHeadModel_modelInfo;
 	head->m_modelquadlines = &g_TripHeadModel_modelQuadLines;
 	head->m_characterarms = &g_TripHeadModel_modelArms;
-	head->m_modelquadpoly = &gTripHeadModel_modelQuadPolys;
+	head->m_modelquadpoly = g_TripHeadModel_modelQuadPolys;
 	head->a1_unknown00010d = true;
 	head->a1_unknown00001 = false;
 	head->InitSprite((ESpriteID)52, "TripHead", true, true);

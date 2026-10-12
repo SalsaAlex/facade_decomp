@@ -22,6 +22,8 @@ void ChangeSize();
 
 void SetColorFromIndex(EColor color);
 
+void DrawSprite(Sprite* spr, bool option);
+
 void UpdateFade();
 void DrawPlayerScreenText();
 void DrawNPCsScreenText();

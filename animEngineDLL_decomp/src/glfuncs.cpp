@@ -680,6 +680,203 @@ void DrawScreenMessage()
 	}
 }
 
+static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSprite* head,
+	bool option,
+	bool& optionout, XYZPointf& xyzout, float& f1out,
+	int* renderdata)
+{
+
+	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(1)))
+	{
+		//v8 = (XYZPointf*)((int(__thiscall*)(Sprite*, XYZPointf*))g_PlayerSprite->vftable->GetRotation)(
+		//	g_PlayerSprite,
+		//	&v105);
+		//v9 = (XYZPointf*)((int(__thiscall*)(Sprite*, XYZPointf*))sprite->vftable->GetPosition)(sprite, &v104);
+		//*(_QWORD*)&angle_4.y = *(_QWORD*)&v9->x;
+		//v53 = v9->z;
+		//LODWORD(angle_4.x) = &v103;
+		//v39 = *(XYZPointf*)((int(__thiscall*)(Sprite*))g_PlayerSprite->vftable->GetPosition)(g_PlayerSprite);
+		//v67 = v8->y - GetXZAngleBetweenPoints(v39, angle_4);
+	}
+	else
+	{
+		//v67 = 0.0;
+	}
+
+	if (character /*&& !LOBYTE(character->unknown039[10423])*/)
+	{
+		//undone
+	}
+
+	if (head)
+	{
+		//undone
+	}
+
+	if (spr->a1_unknown00010b)
+	{
+		//undone
+	}
+
+	animengine_assert(!spr->a1_unknown00010d || !option);
+
+	bool cursor_holding_us = spr->GetSpriteHoldingMe() == g_CursorSprite;
+	if (cursor_holding_us || spr->GetAmIStillGrabDropAnimating())
+	{
+		//undone
+	}
+
+	//undone
+}
+
+void DrawSprite(Sprite* spr, bool option)
+{
+	if (!g_bShouldRenderThisFrame)
+		return;
+
+	int renderdata[235];
+
+	glLoadIdentity();
+	CharacterSprite* character = nullptr;
+	HeadSprite* head = nullptr;
+
+	if (spr->GetIsCharacterSprite())
+		character = (CharacterSprite*)spr;
+	if (spr->GetIsHeadSprite())
+		head = (HeadSprite*)spr;
+
+	bool b1;
+	XYZPointf xyz;
+	float f1;
+
+
+	if (!PrepareRenderPoints(spr, character, head, option, b1, xyz, f1, renderdata))
+		return;
+
+	if (g_numFramesRun > 1 && spr->GetIsCharacterSprite())
+	{
+
+	}
+
+	for (int i = 0; i < spr->m_iNumModelPoints; i++)
+	{
+		if (head)
+		{
+
+		}
+		Sprite* sprlist[5];
+		int* unknown[5];
+		int numsprites = spr->GetSpriteListAttachedToModelPoint(option, sprlist, unknown);
+		for (int j = 0; j < numsprites; j++)
+		{
+
+		}
+
+		//undone
+
+		if (spr->a1_unknown00010d)
+		{
+			if (spr->GetIsAnimatingSprite())
+			{
+				//undone
+			}
+			//if (character && character->unknown005 == a2)
+			//{
+				//undone
+			//}
+		}
+
+		//undone
+
+		for (int j = 0; j < spr->m_iNumOutlineConnectors; ++j)
+		{
+			//if (spr->m_outlineconnectors[j].unknown001 == a2)
+			//{
+				//undone
+			//}
+		}
+		//if (unknown007 == 1 && v88 > 0)
+		//	v75 = 1;
+		//if (unknown001 > 0.0 && (!unknown007 || v75 || g_bAllCircleOutline))
+		//{
+		//	zc = v82 + *(float*)&float1;
+		//	glTranslatef(
+		//		*((GLfloat*)&sprite->data.b1_unknown00725 + 3 * a2),
+		//		*((GLfloat*)&sprite->data.b1_unknown00726 + 3 * a2),
+		//		zc);
+		//	zd = v75;
+		//	v18 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
+		//		g_PlayerSprite,
+		//		v56);
+		//	x = v76.y - v18->y;
+		//	width = (float)FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown006);
+		//	v26 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown005);
+		//	v25 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown004);
+		//	v19 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown003);
+		//	DrawFilledCircle(
+		//		(int)sprite,
+		//		a2,
+		//		*((float*)&sprite->data.b1_unknown00725 + 3 * a2),
+		//		*((float*)&sprite->data.b1_unknown00726 + 3 * a2),
+		//		*(&sprite->data.b1_unknown00727 + 3 * a2),
+		//		unknown001,
+		//		color,
+		//		v19,
+		//		v25,
+		//		v26,
+		//		width,
+		//		x,
+		//		1.0,
+		//		zd);
+		//	ze = -(v82 + *(float*)&float1);
+		//	yb = -*((float*)&sprite->data.b1_unknown00726 + 3 * a2);
+		//	xb = -*((float*)&sprite->data.b1_unknown00725 + 3 * a2);
+		//	glTranslatef(xb, yb, ze);
+		//	*((float*)&sprite->data.b1_unknown00727 + 3 * a2) = v82 + *(float*)&float1;
+		//	*(float*)&v68 = v82 + *(float*)&float1;
+		//	if (v74)
+		//	{
+		//		if (*(float*)&sprite->data.b1_unknown20290 >= (double)*(float*)&v68)
+		//			b1_unknown20290 = v68;
+		//		else
+		//			b1_unknown20290 = sprite->data.b1_unknown20290;
+		//		sprite->data.b1_unknown20290 = b1_unknown20290;
+		//		if (*(float*)&sprite->data.b1_unknown20291 <= (double)*(float*)&v68)
+		//			b1_unknown20291 = v68;
+		//		else
+		//			b1_unknown20291 = sprite->data.b1_unknown20291;
+		//		sprite->data.b1_unknown20291 = b1_unknown20291;
+		//	}
+		//	else
+		//	{
+		//		sprite->data.b1_unknown20290 = v68;
+		//		sprite->data.b1_unknown20291 = v68;
+		//		v74 = 1;
+		//	}
+		//}
+		
+		//zf = v76.y - v20->y;
+		//yc = v82 + *(float*)&float1;
+		//DrawLinesFromModelPoint(sprite, a2, (int)renderdata, yc, zf);
+		//v21 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
+		//	g_PlayerSprite,
+		//	v54);
+		//zg = v76.y - v21->y;
+		//*(float*)&yd = v82 + *(float*)&float1;
+		//DrawPolysFromModelPoint(sprite, a2, (int)renderdata, yd, zg);
+		//v22 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
+		//	g_PlayerSprite,
+		//	v53);
+		//zh = v76.y - v22->y;
+		//*(float*)&ye = v82 + *(float*)&float1;
+		//SaveLimbInfoFromModelPoint((int)sprite, a2, ye, zh);
+	}
+
+	DrawArms(spr);
+
+	//undone
+}
+
 void StartFade(float amnt) //amnt is 0.0-1.0
 {
 	g_fadeIncr = -amnt;

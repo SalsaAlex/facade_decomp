@@ -15,20 +15,20 @@ struct mdlquadpoly_t
     EColor linecolor2;
     EColor linecolor3;
     EColor linecolor4;
-    float linewidth1;
-    float linewidth2;
-    float linewidth3;
-    float linewidth4;
+    int linewidth1;
+    int linewidth2;
+    int linewidth3;
+    int linewidth4;
     ETextureFilmstrip m_eFilmstrip;
 };
 struct mdlinfo_t
 {
-    int unknown001;
+	float unknown001;
     float color;
-    int unknown003;
-    int unknown004;
-    int unknown005;
-    int unknown006;
+    float unknown003;
+    float unknown004;
+    float unknown005;
+    float unknown006;
     float unknown007;
 };
 
@@ -66,24 +66,24 @@ class Sprite
 public:
 	virtual void InitSprite(ESpriteID spriteid, const char* name, bool hasmodel, bool drawable, int nummodelpoints = -1);
 	virtual void UpdateSprite();
-	virtual bool GetIsAnimatingSprite();
-	virtual bool GetIsCharacterSprite();
-	virtual bool GetIsHeadSprite();
-	virtual const char* GetName();
-	virtual bool GetUpdateMe();
-	virtual void SetUpdateMe(bool option);
-	virtual bool GetDrawMe();
-	virtual void SetDrawMe(bool option);
-	virtual XYZPointf GetPosition();
-	virtual XYZPointf GetRotation();
-	virtual float GetScale();
-	virtual XYZPointf GetVolume();
-	virtual void SetPosition(XYZPointf pos, float);
+	virtual bool GetIsAnimatingSprite()								{ return false; };
+	virtual bool GetIsCharacterSprite()								{ return false; };
+	virtual bool GetIsHeadSprite()									{ return false; };
+	virtual const char* GetName()									{ return m_name; };
+	virtual bool GetUpdateMe()										{ return m_bUpdateMe; };
+	virtual void SetUpdateMe(bool option)							{ m_bUpdateMe = option; };
+	virtual bool GetDrawMe()										{ return m_bDrawMe; };
+	virtual void SetDrawMe(bool option)								{ m_bDrawMe = option; };
+	virtual XYZPointf GetPosition()									{ return m_Pos; };
+	virtual XYZPointf GetRotation()									{ return m_Rot; };
+	virtual float GetScale()										{ return m_fScale; };
+	virtual XYZPointf GetVolume()									{ return m_Volume; };
+	virtual void SetPosition(XYZPointf pos, float unknown);
 	virtual void SetRotation(XYZPointf rot);
-	virtual void SetScale(float scale);
-	virtual void SetVolume(XYZPointf vol);
-	virtual XYZPointf GetAttachPosition();
-	virtual void SetAttachPosition(XYZPointf attachpos);
+	virtual void SetScale(float scale)								{ m_fScale = scale; }
+	virtual void SetVolume(XYZPointf vol)							{ m_Volume = vol; }
+	virtual XYZPointf GetAttachPosition()							{ return m_attachPos; }
+	virtual void SetAttachPosition(XYZPointf attachpos)				{ m_attachPos = attachpos; }
 	virtual void GetPickupPositionAndRotation(XZPointf& pos, float& rot);
 	virtual void GetSurfaceDropPositionAndRotation(int, XZPointf& pos, float& rot);
 	virtual void AddSurfaceObjectPositionAndRotationOffset(int, XZPointf& pos, float& rot);
@@ -92,14 +92,14 @@ public:
 	virtual void SetPanelSpriteTextureFilmstrip(ETextureFilmstrip filmstrip);
 	virtual void SetTextureFrameAnimation(int, int, int, bool);
 	virtual void SetScreenText(const char* text, bool);
-	virtual bool GetGrabable();
-	virtual void SetGrabable(bool option);
-	virtual bool GetClickable();
-	virtual void SetClickable(bool option);
-	virtual bool GetClickedThisFrame();
-	virtual void SetClickedThisFrame(bool option);
-	virtual ECollidableType GetCollidableType();
-	virtual void SetCollidableType(ECollidableType collidetype);
+	virtual bool GetGrabable()										{ return m_bGrabable; }
+	virtual void SetGrabable(bool option)							{ m_bGrabable = option; }
+	virtual bool GetClickable()										{ return m_bClickable; }
+	virtual void SetClickable(bool option)							{ m_bClickable = option; }
+	virtual bool GetClickedThisFrame()								{ return m_bClickedThisFrame; }
+	virtual void SetClickedThisFrame(bool option)					{ m_bClickedThisFrame = option; }
+	virtual ECollidableType GetCollidableType()						{ return m_eCollidableType; }
+	virtual void SetCollidableType(ECollidableType collidetype);	{ m_eCollidableType = collidetype; }
 	virtual bool GetAmIHoldingSprite();
 	virtual void* GetHeldSpritesList();
 	virtual int GetNumHeldSprites();
@@ -20442,7 +20442,7 @@ public:
 	int b1_unknown20290;
 	int b1_unknown20291;
 	int b1_unknown20292;
-	int b1_unknown20293;
+	int m_iSpriteFrame;
 	int b1_unknown20294;
 	int b1_unknown20295;
 	int b1_unknown20296;
@@ -20719,7 +20719,7 @@ public:
 	int b1_unknown20582;
 	bool b1_unknown20583;
 	int b1_unknown20584;
-	int b1_unknown20585;
+	Sprite* b1_unknown20585;
 	EObjectType m_eObjectType;
 	int c1_unknown00001;
 	bool m_bUpdateMe;
