@@ -328,27 +328,15 @@ void AnimAPI_ResetMyCopyOfAllAnimCues(ESpriteID actor)
 {
 	GET_ABLREQUEST(eAblRequestType_ResetMyCopyOfAllAnimCues);
 
-
+	//undone
 
 	AblBufferPostSemaphore();
 }
 void AnimAPI_ResetMyCopyOfAllObjectActivations(ESpriteID actor)
 {
-	AblRequest* req;												
-		
-	GetAccessToRequestBuffer(__func__);								
-	
-	int reqindex = g_ablrequestbuffer->GetFreeRequestPtr(req);	
-	if (!req)														
-	{																
-		animengine_assert(0);										
-		return;														
-	}																
-	req->type = eAblRequestType_ResetMyCopyOfAllObjectActivations;
-	req->active = 1;												
-	req->requesttime = GetTickCount();
+	GET_ABLREQUEST(eAblRequestType_ResetMyCopyOfAllAnimCues);
 
-
+	//undone
 
 	AblBufferPostSemaphore();
 }

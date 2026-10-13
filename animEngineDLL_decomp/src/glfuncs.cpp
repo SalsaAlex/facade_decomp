@@ -217,7 +217,7 @@ GLuint LoadTexture(const char* filename, bool alpha, uint32_t wraptype, uint32_t
 	}
 
 	GLuint textarget;
-	GLuint texid;
+	GLuint texid = -1;
 	if (imginfo->biHeight == 1)
 		textarget = GL_TEXTURE_1D;
 	else

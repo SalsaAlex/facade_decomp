@@ -1545,8 +1545,8 @@ static void LoadingMessage()
 	char uppertext[52];
 	char undertext[52];
 
-	if (g_ticksIntroStarted >= 0)
-		return;
+	//if (g_ticksIntroStarted >= 0)
+	//	return;
 
 	DrawRedCurtain();
 	if (!fadeCurtainInCtr)
@@ -1965,8 +1965,9 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			g_pKeyboard->Acquire();
 		break;
 	case WM_CREATE:
-		g_hAppInstance = *(HINSTANCE*)lparam + 4;
+		g_hAppInstance = ((CREATESTRUCTA*)lparam)->hInstance;
 		g_hDeviceContext = GetDC(hwnd);
+		selectglpixelformat(g_hDeviceContext);
 		g_hGLContext = wglCreateContext(g_hDeviceContext);
 		wglMakeCurrent(g_hDeviceContext, g_hGLContext);
 		s_hPalette = CreateWinGLPalette(g_hDeviceContext);
