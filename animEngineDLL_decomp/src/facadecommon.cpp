@@ -324,3 +324,8 @@ void ClipFloatToRange(float& value, float min, float max)
 {
 	value = fminf(fmaxf(value, min), max);
 }
+
+float GetSecsSinceTicks(int ticks)
+{
+	return (GetTickCount() - ticks) / 1000.f;
+}

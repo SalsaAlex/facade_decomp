@@ -212,6 +212,15 @@ extern float g_playerTransAmt;
 extern float g_playerRotAmt;
 extern int g_AutoMovePlayerStatus;
 
+extern int g_ticksIntroStarted;
+extern int g_introEventCtr;
+
+extern int g_introChoices[8];
+extern float g_introTimings[8 + 1];
+extern float g_introBaseTimings[8 * 6];
+extern float g_initialIntroDelay;
+extern float g_startTitleFadeIn;
+
 extern int g_quitAppCountdown;
 
 extern bool g_bAblRequestingFPSAdjustment;
@@ -308,6 +317,8 @@ void StopAllMP3s();
 bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option);
 
 void ClipFloatToRange(float& value, float min, float max);
+
+float GetSecsSinceTicks(int ticks);
 
 
 #endif // FACADECOMMON_H

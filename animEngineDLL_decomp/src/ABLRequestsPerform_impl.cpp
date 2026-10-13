@@ -24,9 +24,36 @@ static void FakePlayerEnteredText(const char* text)
 	g_whenNewPlayerTextEntered = g_numFramesRun;
 }
 
+bool IsAblConnected(){
+	return g_bIsAblConnected;
+}
+static void SetAblConnected(bool option){
+	g_bIsAblConnected = option;
+}
 static void StartTitleSequence()
 {
-	//undone
+	g_introChoices[0] = 0;
+	g_introChoices[1] = rand2(0, 4);
+	g_introChoices[2] = rand2(0, 4);
+	g_introChoices[3] = rand2(0, 3);
+	g_introChoices[4] = rand2(0, 3);
+	g_introChoices[5] = rand2(0, 5);
+	g_introChoices[6] = rand2(0, 5);
+	g_introChoices[7] = 0;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		g_introTimings[i + 1] = g_introBaseTimings[6 * i + g_introChoices[i]] + 1.0;
+		if (!i)
+			g_introTimings[1] = g_initialIntroDelay + g_introTimings[1];
+		if (i == 3)
+			g_introTimings[4] = g_introTimings[4] + 1.0;
+	}
+	for (int i = 1; i < 8; ++i)
+		g_introTimings[i + 1] = g_introTimings[i + 1] + g_introTimings[i];
+	g_startTitleFadeIn = g_introTimings[8] + 2.0;
+	g_ticksIntroStarted = GetTickCount();
+	g_introEventCtr = 0;
 }
 
 static void StartTripCarryingPlayer()
@@ -250,15 +277,38 @@ void PerformGetAllObjectPickupPositions(ESpriteID spriteid, ObjSensePacket* sens
 }
 void PerformGetAllObjectRotations(ObjSensePacket* sensepacket)
 {
-	//	undone
+	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_LAST_OBJECT; ++i)
+	{
+		Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+		XYZPointf rot = spr->GetRotation();
+		sensepacket[i].objectID = (ESpriteID)i;
+		sensepacket[i].x = rot.m_x;
+		sensepacket[i].y = rot.m_y;
+		sensepacket[i].z = rot.m_z;
+	}
 }
 void PerformGetAllObjectPositions(ObjSensePacket* sensepacket)
 {
-	//	undone
+	if (!IsAblConnected())
+		SetAblConnected(1);
+	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_LAST_OBJECT; ++i)
+	{
+		Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+		XYZPointf pos = spr->GetPosition();
+		sensepacket[i].objectID = (ESpriteID)i;
+		sensepacket[i].x = pos.m_x;
+		sensepacket[i].y = pos.m_y;
+		sensepacket[i].z = pos.m_z;
+	}
 }
 void PerformGetAllObjectStates(ObjStateSensePacket* statesensepacket)
 {
-	//	undone
+	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_LAST_OBJECT; ++i)
+	{
+		Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+		statesensepacket[i].objectID = (ESpriteID)i;
+		statesensepacket[i].state = spr->c1_unknown00001;
+	}
 }
 void PerformGetAllObjectStagingRotations(ObjSensePacket* sensepacket)
 {

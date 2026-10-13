@@ -540,8 +540,9 @@ int AnimAPI_GetAllObjectPositions(void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPositions);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown106, sizeof(req->unknown106));
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -551,8 +552,9 @@ int AnimAPI_GetAllObjectRotations(void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectRotations);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown106, sizeof(req->unknown106));
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -573,8 +575,9 @@ int AnimAPI_GetAllObjectStates(void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectStates);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown302, sizeof(req->unknown302));
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;

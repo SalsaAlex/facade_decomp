@@ -4,6 +4,10 @@
 
 static bool g_ToldAblPlayerInfo = false;
 
+extern bool IsAblConnected();
+extern void GetAccessToRequestBuffer(const char* name);
+extern void AblBufferPostSemaphore();
+
 void AblRequestBuffer::InitBuffer(void* mappedmemptr, bool resetmemory)
 {
 	m_pAblRequests = (AblRequest*)mappedmemptr;
@@ -53,15 +57,15 @@ int AblRequestBuffer::PerformAllRequests()
 	PerformAnyRequestedCueTriggeredPerformance(eSpriteID_grace);
 	PerformAnyRequestedCueTriggeredPerformance(eSpriteID_trip);
 
-	//if (!g_ToldAblPlayerInfo && IsAblConnected() && g_playerNameID >= 0)
-	//{
-	//	g_ToldAblPlayerInfo = true;
-	//	AblBufferPostSemaphore();
-	//	bool playerentered = AblCallbackAPI_PlayerGestured(ePlayerGesture_playerInfoEntered, g_playerNameID, g_playerGender);
-	//	GetAccessToRequestBuffer("PerformAllRequests playergestured");
-	//	if (!playerentered)
-	//		dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
-	//}
+	if (!g_ToldAblPlayerInfo && IsAblConnected() && g_playerNameID >= 0)
+	{
+		g_ToldAblPlayerInfo = true;
+		AblBufferPostSemaphore();
+        bool playerentered = true; //AblCallbackAPI_PlayerGestured(ePlayerGesture_playerInfoEntered, g_playerNameID, g_playerGender);
+		GetAccessToRequestBuffer("PerformAllRequests playergestured");
+		if (!playerentered)
+			dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
+	}
 
 	//undone
 
@@ -419,7 +423,7 @@ int AblRequestBuffer::PerformRequest(int reqindex, bool abortonly)
             PerformGetAllHeldObjects(req->unknown400);
             break;
         case eAblRequestType_GetMyCopyOfAllAnimCues:
-            PerformGetMyCopyOfAllAnimCues(req->unknown001, req->unknown596);
+            PerformGetMyCopyOfAllAnimCues(req->unknown001, &req->unknown596);
             break;
         case eAblRequestType_GetMyCopyOfAllObjectActivations:
             PerformGetMyCopyOfAllObjectActivations(req->unknown001, req->unknown620);

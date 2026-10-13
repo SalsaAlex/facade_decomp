@@ -16,6 +16,8 @@
 #include "classes/Sprite/PhoneSprite.h"
 #include "classes/Sprite/AnsweringMachineSprite.h"
 
+#include "ABLRequestsPerform_impl.h"
+
 #define MAX_PANELS 200
 
 int g_startTime;
@@ -53,6 +55,7 @@ float g_autoMovePlayerRot; //yaw
 textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 
 AblRequestBuffer* g_ablrequestbuffer;
+int g_blastFlagSignalToAbl;
 
 EBaseScreenMessage g_baseScreenMessage;
 
@@ -72,6 +75,7 @@ int g_framePlayerLastMoved;
 int g_numFramesStillAtFoyerWallEdge;
 
 int g_ticksIntroStarted;
+int g_introEventCtr = -1;
 
 
 bool g_bLockedInMSToSleep;
@@ -108,6 +112,16 @@ Controller g_PlayerRotController;
 
 Controller g_autoTurnController;
 float g_autoTurnAmount;
+
+
+
+int g_introChoices[8];
+float g_introTimings[8 + 1];
+float g_introBaseTimings[8 * 6];
+float g_initialIntroDelay = 2.0;
+float g_startTitleFadeIn;
+
+
 
 #define MDLFACE_BEGIN \
 		{ \
@@ -1238,6 +1252,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	return 1;
 }
 
+
+void InitTransRotScale(CharacterSprite* spr, bool b1);
+
 static bool IsEditorActive() {
 	return g_scriptDialogHWnd || g_faceDialogHWnd;
 }
@@ -1382,35 +1399,115 @@ static int GetSecondsSinceFrame(int frame) {
 static void UpdateTitleSequence()
 {
 	static bool g_bTitleMusicStarted = false;
-	//if (g_introEventCtr == -1)
-	//	return;
-	//if (g_curTextCharInput && g_introEventCtr < 9)
-	//{
-	//	StopAllGlobalSounds();
-	//	g_introEventCtr = 9;
-	//	g_ticksIntroStarted = (int)((float)GetTickCount() - (g_startTitleFadeIn - 3.f) * 1000.f);
-	//	if (!g_bTitleMusicStarted)
-	//	{
-	//		PerformMusic(eMusicAction_start, eMusicName_title);
-	//		g_bTitleMusicStarted = true;
-	//	}
-	//}
-	//if (g_introEventCtr)
-	//{
-	//
-	//}
-	//else
-	//{
-	//	g_introEventCtr = 1;
-	//	g_bPlayerInputActive = 0;
-	//	StartFade(-1.0);
-	//	InitTransRotScale(nullptr, false);
-	//	g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39), -1);
-	//	XYZPointf playerrot = g_PlayerSprite->GetRotation();
-	//	playerrot.m_y = 24;
-	//	g_PlayerSprite->SetRotation(playerrot);
-	//	g_ticksIntroStarted = GetTickCount();
-	//}
+	if (g_introEventCtr == -1)
+		return;
+
+	if (g_curTextCharInput && g_introEventCtr < 9)
+	{
+		//StopAllGlobalSounds();
+		g_introEventCtr = 9;
+		g_ticksIntroStarted = (int)((float)GetTickCount() - (g_startTitleFadeIn - 3.f) * 1000.f);
+		if (!g_bTitleMusicStarted)
+		{
+			PerformMusic(eMusicAction_start, eMusicName_title);
+			g_bTitleMusicStarted = true;
+		}
+	}
+	if (g_introEventCtr)
+	{
+		float timeelapsed = GetSecsSinceTicks(g_ticksIntroStarted);
+		int tickspassed = GetTickCount() - g_ticksIntroStarted;
+		if (g_introEventCtr == 1 && timeelapsed >= g_initialIntroDelay)
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound(eGlobalSound_tr_intro_start);
+		}
+		else if (g_introEventCtr == 2 && timeelapsed >= g_initialIntroDelay)
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[1] + eGlobalSound_tr_intro_a1));
+		}
+		else if (g_introEventCtr == 3 && timeelapsed >= g_introTimings[2])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[2] + eGlobalSound_tr_intro_b1));
+		}
+		else if (g_introEventCtr == 4 && timeelapsed >= g_introTimings[3])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[3] + eGlobalSound_tr_intro_c1));
+			PerformMusic(eMusicAction_start, eMusicName_title);
+			g_bTitleMusicStarted = true;
+		}
+		else if (g_introEventCtr == 5 && timeelapsed >= g_introTimings[4])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[4] + eGlobalSound_tr_intro_e1));
+		}
+		else if (g_introEventCtr == 6 && timeelapsed >= g_introTimings[5])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[5] + 73));
+		}
+		else if (g_introEventCtr == 7 && timeelapsed >= g_introTimings[6])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			if (rand100(50))
+				PlayGlobalSound((EGlobalSounds)(g_introChoices[6] + 79));
+		}
+		else if (g_introEventCtr == 8 && timeelapsed >= g_introTimings[7])
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			PlayGlobalSound((EGlobalSounds)(g_introChoices[7] + 85));
+		}
+		else if (g_introEventCtr == 9 && timeelapsed > (g_startTitleFadeIn + 1.0))
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			StartFade(0.008);
+		}
+		else if (g_introEventCtr == 10 && timeelapsed > (g_startTitleFadeIn + 10.0))
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+			StartFade(-0.008);
+		}
+		else if (g_introEventCtr == 11 && timeelapsed > (g_startTitleFadeIn + 18.0))
+		{
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr, timeelapsed, tickspassed);
+			g_introEventCtr = -1;
+			g_blastFlagSignalToAbl = 5;
+			g_bTextCharWasPressed = 1;
+		}
+
+		if (g_introEventCtr > 9)
+		{
+			//undone
+
+			DrawArbitraryScreenText("Façade",	 1, -60, 200, 20, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("by",		23, -72,  50,  8, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("Michael",  -9, -80,  50, 10, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("Mateas",   -8, -88,  50, 10, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("and",		21, -83,  50,  8, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("Andrew",	35, -80,  50, 10, -10, eColor_white, eColor_black);
+			DrawArbitraryScreenText("Stern",	37, -88,  50, 10, -10, eColor_white, eColor_black);
+		}
+
+	}
+	else
+	{
+		g_introEventCtr = 1;
+		g_bPlayerInputActive = false;
+
+		StartFade(-1.0);
+		InitTransRotScale(nullptr, false);
+
+		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39), -1);
+
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y = 24;
+		g_PlayerSprite->SetRotation(playerrot);
+
+		g_ticksIntroStarted = GetTickCount();
+	}
 }
 
 static void UpdateCursor()
@@ -2349,17 +2446,17 @@ void LoadTextureFilmstrip(ETextureFilmstrip filmstrip)
 		sprite->SetCollidableType(eCollidableType_Complex); \
 	}
 
-//START_SPRITECREATE(Couch, 
-//	g_Couch_modelFrame, 
-//	g_Couch_modelInfo, 
-//	g_Couch_modelQuadPolys, 
-//	g_Couch_modelQuadLines)
-//
-//	sprite->AddSurface(14, 20, 23, 19, eSurfacePickupAngle_unknown002);
-//	sprite->AddSurface(4, 10, 25, 5, eSurfacePickupAngle_unknown002);
-//	sprite->AddSurface(8, 27, 12, 7, eSurfacePickupAngle_unknown002);
-//
-//END_SPRITECREATE()
+START_SPRITECREATE(Couch, 
+	g_Couch_modelFrame, 
+	g_Couch_modelInfo, 
+	g_Couch_modelQuadPolys, 
+	nullptr/*g_Couch_modelQuadLines*/)
+
+	sprite->AddSurface(14, 20, 23, 19, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(4, 10, 25, 5, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(8, 27, 12, 7, eSurfacePickupAngle_unknown002);
+
+END_SPRITECREATE()
 START_SPRITECREATE(Cabinet,
 	g_Cabinet_modelFrame,
 	g_Cabinet_modelInfo,
@@ -2432,7 +2529,7 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	XYZPointf pos,
 	bool collide, bool b3)
 {
-	static int s_panelID = 0;
+	static int s_panelID = 54;
 	if (g_numPanels >= MAX_PANELS)
 	{
 		ShouldntBeHere("need to allocate more memory for panels");
@@ -2495,7 +2592,7 @@ void PlayerEnteredText()
 void CreateRoom()
 {
 	Sprite* spr;
-	//CreateCouchSprite(eSpriteID_couch, "couch");
+	CreateCouchSprite(eSpriteID_couch, "couch");
 	CreateCabinetSprite(eSpriteID_cabinet, "cabinet");
 	CreateSideTableSprite(eSpriteID_sideTable, "side table");
 	CreateWorkTableSprite(eSpriteID_workTable, "work table");
