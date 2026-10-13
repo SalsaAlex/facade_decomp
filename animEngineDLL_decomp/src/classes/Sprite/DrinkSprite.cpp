@@ -2,6 +2,11 @@
 #include "classes/Sprite/Sprite.h"
 #include "classes/Sprite/DrinkSprite.h"
 
+static void ChangeScarecrowPanelSize(int i1, float f1, float f2)
+{
+
+}
+
 DrinkSprite::DrinkSprite()
 	: Sprite()
 {

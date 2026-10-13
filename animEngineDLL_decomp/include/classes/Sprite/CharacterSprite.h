@@ -1,7 +1,21 @@
 #ifndef CHARACTERSPRITE_H
 #define CHARACTERSPRITE_H
 
-#include "AnimatingSprite.h"
+class LayerController
+{
+public:
+	virtual ~LayerController() = default;
+
+	int unknown[754];
+};
+
+class GestureFxnMgr
+{
+public:
+	virtual ~GestureFxnMgr() = default;
+
+	int unknown[692];
+};
 
 class CharacterSprite : public AnimatingSprite					//proof: libnativeAnimInterface.jnilib:__const_coal:00206620
 {
@@ -52,12 +66,12 @@ public:
 	XYZPointf GetNorm0to360TorsoRotation();
 	XYZPointf GetHeadPlusTorsoRotation();
 
+	Sprite* GetGazeTracking();
+
 	void GetCurrentBrowRLowerEmphasis(int&, int&);
 	void GetCurrentBrowLRaiseEmphasis(int&, int&);
 	void GetCurrentBrowRRaiseEmphasis(int&, int&);
 	void GetCurrentBrowLLowerEmphasis(int&, int&);
-	const char* GetFullExpressionBaseName(EFullExpressionBase base);
-	const char* GetFullExpressionMoodName(EFullExpressionMood mood);
 	int GetVolumeInterpolation(int, int, int, int, int);
 
 	XYZPointf GetLocomotionTargetPoint();
@@ -74,6 +88,7 @@ public:
 	bool IsRightHandHoldingSomething();
 	bool IsDialogQueued();
 
+	bool AreWeInAnEditor(bool option);
 	bool AreWeDoingFullExpression();
 	bool AreWeDoingTenseFullExpression();
 	bool AreWeSpeaking();
@@ -134,9 +149,12 @@ public:
 	void PossiblyDoCorrespondingLittleActionsForDialog(int i1);
 
 
+	static const char* GetFullExpressionBaseName(EFullExpressionBase base);
+	static const char* GetFullExpressionMoodName(EFullExpressionMood mood);
 
-	int unknown001;
-	void* m_pHeadSprite;
+
+	Sprite* unknown001;
+	HeadSprite* m_pHeadSprite;
 	XYZPointf unknown004;
 	int unknown005;
 	int unknown006;
@@ -150,29 +168,75 @@ public:
 	int unknown014;
 	int unknown015;
 	int unknown016;
-	Controller unknown017;
-	Controller unknown018;
-	Controller unknown019;
-	Controller unknown020;
-	Controller unknown021;
-	Controller unknown022;
-	Controller unknown023;
-	Controller unknown024;
-	Controller unknown025;
-	Controller unknown026;
-	Controller unknown027;
-	Controller unknown028;
-	Controller unknown029;
-	Controller unknown030;
-	Controller unknown031;
-	Controller unknown032;
-	Controller unknown033;
-	Controller unknown034;
-	Controller unknown035;
-	Controller unknown036;
-	Controller unknown037;
-	Controller unknown038;
-	int unknown039[10424];
+	Controller m_Controller1;
+	Controller m_Controller2;
+	Controller m_Controller3;
+	Controller m_Controller4;
+	Controller m_Controller5;
+	Controller m_Controller6;
+	Controller m_Controller7;
+	Controller m_Controller8;
+	Controller m_Controller9;
+	Controller m_Controller10;
+	Controller m_Controller11;
+	Controller m_Controller12;
+	Controller m_Controller13;
+	Controller m_Controller14;
+	Controller m_Controller15;
+	Controller m_Controller16;
+	Controller m_Controller17;
+	Controller m_Controller18;
+	Controller m_Controller19;
+	Controller m_Controller20;
+	Controller m_Controller21;
+	Controller m_Controller22;
+	LayerController m_LayerController1;
+	LayerController m_LayerController2;
+	int unknown039[14];
+	int unknown040[14];
+	int unknown041[14];
+	int unknown042[12];
+	Controller m_Controller23;
+	float unknown043;
+	Controller m_Controller24;
+	float unknown044;
+	Controller m_Controller25;
+	float unknown045;
+	GestureFxnMgr m_GestureFxnMgr1;
+	GestureFxnMgr m_GestureFxnMgr2;
+	GestureFxnMgr m_GestureFxnMgr3;
+	GestureFxnMgr m_GestureFxnMgr4;
+	GestureFxnMgr m_GestureFxnMgr5;
+	GestureFxnMgr m_GestureFxnMgr6;
+	GestureFxnMgr m_GestureFxnMgr7;
+	GestureFxnMgr m_GestureFxnMgr8;
+	GestureFxnMgr m_GestureFxnMgr9;
+	GestureFxnMgr m_GestureFxnMgr10;
+	int unknown046;
+	bool unknown047;
+	int unknown048;
+	int unknown049;
+	int unknown050;
+	int unknown051[28];
+	int unknown052;
+	int unknown053;
+	int unknown054[3];
+	int unknown055;
+	int unknown056;
+	int unknown057;
+	int unknown058[3];
+	int unknown059;
+	float funknown001;
+	float funknown002;
+	int unknown061;
+	int unknown062;
+	int unknown063;
+	int unknown064;
+	int unknown065;
+	int unknown066;
+	float unknown067[1808];
+	ECinematographyFraming m_eCineFraming;
+	int unknown068[17];
 
 private:
 protected:

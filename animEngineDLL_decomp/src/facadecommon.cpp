@@ -55,6 +55,10 @@ bool g_bVeryNearCharacter;
 bool g_bWriteOutput;
 
 uint32_t g_numFramesRun = 0;
+uint32_t g_SkipFramesCounter = 0;
+uint32_t g_lastFrameGotAblRequest = 0;
+
+uint32_t g_whenNewPlayerTextEntered = 0;
 
 
 HWND g_hMainAppWindow;
@@ -197,6 +201,7 @@ void printf_step1(const char* format, ...)
 {
 	static char s_printbuffer[2048];
 	va_list va;
+	va_start(va, format);
 	vsnprintf(s_printbuffer, sizeof(s_printbuffer) - 1, format, va);
 	printf_step2(s_printbuffer);
 }
@@ -204,6 +209,7 @@ void dprintf(const char* format, ...)
 {
 	static char s_varbuffer[2048];
 	va_list va;
+	va_start(va, format);
 	vsnprintf(s_varbuffer, sizeof(s_varbuffer) - 1, format, va);
 	printf_step1("%s\n", s_varbuffer);
 }
@@ -224,7 +230,7 @@ void animengine_assert(bool cond)
 	{
 		dprintf("\n#####\nASSERTION FAILED, see callstack for details\n#####\n");
 		AddEventInfoToLog(eEventLogType_Miscellaneous, eSpriteID_NOTASPRITE, "Generic AnimEngine assertion failed", false, eSpriteID_NOTASPRITE, 0);
-		StopAllMP3s();
+		//StopAllMP3s();
 	}
 
 	g_bAssertionThrown = false;
@@ -288,11 +294,13 @@ float NormalizeNeg180to180(float ang)
 {
 	while (ang > 180)	ang -= 180;
 	while (ang < -180)	ang += 180;
+	return ang;
 }
 float Normalize0to360(float ang)
 {
 	while (ang > 360)	ang -= 360;
 	while (ang < - 360)	ang += 360;
+	return ang;
 }
 
 int rand2(int min, int max)
@@ -310,4 +318,9 @@ bool rand100(int val)
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 {
 	return sqrt( (p1.m_x-p2.m_x)*(p1.m_x-p2.m_x) + (p1.m_y-p2.m_y)*(p1.m_y-p2.m_y) );
+}
+
+void ClipFloatToRange(float& value, float min, float max)
+{
+	value = fminf(fmaxf(value, min), max);
 }

@@ -46,7 +46,9 @@ static void GetArticleForSpriteType(ESpriteID type, char* output)
 	}
 }
 
-void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator, const char* text, bool speechinterrupted, ESpriteID victim, uint32_t tick)
+void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator, 
+	const char* text, bool speechinterrupted, 
+	ESpriteID victim, uint32_t tick)
 {
 	static bool s_bPrintedErrorMessage = false;
 	if (g_eventLogCtr >= MAX_EVENTLOGS)
@@ -225,7 +227,7 @@ void OutputEventLog(bool stageplay)
 				{
 					case eSpriteID_grace: sprintf(datastream, "GRACE\n"); break;
 					case eSpriteID_trip: sprintf(datastream, "TRIP\n"); break;
-					case eSpriteID_player: sprintf(datastream, "%s\n", strupr((char*)playername)); break;
+					case eSpriteID_player: sprintf(datastream, "%s\n", _strupr((char*)playername)); break;
 					case eSpriteID_phone: sprintf(datastream, "PHONE\n"); break;
 					case eSpriteID_answeringMachine: sprintf(datastream, "ANSWERING MACHINE\n"); break;
 					default: break;

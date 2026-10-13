@@ -64,6 +64,9 @@ struct mdlframe_t
 class Sprite
 {
 public:
+
+	Sprite();
+
 	virtual void InitSprite(ESpriteID spriteid, const char* name, bool hasmodel, bool drawable, int nummodelpoints = -1);
 	virtual void UpdateSprite();
 	virtual bool GetIsAnimatingSprite()								{ return false; };
@@ -73,7 +76,7 @@ public:
 	virtual bool GetUpdateMe()										{ return m_bUpdateMe; };
 	virtual void SetUpdateMe(bool option)							{ m_bUpdateMe = option; };
 	virtual bool GetDrawMe()										{ return m_bDrawMe; };
-	virtual void SetDrawMe(bool option)								{ m_bDrawMe = option; };
+	virtual void SetDrawMe(bool option);
 	virtual XYZPointf GetPosition()									{ return m_Pos; };
 	virtual XYZPointf GetRotation()									{ return m_Rot; };
 	virtual float GetScale()										{ return m_fScale; };
@@ -99,9 +102,9 @@ public:
 	virtual bool GetClickedThisFrame()								{ return m_bClickedThisFrame; }
 	virtual void SetClickedThisFrame(bool option)					{ m_bClickedThisFrame = option; }
 	virtual ECollidableType GetCollidableType()						{ return m_eCollidableType; }
-	virtual void SetCollidableType(ECollidableType collidetype);	{ m_eCollidableType = collidetype; }
+	virtual void SetCollidableType(ECollidableType collidetype)		{ m_eCollidableType = collidetype; }
 	virtual bool GetAmIHoldingSprite();
-	virtual void* GetHeldSpritesList();
+	virtual Sprite** GetHeldSpritesList();
 	virtual int GetNumHeldSprites();
 	virtual Sprite* GetFirstSpriteAttachedToModelPoint(int);
 	//virtual GetSpriteListAttachedToModelPoint(int, Sprite**, int*);
@@ -20457,14 +20460,7 @@ public:
 	int b1_unknown20320;
 	int b1_unknown20321;
 	int b1_unknown20322;
-	bool b1_unknown20323;
-	int b1_unknown20324;
-	int b1_unknown20325;
-	int b1_unknown20326;
-	int b1_unknown20327;
-	int b1_unknown20328;
-	int b1_unknown20329;
-	int b1_unknown20330;
+	char b1_unknown20323[32];
 	int b1_unknown20331;
 	int b1_unknown20332;
 	int b1_unknown20333;
@@ -20521,14 +20517,7 @@ public:
 	int b1_unknown20384;
 	int b1_unknown20385;
 	int b1_unknown20386;
-	bool b1_unknown20387;
-	int b1_unknown20388;
-	int b1_unknown20389;
-	int b1_unknown20390;
-	int b1_unknown20391;
-	int b1_unknown20392;
-	int b1_unknown20393;
-	int b1_unknown20394;
+	char m_playerTextInput[32];
 	int b1_unknown20395;
 	int b1_unknown20396;
 	int b1_unknown20397;

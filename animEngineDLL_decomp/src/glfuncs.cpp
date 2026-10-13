@@ -1,6 +1,8 @@
 #include "facadecommon.h"
 #include "gl/GLU.h"
 
+#include "glfuncs.h"
+
 
 int g_windowWidth;
 int g_windowHeight;
@@ -37,6 +39,27 @@ GLuint g_BitmapFontBase;
 												 (g_CursorSprite->GetPosition().m_x > xmin) && \
 												 (g_CursorSprite->GetPosition().m_y < ymax) && \
 												 (g_CursorSprite->GetPosition().m_y > ymin) )
+
+
+
+static float glPrintPolygonalFont(const char* text)
+{
+	char buffer[256];
+	float spacetaken = 0.0;
+
+	if (!text)
+		return 0.0;
+
+	strcpy(buffer, text);
+	for (int i = 0; i < strlen(buffer); i++)
+		spacetaken += g_FontGlyphs[buffer[i]].gmfCellIncX;
+
+	glPushAttrib(GL_LIST_BIT);
+	glListBase(g_BitmapFontBase);
+	glCallLists(strlen(buffer), GL_UNSIGNED_BYTE, buffer);
+	glPopAttrib();
+	return spacetaken;
+}
 
 
 void DrawArbitraryScreenText(const char* Str,
@@ -116,13 +139,17 @@ static void* LoadDIBitmap(const char* filename, BITMAPINFOHEADER** imginfo)
 		goto fail_closefile;
 	}
 	dataoffset = bmpheader.bfOffBits - sizeof(BITMAPFILEHEADER);
-	if (fread(imginfo, 1, dataoffset, hfile) < dataoffset)
+	if (fread(*imginfo, 1, dataoffset, hfile) < dataoffset)
 		goto fail_deallocate_block;
 
 
 	bytestoread = (*imginfo)->biSizeImage;
 	if (!(*imginfo)->biSizeImage)
-		bytestoread = abs((*imginfo)->biHeight) * ((*imginfo)->biBitCount * (*imginfo)->biWidth + 7) / 8;
+	{
+		int pitch[2];
+		*(int64_t*)&pitch = (*imginfo)->biBitCount * (*imginfo)->biWidth + 7;//wtf
+		bytestoread = abs((*imginfo)->biHeight) * ( ( (pitch[1] & 7) + pitch[0]) >> 3);
+	}
 
 	if ((imagedata = malloc(bytestoread)) == nullptr)
 		goto fail_deallocate_block;
@@ -140,30 +167,11 @@ static void* LoadDIBitmap(const char* filename, BITMAPINFOHEADER** imginfo)
 fail_deallocate_imagedata:
 	free(imagedata);
 fail_deallocate_block:
-	free(imginfo);
+	free(*imginfo);
 fail_closefile:
 	fclose(hfile);
 
 	return nullptr;
-}
-
-static float glPrintPolygonalFont(const char* text)
-{
-	char buffer[256];
-	float spacetaken = 0.0;
-
-	if (!text)
-		return 0.0;
-
-	strcpy(buffer, text);
-	for (int i = 0; i < strlen(buffer); i++)
-		spacetaken += g_FontGlyphs[buffer[i]].gmfCellIncX;
-
-	glPushAttrib(GL_LIST_BIT);
-	glListBase(g_BitmapFontBase);
-	glCallLists(strlen(buffer), GL_UNSIGNED_BYTE, buffer);
-	glPopAttrib();
-	return spacetaken;
 }
 
 void BuildBitmapFont()
@@ -727,6 +735,9 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	}
 
 	//undone
+
+
+	return true;
 }
 
 void DrawSprite(Sprite* spr, bool option)
@@ -764,13 +775,13 @@ void DrawSprite(Sprite* spr, bool option)
 		{
 
 		}
-		Sprite* sprlist[5];
-		int* unknown[5];
-		int numsprites = spr->GetSpriteListAttachedToModelPoint(option, sprlist, unknown);
-		for (int j = 0; j < numsprites; j++)
-		{
-
-		}
+		//Sprite* sprlist[5];
+		//int* unknown[5];
+		//int numsprites = spr->GetSpriteListAttachedToModelPoint(option, sprlist, unknown);
+		//for (int j = 0; j < numsprites; j++)
+		//{
+		//
+		//}
 
 		//undone
 
@@ -872,7 +883,7 @@ void DrawSprite(Sprite* spr, bool option)
 		//SaveLimbInfoFromModelPoint((int)sprite, a2, ye, zh);
 	}
 
-	DrawArms(spr);
+	//DrawArms(spr);
 
 	//undone
 }
@@ -919,4 +930,21 @@ void UpdateFade()
 		glEnd();
 		glLoadIdentity();
 	}
+}
+
+void DrawPlayerScreenText()
+{
+	if (g_bAtEndOfDrama)
+		return;
+
+	//undone
+}
+void DrawNPCsScreenText()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		//undone
+	}
+
+	glLoadIdentity();
 }

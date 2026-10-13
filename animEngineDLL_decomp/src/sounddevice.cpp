@@ -211,4 +211,5 @@ bool DSound_Shutdown()
 			g_SoundBuffers[i].dsoundbuffer->Release();
 	}
 	g_ppDS->Release();
+	return true;
 }

@@ -1,7 +1,7 @@
 #include "windows.h"
 #include "stdio.h"
 
-typedef WPARAM(*t_AnimEngineWinMain)(HINSTANCE hInstance);
+typedef int(__cdecl*t_AnimEngineWinMain)(HINSTANCE, HINSTANCE, LPSTR, int);
 
 int WINAPI WinMain(
     HINSTANCE hInstance,
@@ -11,5 +11,5 @@ int WINAPI WinMain(
 {
 	HMODULE moduledll = LoadLibrary("animEngineDLL.dll");
 	t_AnimEngineWinMain winmain = (t_AnimEngineWinMain)GetProcAddress(moduledll, "?AnimEngineWinMain@@YAHPAUHINSTANCE__@@0PADH@Z");
-    winmain(hInstance);
+    winmain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 }

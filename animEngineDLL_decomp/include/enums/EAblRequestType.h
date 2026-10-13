@@ -37,7 +37,7 @@ enum EAblRequestType
 	eAblRequestType_ResetMyCopyOfAllObjectActivations,
 	eAblRequestType_SetAnimEngineInfo,
 	eAblRequestType_SetPerformanceInfo,
-	eAblRequestType_AddEventInfoToLog ,
+	eAblRequestType_AddEventInfoToLog,
 	eAblRequestType_GetObjectPosition,
 	eAblRequestType_GetObjectRotation,
 	eAblRequestType_GetObjectPickupPosition,

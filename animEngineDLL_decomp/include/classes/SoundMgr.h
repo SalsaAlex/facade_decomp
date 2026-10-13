@@ -2,7 +2,6 @@
 #define SOUNDMGR_H
 
 #undef PlaySound
-#include "enums/EGlobalSounds.h"
 
 class SoundSource;
 
@@ -13,6 +12,8 @@ struct soundmgr_soundentry_t
 	int soundindex;
 	int sound_timestart;
 };
+
+#define SOUNDMGR_MAXSOUNDS 256
 
 
 class SoundMgr
@@ -27,12 +28,13 @@ public:
 	void SetSoundVolume(int sourceid, int volume, int);
 
 	void StopAllSounds(int sourceid);
+	void StopSound(int sourceid, int unknown);
 private:
 
 	void PlaySoundPart2(int);
 
 	SoundSource* sndsources[10];
-	soundmgr_soundentry_t sounds[256];
+	soundmgr_soundentry_t sounds[SOUNDMGR_MAXSOUNDS];
 	int unknown02[3];
 	bool unknown03;
 	bool unknown04;

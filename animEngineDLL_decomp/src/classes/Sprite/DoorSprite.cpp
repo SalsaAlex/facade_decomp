@@ -3,7 +3,7 @@
 #include "classes/Sprite/DoorSprite.h"
 
 DoorSprite::DoorSprite()
-	: DoorSprite()
+	: Sprite()
 {
 	m_eObjectType = eObjectType_Door;
 }
@@ -28,7 +28,7 @@ void DoorSprite::OpenDoor(Sprite* actor, float speed)
 {
 	b1_unknown20299.SetTargetByRate(-65, speed, eControllerType_unknown02, -666);
 	PlayGlobalSound((EGlobalSounds)((int)eGlobalSound_opendoor1 + rand2(0, 1)));
-	UpdateFrontDoorCollisionZone(true);
+	//UpdateFrontDoorCollisionZone(true);
 	unknown002 = true;
 	AddEventInfoToLog(eEventLogType_EnterInteraction,
 		g_spriteMgr.GetSpriteIDBySpritePtr(actor),

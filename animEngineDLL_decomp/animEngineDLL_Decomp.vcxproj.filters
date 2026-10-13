@@ -54,9 +54,6 @@
     <ClInclude Include="include\enums\ETextureFilmstrip.h">
       <Filter>Header Files\enums</Filter>
     </ClInclude>
-    <ClInclude Include="src\eventLogging.cpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\enums\EPlayerGestureID.h">
       <Filter>Header Files\enums</Filter>
     </ClInclude>
@@ -206,27 +203,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\facadecommon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AnimAPI_interface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\keyboarddevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sounddevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\glfuncs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\entrypoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\classes\AblRequestBuffer.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
@@ -235,9 +211,6 @@
     </ClCompile>
     <ClCompile Include="src\classes\XCursor.cpp">
       <Filter>Source Files\classes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ABLRequestsPerform_impl.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\SpriteMgr.cpp">
       <Filter>Source Files\classes</Filter>
@@ -261,6 +234,48 @@
       <Filter>Source Files\classes\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="src\SoundSource.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\AnimatingSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Controller.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ABLRequestsPerform_impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimAPI_interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entrypoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\eventLogging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\facadecommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glfuncs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\keyboarddevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sounddevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\SoundMgr.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Sprite\CharacterSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Stack.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
   </ItemGroup>

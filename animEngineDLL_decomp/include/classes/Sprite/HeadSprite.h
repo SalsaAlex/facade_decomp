@@ -1,14 +1,22 @@
 #ifndef HEADSPRITE_H
 #define HEADSPRITE_H
 
-#include "Sprite.h"
-
 class HeadSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:00206780
 {
 public:
 
-private:
+	int unknown001;
+	float unknown002;
+	float unknown003;
+	float unknown004;
+	float unknown005;
+	float unknown006;
+	float unknown007;
+	int unknown008;
+	float unknown009;
+	float unknown[5374];
 
+private:
 protected:
 
 };

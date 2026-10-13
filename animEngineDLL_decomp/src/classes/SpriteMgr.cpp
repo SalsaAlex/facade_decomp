@@ -31,7 +31,7 @@ void SpriteMgr::AddSprite(Sprite* spr)
 			return;
 		}
 	}
-	m_pSpriteList[i] = spr;
+	m_pSpriteList[m_iNumSprites++] = spr;
 }
 
 Sprite* SpriteMgr::GetSpritePtr(int listindex)

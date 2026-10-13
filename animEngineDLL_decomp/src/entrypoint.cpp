@@ -8,7 +8,7 @@
 extern LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 extern void InitGlobals();
 
-WPARAM AnimEngineWinMain(HINSTANCE p1, HINSTANCE p2, char* p3, int p4)
+int __declspec(dllexport) AnimEngineWinMain(HINSTANCE p1, HINSTANCE p2, char* p3, int p4)
 {
 	static bool g_bUnusedFlag;
 	char stageplaypath[100];

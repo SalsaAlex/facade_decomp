@@ -50,13 +50,6 @@
 #include "../../animEngineStarter_decomp/resource.h"
 
 
-#include "classes/Sprite/Sprite.h"
-#include "classes/Sprite/AnimatingSprite.h"
-#include "classes/Sprite/CharacterSprite.h"
-#include "classes/Sprite/HeadSprite.h"
-#include "classes/SpriteMgr.h"
-
-
 #define WM_EDITGRACESCRIPT WM_USER
 #define WM_EDITGRACEFACE WM_USER + 1
 #define WM_EDITTRIPSCRIPT WM_USER + 2
@@ -84,6 +77,15 @@ public:
 
 	bool operator!=(const XYZPoint_template<T>& point) { return m_x != point.m_x && m_y != point.m_y && m_z != point.m_z; }
 	bool operator==(const XYZPoint_template<T>& point) { return m_x == point.m_x && m_y == point.m_y && m_z == point.m_z; }
+
+	void operator+=(const XYZPoint_template<T>& point) { m_x += point.m_x; m_y += point.m_y; m_z += point.m_z; }
+	XYZPoint_template operator+(const XYZPoint_template<T>& point) { 
+		XYZPoint_template<T> temp;
+		temp.m_x = m_x + point.m_x;
+		temp.m_y = m_y + point.m_y;
+		temp.m_z = m_z + point.m_z;
+		return temp;
+	}
 
 	T m_x;
 	T m_y;
@@ -167,10 +169,18 @@ struct textureentry_t
 };
 extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 
+#include "classes/Sprite/Sprite.h"
+#include "classes/Sprite/HeadSprite.h"
+#include "classes/Sprite/AnimatingSprite.h"
+#include "classes/Sprite/CharacterSprite.h"
+#include "classes/SpriteMgr.h"
+#include "classes/SoundMgr.h"
+
 extern Sprite* g_PlayerSprite;
 extern Sprite* g_CursorSprite;
 
 extern SpriteMgr g_spriteMgr;
+extern SoundMgr g_soundMgr;
 
 extern EBaseScreenMessage g_baseScreenMessage;
 
@@ -191,6 +201,8 @@ extern HANDLE g_ablRequestBufferMutexHandle;
 
 extern uint32_t g_numFramesRun;
 extern uint32_t g_SkipFramesCounter;
+extern uint32_t g_whenNewPlayerTextEntered;
+extern uint32_t g_lastFrameGotAblRequest;
 
 extern char g_launchErrorString[52];
 extern char g_curTextInput[32];
@@ -270,6 +282,7 @@ void animengine_assert(bool cond);
 void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator,
 	const char* text, bool speechinterrupted,
 	ESpriteID victim, uint32_t tick);
+
 void OutputEventLog(bool stageplay);
 void ShouldntBeHere(const char* asserttext);
 
@@ -289,6 +302,12 @@ bool rand100(int val);
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 
 bool PlayGlobalSound(EGlobalSounds sound);
+
+void StopAllMP3s();
+
+bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option);
+
+void ClipFloatToRange(float& value, float min, float max);
 
 
 #endif // FACADECOMMON_H

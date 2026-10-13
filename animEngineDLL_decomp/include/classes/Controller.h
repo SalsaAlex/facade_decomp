@@ -10,7 +10,7 @@ public:
 
 	void SetTargetByFrames(float target, int numframes, EControllerType controltype);
 	void SetTargetByRate(float target, float rate, EControllerType controltype, float f1);
-	void GetRateByFrames(float f1, int numframes);
+	float GetRateByFrames(float f1, int numframes);
 
 
 	void SetVal(float value, bool keepMoving);
@@ -19,9 +19,9 @@ public:
 	bool GetIsMoving();
 	void StopMoving();
 
-	void UpdateTarget();
+	void UpdateTarget(float target);
 	void UpdateController();
-	void Offset();
+	void Offset(float offs);
 
 
 

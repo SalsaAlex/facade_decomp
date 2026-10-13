@@ -1,8 +1,6 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
-#include "Sprite.h"
-
 class SpriteMgr
 {
 public:
@@ -19,7 +17,7 @@ public:
 
 private:
 	Sprite* m_pSpriteList[150];
-	int m_iNumSprites;
+	int m_iNumSprites = 0;
 protected:
 
 };

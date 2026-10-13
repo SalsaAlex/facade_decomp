@@ -3,7 +3,7 @@
 
 #include <string>
 
-#define GET_ABLREQUEST(req, reqtype)								\
+#define GET_ABLREQUEST(reqtype)										\
 	AblRequest* ##req;												\
 																	\
 	GetAccessToRequestBuffer(__func__);								\
@@ -18,7 +18,7 @@
 	req->active = 1;												\
 	req->requesttime = GetTickCount()
 
-#define GET_ABLREQUEST_RET(req, reqtype)							\
+#define GET_ABLREQUEST_RET(reqtype)									\
 	AblRequest* ##req;												\
 																	\
 	GetAccessToRequestBuffer(__func__);								\
@@ -88,13 +88,100 @@ static bool AblBufferWaitSemaphore(HANDLE hevent, const char* name)
 	return false;
 }
 
+struct perfinfo_animapi_input
+{
+	int a2;
+	int a3;
+	int a4;
+	int a5;
+	int a6;
+	int a7;
+	int a8;
+	int a9;
+	int a10;
+	int a11;
+	int a12;
+	int a13;
+	int a14;
+	int a15;
+	int a16;
+	int a17;
+	int a18;
+	int a19;
+	int a20;
+	int a21;
+	int a22;
+	int a23;
+	int a24;
+	int a25;
+	int a26;
+	int a27;
+	int a28;
+	int a29;
+	int a30;
+	int a31;
+	int a32;
+	int a33;
+	int a34;
+	int a35;
+	int a36;
+	int a37;
+	int a38;
+	int a39;
+	int a40;
+	int a41;
+	int a42;
+	int a43;
+	int a44;
+	int a45;
+	int a46;
+	int a47;
+	int a48;
+	int a49;
+	int a50;
+	int a51;
+	int a52;
+	int a53;
+	int a54;
+	int a55;
+	int a56;
+	int a57;
+	int a58;
+	int a59;
+	int a60;
+	int a61;
+	int a62;
+	int a63;
+	int a64;
+	int a65;
+	int a66;
+	int a67;
+	int a68;
+	int a69;
+	int a70;
+	int a71;
+	int a72;
+	int a73;
+	int a74;
+	int a75;
+	int a76;
+	int a77;
+	int a78;
+	int a79;
+	int a80;
+	int a81;
+	int a82;
+	int a83;
+	int a84;
+	int a85;
+};
+
 
 extern "C" {
 
-void AnimAPI_AbortAnimationScripts()
+void AnimAPI_AbortAnimationScripts(ESpriteID charid, EAnimLayer layer)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_AbortAnimationScripts);
+	GET_ABLREQUEST(eAblRequestType_AbortAnimationScripts);
 
 	//undone
 
@@ -104,10 +191,9 @@ void AnimAPI_AbortTurnInPlace()
 {
 	ShouldntBeHere("AnimAPI_AbortTurnInPlace is an obsolete function, use PerformAbortWalkStep");
 }
-void AnimAPI_AbortWalkStep()
+void AnimAPI_AbortWalkStep(ESpriteID charid)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_AbortWalkStep);
+	GET_ABLREQUEST(eAblRequestType_AbortWalkStep);
 
 	//undone
 
@@ -115,53 +201,50 @@ void AnimAPI_AbortWalkStep()
 }
 void AnimAPI_AddEventInfoToLog()
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_AddEventInfoToLog);
+	GET_ABLREQUEST(eAblRequestType_AddEventInfoToLog);
 
 	//undone
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_DoFullExpressionBaseAnimation()
+void AnimAPI_DoFullExpressionBaseAnimation(ESpriteID charid, EFullExpressionBase base, int i1, int i2)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_DoFullExpressionBaseAnimation);
+	GET_ABLREQUEST(eAblRequestType_DoFullExpressionBaseAnimation);
 
 	//undone
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_DoFullExpressionMoodAnimation()
+void AnimAPI_DoFullExpressionMoodAnimation(ESpriteID charid, EFullExpressionMood mood, int i1, int i2)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_DoFullExpressionMoodAnimation);
+	GET_ABLREQUEST(eAblRequestType_DoFullExpressionMoodAnimation);
 
 	//undone
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_DoGestureAnimation()
+void AnimAPI_DoGestureAnimation(ESpriteID charid, EGestureBodyPart bodypart, 
+	int i1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_DoGestureAnimation);
+	GET_ABLREQUEST(eAblRequestType_DoGestureAnimation);
 
 	//undone
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_DoPickupObjGestureAnimation()
+void AnimAPI_DoPickupObjGestureAnimation(ESpriteID charid, EGestureBodyPart bodypart, 
+	int i1, int i2, int i3)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_DoPickupObjGestureAnimation);
+	GET_ABLREQUEST(eAblRequestType_DoPickupObjGestureAnimation);
 
 	//undone
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_DoPutdownObjGestureAnimation()
+void AnimAPI_DoPutdownObjGestureAnimation(ESpriteID charid, EGestureBodyPart bodypart, 
+	int i1, int i2, int i3, int i4, int i5, int i6, int i7)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_DoPutdownObjGestureAnimation);
+	GET_ABLREQUEST(eAblRequestType_DoPutdownObjGestureAnimation);
 
 	//undone
 
@@ -169,8 +252,7 @@ void AnimAPI_DoPutdownObjGestureAnimation()
 }
 void AnimAPI_MiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, float param1, float param2)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_MiscLittleAction);
+	GET_ABLREQUEST(eAblRequestType_MiscLittleAction);
 
 	req->unknown001 = spriteid;
 	req->unknown002 = action;
@@ -181,8 +263,7 @@ void AnimAPI_MiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, floa
 }
 void AnimAPI_Music(int musicaction, int musicid)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_Music);
+	GET_ABLREQUEST(eAblRequestType_Music);
 
 	req->unknown002 = musicaction;
 	req->unknown018 = musicid;
@@ -191,21 +272,19 @@ void AnimAPI_Music(int musicaction, int musicid)
 }
 void AnimAPI_PlaySoundEffect(int sfx)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_PlaySoundEffect);
+	GET_ABLREQUEST(eAblRequestType_PlaySoundEffect);
 
 	req->unknown002 = sfx;
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_PushAnimationUScript(ESpriteID actor, int param1, int param2, int param3)
+void AnimAPI_PushAnimationUScript(ESpriteID actor, int param1, int param2)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_PushAnimationUScript);
+	GET_ABLREQUEST(eAblRequestType_PushAnimationUScript);
 
 	req->unknown001 = actor;
-	req->unknown002 = param2;
-	req->unknown006 = param3;
+	req->unknown002 = param1;
+	req->unknown006 = (EAnimLayer)param2;
 
 	g_ablrequestbuffer->SaveRequestInTrace(req);
 	AblBufferPostSemaphore();
@@ -214,8 +293,7 @@ void AnimAPI_PushMultipleAnimationScripts(ESpriteID actor,
 	int script1Index, int script2Index, int script3Index, int script4Index,
 	EAnimLayer layer)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_PushMultipleAnimationScripts);
+	GET_ABLREQUEST(eAblRequestType_PushMultipleAnimationScripts);
 
 	req->unknown001 = actor;
 	req->unknown002 = script1Index;
@@ -228,19 +306,17 @@ void AnimAPI_PushMultipleAnimationScripts(ESpriteID actor,
 }
 void AnimAPI_PushPoseScript(ESpriteID actor, int param1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_PushPoseScript);
+	GET_ABLREQUEST(eAblRequestType_PushPoseScript);
 
 	req->unknown001 = actor;
-	req->unknown006 = 0;
+	req->unknown006 = eAnimLayer_base;
 	req->unknown002 = param1;
 
 	AblBufferPostSemaphore();
 }
 void AnimAPI_ReactiveWalkStep(ESpriteID actor, ESpriteID spriteid, bool stop)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_ReactiveWalkStep);
+	GET_ABLREQUEST(eAblRequestType_ReactiveWalkStep);
 
 	req->unknown001 = actor;
 	req->unknown000 = spriteid;
@@ -248,19 +324,29 @@ void AnimAPI_ReactiveWalkStep(ESpriteID actor, ESpriteID spriteid, bool stop)
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_ResetMyCopyOfAllAnimCues()
+void AnimAPI_ResetMyCopyOfAllAnimCues(ESpriteID actor)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_ResetMyCopyOfAllAnimCues);
+	GET_ABLREQUEST(eAblRequestType_ResetMyCopyOfAllAnimCues);
 
 
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_ResetMyCopyOfAllObjectActivations()
+void AnimAPI_ResetMyCopyOfAllObjectActivations(ESpriteID actor)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_ResetMyCopyOfAllObjectActivations);
+	AblRequest* req;												
+		
+	GetAccessToRequestBuffer(__func__);								
+	
+	int reqindex = g_ablrequestbuffer->GetFreeRequestPtr(req);	
+	if (!req)														
+	{																
+		animengine_assert(0);										
+		return;														
+	}																
+	req->type = eAblRequestType_ResetMyCopyOfAllObjectActivations;
+	req->active = 1;												
+	req->requesttime = GetTickCount();
 
 
 
@@ -268,8 +354,7 @@ void AnimAPI_ResetMyCopyOfAllObjectActivations()
 }
 void AnimAPI_SetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetAnimEngineInfo);
+	GET_ABLREQUEST(eAblRequestType_SetAnimEngineInfo);
 
 	req->unknown018 = type;
 	req->unknown019 = info;
@@ -278,8 +363,7 @@ void AnimAPI_SetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 }
 void AnimAPI_SetBrowShapeL(ESpriteID actor, int shape)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetBrowShapeL);
+	GET_ABLREQUEST(eAblRequestType_SetBrowShapeL);
 
 	req->unknown001 = actor;
 	req->unknown007 = shape;
@@ -288,8 +372,7 @@ void AnimAPI_SetBrowShapeL(ESpriteID actor, int shape)
 }
 void AnimAPI_SetBrowShapeR(ESpriteID actor, int shape)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetBrowShapeR);
+	GET_ABLREQUEST(eAblRequestType_SetBrowShapeR);
 
 	req->unknown001 = actor;
 	req->unknown007 = shape;
@@ -298,8 +381,7 @@ void AnimAPI_SetBrowShapeR(ESpriteID actor, int shape)
 }
 void AnimAPI_SetEyelidHeightL(ESpriteID actor, float height, float unused)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetEyelidHeightL);
+	GET_ABLREQUEST(eAblRequestType_SetEyelidHeightL);
 
 	req->unknown001 = actor;
 	req->unknown010 = height;
@@ -309,8 +391,7 @@ void AnimAPI_SetEyelidHeightL(ESpriteID actor, float height, float unused)
 }
 void AnimAPI_SetEyelidHeightR(ESpriteID actor, float height, float unused)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetEyelidHeightR);
+	GET_ABLREQUEST(eAblRequestType_SetEyelidHeightR);
 
 	req->unknown001 = actor;
 	req->unknown010 = height;
@@ -320,8 +401,7 @@ void AnimAPI_SetEyelidHeightR(ESpriteID actor, float height, float unused)
 }
 void AnimAPI_SetEyesMove(ESpriteID actor, float x, float y)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetEyesMove);
+	GET_ABLREQUEST(eAblRequestType_SetEyesMove);
 
 	req->unknown001 = actor;
 	req->unknown009 = x;
@@ -331,18 +411,17 @@ void AnimAPI_SetEyesMove(ESpriteID actor, float x, float y)
 }
 void AnimAPI_SetEyesShape(ESpriteID actor, int shape)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetEyesShape);
+	GET_ABLREQUEST(eAblRequestType_SetEyesShape);
 
 	req->unknown001 = actor;
 	req->unknown007 = shape;
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_SetGazeTracking()
+void AnimAPI_SetGazeTracking(ESpriteID actor, ESpriteID obj, 
+	int a3, int a4, int a5, int a6, int a7, int a8)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetGazeTracking);
+	GET_ABLREQUEST(eAblRequestType_SetGazeTracking);
 
 	//undone
 
@@ -350,8 +429,7 @@ void AnimAPI_SetGazeTracking()
 }
 void AnimAPI_SetMouthShape(ESpriteID actor, int shape)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetMouthShape);
+	GET_ABLREQUEST(eAblRequestType_SetMouthShape);
 
 	req->unknown001 = actor;
 	req->unknown007 = shape;
@@ -360,8 +438,7 @@ void AnimAPI_SetMouthShape(ESpriteID actor, int shape)
 }
 void AnimAPI_SetObjectPosition(ESpriteID object, float x, float y, float z)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetObjectPosition);
+	GET_ABLREQUEST(eAblRequestType_SetObjectPosition);
 
 	req->unknown000 = object;
 	req->unknown009 = x;
@@ -372,8 +449,7 @@ void AnimAPI_SetObjectPosition(ESpriteID object, float x, float y, float z)
 }
 void AnimAPI_SetObjectRotation(ESpriteID object, float x, float y, float z)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetObjectRotation);
+	GET_ABLREQUEST(eAblRequestType_SetObjectRotation);
 
 	req->unknown000 = object;
 	req->unknown009 = x;
@@ -384,8 +460,7 @@ void AnimAPI_SetObjectRotation(ESpriteID object, float x, float y, float z)
 }
 void AnimAPI_SetObjectToHold(ESpriteID actor, int a2, ESpriteID object)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetObjectToHold);
+	GET_ABLREQUEST(eAblRequestType_SetObjectToHold);
 
 	req->unknown001 = actor;
 	req->unknown008 = a2;
@@ -393,10 +468,9 @@ void AnimAPI_SetObjectToHold(ESpriteID actor, int a2, ESpriteID object)
 
 	AblBufferPostSemaphore();
 }
-void AnimAPI_SetPerformanceInfo()
+void AnimAPI_SetPerformanceInfo(ESpriteID actor, perfinfo_animapi_input input)
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_SetPerformanceInfo);
+	GET_ABLREQUEST(eAblRequestType_SetPerformanceInfo);
 
 	//undone
 
@@ -410,8 +484,7 @@ void AnimAPI_WalkStep(
 	ESpriteID actor, EWalkType type, float x, float y, float z, float f1, //in
 	float* xout, float* yout, float* zout)//out
 {
-	AblRequest* req;
-	GET_ABLREQUEST(req, eAblRequestType_WalkStep);
+	GET_ABLREQUEST(eAblRequestType_WalkStep);
 
 	req->unknown001 = actor;
 	req->unknown002 = type;
@@ -441,10 +514,9 @@ void AnimAPI_WalkStep(
 }
 
 
-int AnimAPI_GetAllHeldObjects()
+int AnimAPI_GetAllHeldObjects(void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllHeldObjects);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllHeldObjects);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -453,10 +525,9 @@ int AnimAPI_GetAllHeldObjects()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectPickupPositions()
+int AnimAPI_GetAllObjectPickupPositions(ESpriteID actor, void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectPickupPositions);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPickupPositions);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -465,10 +536,9 @@ int AnimAPI_GetAllObjectPickupPositions()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectPickupRotations()
+int AnimAPI_GetAllObjectPickupRotations(ESpriteID actor, void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectPickupRotations);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPickupRotations);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -477,10 +547,9 @@ int AnimAPI_GetAllObjectPickupRotations()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectPositions()
+int AnimAPI_GetAllObjectPositions(void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectPositions);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPositions);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -489,10 +558,9 @@ int AnimAPI_GetAllObjectPositions()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectRotations()
+int AnimAPI_GetAllObjectRotations(void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectRotations);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectRotations);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -501,10 +569,9 @@ int AnimAPI_GetAllObjectRotations()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectStagingRotations()
+int AnimAPI_GetAllObjectStagingRotations(void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectStagingRotations);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectStagingRotations);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -513,10 +580,9 @@ int AnimAPI_GetAllObjectStagingRotations()
 
 	return 0;
 }
-int AnimAPI_GetAllObjectStates()
+int AnimAPI_GetAllObjectStates(void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetAllObjectStates);
+	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectStates);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -525,10 +591,9 @@ int AnimAPI_GetAllObjectStates()
 
 	return 0;
 }
-int AnimAPI_GetArmGestureBases()
+int AnimAPI_GetArmGestureBases(ESpriteID actor, int* a1, int* a2, int* a3)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetArmGestureBases);
+	GET_ABLREQUEST_RET(eAblRequestType_GetArmGestureBases);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -537,10 +602,9 @@ int AnimAPI_GetArmGestureBases()
 
 	return 0;
 }
-int AnimAPI_GetBrowShapeL()
+int AnimAPI_GetBrowShapeL(ESpriteID actor, int* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetBrowShapeL);
+	GET_ABLREQUEST_RET(eAblRequestType_GetBrowShapeL);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -549,10 +613,9 @@ int AnimAPI_GetBrowShapeL()
 
 	return 0;
 }
-int AnimAPI_GetBrowShapeR()
+int AnimAPI_GetBrowShapeR(ESpriteID actor, int* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetBrowShapeR);
+	GET_ABLREQUEST_RET(eAblRequestType_GetBrowShapeR);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -561,10 +624,9 @@ int AnimAPI_GetBrowShapeR()
 
 	return 0;
 }
-int AnimAPI_GetEyelidHeightL()
+int AnimAPI_GetEyelidHeightL(ESpriteID actor, float* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetEyelidHeightL);
+	GET_ABLREQUEST_RET(eAblRequestType_GetEyelidHeightL);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -573,10 +635,9 @@ int AnimAPI_GetEyelidHeightL()
 
 	return 0;
 }
-int AnimAPI_GetEyelidHeightR()
+int AnimAPI_GetEyelidHeightR(ESpriteID actor, float* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetEyelidHeightR);
+	GET_ABLREQUEST_RET(eAblRequestType_GetEyelidHeightR);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -585,10 +646,9 @@ int AnimAPI_GetEyelidHeightR()
 
 	return 0;
 }
-int AnimAPI_GetEyesMove()
+int AnimAPI_GetEyesMove(ESpriteID actor, float* a1, float* a2)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetEyesMove);
+	GET_ABLREQUEST_RET(eAblRequestType_GetEyesMove);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -597,10 +657,9 @@ int AnimAPI_GetEyesMove()
 
 	return 0;
 }
-int AnimAPI_GetEyesShape()
+int AnimAPI_GetEyesShape(ESpriteID actor, int* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetEyesShape);
+	GET_ABLREQUEST_RET(eAblRequestType_GetEyesShape);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -609,10 +668,9 @@ int AnimAPI_GetEyesShape()
 
 	return 0;
 }
-int AnimAPI_GetGazeTracking()
+int AnimAPI_GetGazeTracking(ESpriteID actor, int* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetGazeTracking);
+	GET_ABLREQUEST_RET(eAblRequestType_GetGazeTracking);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -621,10 +679,9 @@ int AnimAPI_GetGazeTracking()
 
 	return 0;
 }
-int AnimAPI_GetMouthShape()
+int AnimAPI_GetMouthShape(ESpriteID actor, int* a1)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetMouthShape);
+	GET_ABLREQUEST_RET(eAblRequestType_GetMouthShape);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -633,10 +690,9 @@ int AnimAPI_GetMouthShape()
 
 	return 0;
 }
-int AnimAPI_GetMyCopyOfAllAnimCues()
+int AnimAPI_GetMyCopyOfAllAnimCues(ESpriteID actor, void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetMyCopyOfAllAnimCues);
+	GET_ABLREQUEST_RET(eAblRequestType_GetMyCopyOfAllAnimCues);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -645,10 +701,9 @@ int AnimAPI_GetMyCopyOfAllAnimCues()
 
 	return 0;
 }
-int AnimAPI_GetMyCopyOfAllObjectActivations()
+int AnimAPI_GetMyCopyOfAllObjectActivations(ESpriteID actor, void* dest)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetMyCopyOfAllObjectActivations);
+	GET_ABLREQUEST_RET(eAblRequestType_GetMyCopyOfAllObjectActivations);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -659,8 +714,7 @@ int AnimAPI_GetMyCopyOfAllObjectActivations()
 }
 int AnimAPI_GetObjectPickupPosition(ESpriteID actor, ESpriteID object, float* x, float* y, float* z)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetObjectPickupPosition);
+	GET_ABLREQUEST_RET(eAblRequestType_GetObjectPickupPosition);
 	WAIT_ABLREQUEST();
 
 	//undone
@@ -671,8 +725,7 @@ int AnimAPI_GetObjectPickupPosition(ESpriteID actor, ESpriteID object, float* x,
 }
 int AnimAPI_GetObjectPosition(ESpriteID object, float* x, float* y, float* z)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetObjectPosition);
+	GET_ABLREQUEST_RET(eAblRequestType_GetObjectPosition);
 	WAIT_ABLREQUEST();
 
 	*x = req->unknown009;
@@ -686,8 +739,7 @@ int AnimAPI_GetObjectPosition(ESpriteID object, float* x, float* y, float* z)
 }
 int AnimAPI_GetObjectRotation(ESpriteID object, float* x, float* y, float* z)
 {
-	AblRequest* req;
-	GET_ABLREQUEST_RET(req, eAblRequestType_GetObjectRotation);
+	GET_ABLREQUEST_RET(eAblRequestType_GetObjectRotation);
 	WAIT_ABLREQUEST();
 
 	*x = req->unknown009;

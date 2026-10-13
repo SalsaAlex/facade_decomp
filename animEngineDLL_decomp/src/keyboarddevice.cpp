@@ -179,14 +179,14 @@ HRESULT ReadBufferedKeyboardData()
 			continue;
 
 
-		BYTE keyboardstate;
+		BYTE keyboardstate[256];
 		WORD Char[10];
 		DWORD virtualkey = didod[i].dwOfs;
 
-		GetKeyboardState(&keyboardstate);
+		GetKeyboardState(keyboardstate);
 		ToAsciiEx(
 			MapVirtualKeyEx(virtualkey, MAPVK_VSC_TO_VK, g_keyboardlayout), 
-			virtualkey, &keyboardstate, Char, NULL, g_keyboardlayout);
+			virtualkey, keyboardstate, Char, NULL, g_keyboardlayout);
 
 		char CorrectedChar = Char[0] == '\b' ? '<' : Char[0];
 		if (virtualkey == DIK_NUMPADENTER)

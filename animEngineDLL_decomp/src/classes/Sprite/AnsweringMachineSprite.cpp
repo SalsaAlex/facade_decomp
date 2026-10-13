@@ -3,7 +3,7 @@
 #include "classes/Sprite/AnsweringMachineSprite.h"
 
 AnsweringMachineSprite::AnsweringMachineSprite()
-	: AnsweringMachineSprite()
+	: Sprite()
 {
 	m_eObjectType = eObjectType_AnsweringMachine;
 }

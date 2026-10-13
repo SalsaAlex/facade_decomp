@@ -3,7 +3,12 @@
 
 enum ELayerAltIndex
 {
-    eLayerAltIndex_unknown = 0
+    eLayerAltIndex_unknown001 = 0,
+    eLayerAltIndex_unknown002,
+    eLayerAltIndex_unknown003,
+    eLayerAltIndex_unknown004,
+
+    eLayerAltIndex_Max,
 };
 
 #endif // ENUM_LAYERALTINDEX_H

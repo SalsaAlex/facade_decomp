@@ -1,4 +1,5 @@
 #include "facadecommon.h"
+#include "glfuncs.h"
 #include "classes/AblRequestBuffer.h"
 
 #include "classes/Sprite/Sprite.h"
@@ -14,13 +15,50 @@ static bool g_bUnused;
 extern void GetAccessToRequestBuffer(const char* name);
 extern void AblBufferPostSemaphore();
 
+extern void PlayerEnteredText();
+
+static void FakePlayerEnteredText(const char* text)
+{
+	strcpy(g_PlayerSprite->m_playerTextInput, text);
+	g_bNewPlayerTextEntered = true;
+	g_whenNewPlayerTextEntered = g_numFramesRun;
+}
+
+static void StartTitleSequence()
+{
+	//undone
+}
+
+static void StartTripCarryingPlayer()
+{
+	//undone
+}
+static void EndTripCarryingPlayer()
+{
+	//undone
+}
+
+static void StartMP3(const char* filepath, int, int)
+{
+	//undone
+}
+static void FadeOutCurrentMP3(int time)
+{
+	//undone
+}
+
+
 bool PerformCallbackWhenFullExpressionMoodDone(ESpriteID actor, AblRequest* request)
 {
+	//	undone
 
+	return true;
 }
 bool PerformCallbackWhenFullExpressionBaseDone(ESpriteID actor, AblRequest* request)
 {
-	
+	//	undone
+
+	return true;
 }
 bool PerformCallbackWhenGestureDone(ESpriteID actor, EGestureBodyPart bodypartindex, AblRequest* request)
 {
@@ -29,38 +67,42 @@ bool PerformCallbackWhenGestureDone(ESpriteID actor, EGestureBodyPart bodypartin
 
 	CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
 	//	undone
+
+	return true;
 }
 bool PerformCallbackWhenAnimationDone(ESpriteID actor, EAnimLayer layer, AblRequest* request)
 {
-	animengine_assert(layer < eNumAnimLayers);
-	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
-
-	CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
-
-	if (layer == eAnimLayer_base && !character->m_animMgr.AreBaseScriptsAndFramesDone())
-		return false;
-
-	if (layer < eAnimLayer_base || character->m_animMgr.IsLayerDone(layer))
-		return false;
-
-	if (layer == eAnimLayer_dialog)
-	{
-		if (character->IsDialogQueued() || character->AreWeSpeaking())
-			return false;
-	}
-	AblBufferPostSemaphore();
-	bool scriptfinished = AblCallbackAPI_ScriptFinished(actor, layer);
-	GetAccessToRequestBuffer("PerformAllRequests PerformCallbackWhenAnimationDone");
-	g_ablrequestbuffer->SaveRequestInTrace(request);
-	if (!scriptfinished)
-		dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
-
+	//animengine_assert(layer < eNumAnimLayers);
+	//animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
+	//
+	//CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
+	//
+	//if (layer == eAnimLayer_base && !character->m_animMgr.AreBaseScriptsAndFramesDone())
+	//	return false;
+	//
+	//if (layer < eAnimLayer_base || character->m_animMgr.IsLayerDone(layer))
+	//	return false;
+	//
+	//if (layer == eAnimLayer_dialog)
+	//{
+	//	if (character->IsDialogQueued() || character->AreWeSpeaking())
+	//		return false;
+	//}
+	//AblBufferPostSemaphore();
+	//bool scriptfinished = AblCallbackAPI_ScriptFinished(actor, layer);
+	//GetAccessToRequestBuffer("PerformAllRequests PerformCallbackWhenAnimationDone");
+	//g_ablrequestbuffer->SaveRequestInTrace(request);
+	//if (!scriptfinished)
+	//	dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
+	//
 	return true;
 
 }
 bool PerformCallbackWhenWalkIsDone(uint32_t unused, ESpriteID actor, bool b1, AblRequest* request)
 {
 	//	undone
+
+	return true;
 }
 
 
@@ -252,6 +294,12 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 	animengine_assert(drinktype > eDrink_NOTADRINK && drinktype <= eDrink_lastDrink); \
 	((DrinkSprite*)g_spriteMgr.GetSpritePtrByID(spriteid))->SetDrinkType((EDrink)drinktype)
 
+
+	PhoneSprite* phone;
+	AnsweringMachineSprite* answeringmachine;
+	CharacterSprite* character;
+
+
 	switch (type)
 	{
 		case eSetAnimEngineInfo_setPlayerGenderID:		g_playerGender = info;						break;
@@ -276,20 +324,20 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 		case eSetAnimEngineInfo_tripThrowsPlayer:		EndTripCarryingPlayer();					break;
 		case eSetAnimEngineInfo_magicallyOpenDoor:
 			animengine_assert(info <= eSpriteID_LAST_CHARACTER);
-			CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
+			character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
 			((DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor))->OpenDoor(character, 3);
 			break;
 		case eSetAnimEngineInfo_magicallyCloseDoor:
 			animengine_assert(info <= eSpriteID_LAST_CHARACTER);
-			CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
+			character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID((ESpriteID)info);
 			((DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor))->CloseDoor(character, 3);
 			break;
 		case eSetAnimEngineInfo_startFPSAdjustment:		g_bAblRequestingFPSAdjustment = true;		break;
 		case eSetAnimEngineInfo_muteSounds:				g_bMuteSounds = info;						break;
 		case eSetAnimEngineInfo_setDoSoundDropOff:		g_bDoSoundDropOff = info;					break;
 		case eSetAnimEngineInfo_doPhoneCallBehavior:
-			PhoneSprite* phone = (PhoneSprite*)g_spriteMgr.GetSpritePtrByName("phone");
-			AnsweringMachineSprite* answeringmachine = (AnsweringMachineSprite*)g_spriteMgr.GetSpritePtrByName("answering machine");
+			phone = (PhoneSprite*)g_spriteMgr.GetSpritePtrByName("phone");
+			answeringmachine = (AnsweringMachineSprite*)g_spriteMgr.GetSpritePtrByName("answering machine");
 			if (info <= ePhoneCallBehavior_none)
 			{
 				phone->SetBehavior(ePhoneCallBehavior_none);
@@ -312,7 +360,7 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 			break;
 		case eSetAnimEngineInfo_dramaComplete:
 			g_bAtEndOfDrama = true;
-			strcpy((char*)&g_PlayerSprite->b1_unknown20323, "q");
+			strcpy(g_PlayerSprite->b1_unknown20323, "q");
 			PlayerEnteredText();
 			OutputEventLog(true);
 			g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;
@@ -368,7 +416,7 @@ void PerformPushMultipleAnimationScripts(ESpriteID actor, int script1Index, int 
 	{
 		if (character->GetAreWeBodyPosing())
 			ShouldntBeHere("Error: Abl is trying to push a base animation while posing!");
-		character->m_animMgr.PushScript(script1Index, -1);
+		//character->m_animMgr.PushScript(script1Index, -1);
 	}
 }
 void PerformPushPoseScript(ESpriteID spriteid, EBodyPoseConfig config)
@@ -427,10 +475,10 @@ void PerformMusic(EMusicAction action, EMusicName name)
 	}
 	else
 	{
+		int random = rand2(0, 3);
 		switch (name)
 		{
 		case eMusicName_title:
-			int random = rand2(0, 3);
 			switch (random)
 			{
 			case 0: StartMP3("sounds\\mp3_1\\1a.mp3", 100, 60); break;
@@ -512,12 +560,12 @@ void PerformAbortAnimationScripts(ESpriteID actor, EAnimLayer layer)
 		if(character->GetLocomoting())
 		{
 			character->StopLocomotion(true);
-			character->m_animMgr.Reset(true, false, true);
+			//character->m_animMgr.Reset(true, false, true);
 		}
 		if (character->GetAreWeBodyPosing())
 		{
 			character->StopCurrentBodyPosing();
-			character->m_animMgr.Reset(true, false, true);
+			//character->m_animMgr.Reset(true, false, true);
 		}
 		//undone
 	}
@@ -530,7 +578,7 @@ void PerformAbortAnimationScripts(ESpriteID actor, EAnimLayer layer)
 		if (character->GetAreWeBodyPosing())
 			character->StopCurrentBodyPosing();
 
-		character->m_animMgr.Reset(false, true, true);
+		//character->m_animMgr.Reset(false, true, true);
 	}
 }
 

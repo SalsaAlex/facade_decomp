@@ -2,6 +2,7 @@
 #define XCURSOR_H
 
 #include "facadecommon.h"
+#include "Stack.h"
 
 class XCursor
 {
@@ -21,6 +22,8 @@ public:
 
 	void PushTransitionToNeutral(ECursorType cursor);
 
+	void ResetStack(bool option);
+
 
 	static XCursor* theirCursor;
 private:
@@ -35,7 +38,7 @@ private:
 	bool m_bLockedState;
 	int unknown2[10];
 	ECursorType m_eCursorType;
-	void* cursorstack;
+	Stack* cursorstack;
 	int unknown4[3];
 	int m_iRate;
 	int unknown5;
