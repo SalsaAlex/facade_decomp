@@ -290,7 +290,7 @@ void PerformGetAllObjectRotations(ObjSensePacket* sensepacket)
 void PerformGetAllObjectPositions(ObjSensePacket* sensepacket)
 {
 	if (!IsAblConnected())
-		SetAblConnected(1);
+		SetAblConnected(true);
 	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_LAST_OBJECT; ++i)
 	{
 		Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);

@@ -509,6 +509,7 @@ int AnimAPI_GetAllHeldObjects(void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -520,6 +521,7 @@ int AnimAPI_GetAllObjectPickupPositions(ESpriteID actor, void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -531,6 +533,7 @@ int AnimAPI_GetAllObjectPickupRotations(ESpriteID actor, void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -566,6 +569,7 @@ int AnimAPI_GetAllObjectStagingRotations(void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -589,6 +593,7 @@ int AnimAPI_GetArmGestureBases(ESpriteID actor, int* a1, int* a2, int* a3)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -600,6 +605,7 @@ int AnimAPI_GetBrowShapeL(ESpriteID actor, int* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -611,6 +617,7 @@ int AnimAPI_GetBrowShapeR(ESpriteID actor, int* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -622,6 +629,7 @@ int AnimAPI_GetEyelidHeightL(ESpriteID actor, float* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -633,6 +641,7 @@ int AnimAPI_GetEyelidHeightR(ESpriteID actor, float* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -644,6 +653,7 @@ int AnimAPI_GetEyesMove(ESpriteID actor, float* a1, float* a2)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -655,6 +665,7 @@ int AnimAPI_GetEyesShape(ESpriteID actor, int* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -666,6 +677,7 @@ int AnimAPI_GetGazeTracking(ESpriteID actor, int* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -677,6 +689,7 @@ int AnimAPI_GetMouthShape(ESpriteID actor, int* a1)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -688,6 +701,7 @@ int AnimAPI_GetMyCopyOfAllAnimCues(ESpriteID actor, void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -699,6 +713,7 @@ int AnimAPI_GetMyCopyOfAllObjectActivations(ESpriteID actor, void* dest)
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -710,6 +725,7 @@ int AnimAPI_GetObjectPickupPosition(ESpriteID actor, ESpriteID object, float* x,
 
 	//undone
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -722,8 +738,8 @@ int AnimAPI_GetObjectPosition(ESpriteID object, float* x, float* y, float* z)
 	*x = req->unknown009;
 	*y = req->unknown010;
 	*z = req->unknown011;
-	req->active = 0;
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;
@@ -736,8 +752,8 @@ int AnimAPI_GetObjectRotation(ESpriteID object, float* x, float* y, float* z)
 	*x = req->unknown009;
 	*y = req->unknown010;
 	*z = req->unknown011;
-	req->active = 0;
 
+	req->active = 0;
 	AblBufferPostSemaphore();
 
 	return 0;

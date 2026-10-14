@@ -74,7 +74,7 @@ int g_frameWhenLastCinematographyMove;
 int g_framePlayerLastMoved;
 int g_numFramesStillAtFoyerWallEdge;
 
-int g_ticksIntroStarted;
+int g_ticksIntroStarted = -1;
 int g_introEventCtr = -1;
 
 
@@ -1230,7 +1230,9 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 		g_ablRequestBufferMutexHandle = CreateMutex(NULL, FALSE, "BufferMutex");
 		animengine_assert(g_ablRequestBufferMutexHandle);
 
-		uint32_t allocate_size = sizeof(AblRequest) * REQUESTBUFFERSIZE + sizeof(unknownablstructure1) + sizeof(unknownablstructure2) * 1000;
+		uint32_t allocate_size = sizeof(AblRequest) * REQUESTBUFFERSIZE 
+			+ sizeof(unknownablstructure1) 
+			+ sizeof(unknownablstructure2) * 1000;
 
 		s_hDLLMemoryFilemap = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, NULL, allocate_size, "dllmemfilemap");
 		if (!s_hDLLMemoryFilemap)
@@ -1278,6 +1280,7 @@ static void ProcessAblRequests(bool clear) {
 		return;
 	}
 
+	timeAtStart = GetTickCount();
 	if (!lastPrintGuard)
 	{
 		lastPrintGuard = true;
@@ -1417,66 +1420,55 @@ static void UpdateTitleSequence()
 	{
 		float timeelapsed = GetSecsSinceTicks(g_ticksIntroStarted);
 		int tickspassed = GetTickCount() - g_ticksIntroStarted;
+
+#define BEGIN_INTROEVENT(eventnum, timemark) \
+		else if (g_introEventCtr == eventnum && timeelapsed >= timemark) \
+		{ \
+			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+
+#define END_INTROEVENT() \
+		}
+
 		if (g_introEventCtr == 1 && timeelapsed >= g_initialIntroDelay)
 		{
 			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
 			PlayGlobalSound(eGlobalSound_tr_intro_start);
 		}
-		else if (g_introEventCtr == 2 && timeelapsed >= g_initialIntroDelay)
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		BEGIN_INTROEVENT(2, g_initialIntroDelay)
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[1] + eGlobalSound_tr_intro_a1));
-		}
-		else if (g_introEventCtr == 3 && timeelapsed >= g_introTimings[2])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(3, g_introTimings[2])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[2] + eGlobalSound_tr_intro_b1));
-		}
-		else if (g_introEventCtr == 4 && timeelapsed >= g_introTimings[3])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(4, g_introTimings[3])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[3] + eGlobalSound_tr_intro_c1));
 			PerformMusic(eMusicAction_start, eMusicName_title);
 			g_bTitleMusicStarted = true;
-		}
-		else if (g_introEventCtr == 5 && timeelapsed >= g_introTimings[4])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(5, g_introTimings[4])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[4] + eGlobalSound_tr_intro_e1));
-		}
-		else if (g_introEventCtr == 6 && timeelapsed >= g_introTimings[5])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(6, g_introTimings[5])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[5] + 73));
-		}
-		else if (g_introEventCtr == 7 && timeelapsed >= g_introTimings[6])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(7, g_introTimings[6])
 			if (rand100(50))
 				PlayGlobalSound((EGlobalSounds)(g_introChoices[6] + 79));
-		}
-		else if (g_introEventCtr == 8 && timeelapsed >= g_introTimings[7])
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(8, g_introTimings[7])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[7] + 85));
-		}
-		else if (g_introEventCtr == 9 && timeelapsed > (g_startTitleFadeIn + 1.0))
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(9, (g_startTitleFadeIn + 1.0))
 			StartFade(0.008);
-		}
-		else if (g_introEventCtr == 10 && timeelapsed > (g_startTitleFadeIn + 10.0))
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(10, (g_startTitleFadeIn + 10.0))
 			StartFade(-0.008);
-		}
-		else if (g_introEventCtr == 11 && timeelapsed > (g_startTitleFadeIn + 18.0))
-		{
-			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr, timeelapsed, tickspassed);
+		END_INTROEVENT()
+		BEGIN_INTROEVENT(11, (g_startTitleFadeIn + 18.0))
 			g_introEventCtr = -1;
 			g_blastFlagSignalToAbl = 5;
 			g_bTextCharWasPressed = 1;
-		}
+		END_INTROEVENT()
 
 		if (g_introEventCtr > 9)
 		{
@@ -1642,8 +1634,8 @@ static void LoadingMessage()
 	char uppertext[52];
 	char undertext[52];
 
-	//if (g_ticksIntroStarted >= 0)
-	//	return;
+	if (g_ticksIntroStarted >= 0)
+		return;
 
 	DrawRedCurtain();
 	if (!fadeCurtainInCtr)
@@ -1682,6 +1674,8 @@ static void LoadingMessage()
 			strcpy(undertext, "Loading Façade . .");
 		else if (ctr <= 105)
 			strcpy(undertext, "Loading Façade . . .");
+
+		ctr++;
 
 		if (ctr == 105)
 			ctr = 0;
@@ -1835,6 +1829,8 @@ static void UpdatePlayerNavigation() {
 	if (g_bQuittingApp || !g_bPlayerInputActive)
 		return;
 
+	static bool bAlreadyCollided = false;
+
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf playerrot = g_PlayerSprite->GetRotation();
 
@@ -1876,6 +1872,38 @@ static void UpdatePlayerNavigation() {
 	}
 	else
 	{
+		//undone
+		if (GetAsyncKeyState(VK_JUNJA) < 0)
+		{
+			//undone
+		}
+
+		bool bVeryNearCharacter = false;
+		bool dramaActorInView = false;
+		bool dramaActorInTightView = false;
+		for (int i = 0; i < 2 && !bVeryNearCharacter; ++i)
+		{
+			//undone
+		}
+
+		if (dramaActorInView)
+		{
+			if (g_bVeryNearCharacter)
+			{
+				//undone
+			}
+			else if (dramaActorInTightView)
+			{
+				//undone
+			}
+			//undone
+		}
+
+		if (g_bPlayerRotateLeft || g_bPlayerRotateRight)
+		{
+			//undone
+		}
+
 		//undone
 	}
 }
@@ -3041,8 +3069,10 @@ void InitCircleDrawing()
 		if (itertri == 20)	g_triangleFanSineCache[itertri] = sin(0);
 		else				g_triangleFanSineCache[itertri] = sin(i);
 
-		if(itertri == 20)	g_triangleFanSineCache[itertri++] = cos(0);
-		else				g_triangleFanSineCache[itertri++] = cos(i);
+		if(itertri == 20)	g_triangleFanSineCache[itertri] = cos(0);
+		else				g_triangleFanSineCache[itertri] = cos(i);
+
+		itertri++;
 	}
 }
 void InitQueuedUpRequestedPerformance()
@@ -3082,7 +3112,7 @@ void InitGlobals()
 
 	InitGraceSprite();
 	InitTripSprite();
-	InitTransRotScale(0, 0);
+	InitTransRotScale(nullptr, false);
 	InitCollisionZonesAndPathPlanGrid();
 	InitPathPlanning();
 	InitCircleDrawing();
@@ -3097,7 +3127,7 @@ void InitGlobals()
 	XCursor::theirCursor->InitCursor();
 	XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
 
-	//LoadIcon(g_hAppInstance, (LPCSTR)IDI_FACADEWINDOWICON);
+	LoadIcon(g_hAppInstance, (LPCSTR)IDI_FACADEWINDOWICON);
 
 	for (int i = 0; i < 32; i++)
 		g_curTextInput[i] = 0;

@@ -53,8 +53,8 @@ void XCursor::ChangeCursorImage(ECursorType cursor)
 		case eCursorType_IDC_SIZENS:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENS); break;
 		case eCursorType_IDC_SIZENWSE:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENWSE); break;
 		case eCursorType_IDC_SIZENESW:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENESW); break;
-		//default:						cursorhandle2 = LoadImage(g_hAppInstance, (LPCSTR)cursor + IDC_HANDCURSOR_IDLE, IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR); break;
-		default: cursorhandle2 = LoadCursor(NULL, IDC_SIZENESW); break;
+		default:						cursorhandle2 = LoadImage(g_hAppInstance, (LPCSTR)IDC_HANDCURSOR_IDLE, IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR); break;
+		//default: cursorhandle2 = LoadCursor(NULL, IDC_SIZENESW); break;
 	}
 
 	if (!cursorhandle1 && !cursorhandle2)

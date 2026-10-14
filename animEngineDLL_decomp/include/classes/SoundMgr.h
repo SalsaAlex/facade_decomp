@@ -8,7 +8,7 @@ class SoundSource;
 struct soundmgr_soundentry_t
 {
 	int soundsource_id;
-	int unknown001;
+	EGlobalSounds globalsndindex;
 	int soundindex;
 	int sound_timestart;
 };
@@ -21,23 +21,25 @@ class SoundMgr
 public:
 	virtual ~SoundMgr() = default;
 
-	bool PlaySound(int, EGlobalSounds gsoundindex , bool);
+	bool PlaySound(int sourceid, EGlobalSounds gsoundindex , bool);
 	int AddSoundSource(SoundSource* src);
 
-	void SetSoundPan(int sourceid, int pan, int);
-	void SetSoundVolume(int sourceid, int volume, int);
+	void SetSoundPan(int sourceid, int pan, EGlobalSounds gsoundindex = (EGlobalSounds)-1);
+	void SetSoundVolume(int sourceid, int volume, EGlobalSounds gsoundindex = (EGlobalSounds)-1);
 
 	void StopAllSounds(int sourceid);
-	void StopSound(int sourceid, int unknown);
+	void StopSound(int sourceid, EGlobalSounds gsoundindex);
 private:
 
-	void PlaySoundPart2(int);
+	void PlaySoundPart2(int sourceid);
 
 	SoundSource* sndsources[10];
 	soundmgr_soundentry_t sounds[SOUNDMGR_MAXSOUNDS];
-	int unknown02[3];
-	bool unknown03;
+	int unknown01;
+	int unknown02;
+	int unknown03;
 	bool unknown04;
+	bool unknown05;
 
 protected:
 

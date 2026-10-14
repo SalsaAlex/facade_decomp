@@ -45,6 +45,19 @@ bool DSound_Init()
 	return true;
 }
 
+void DSound_Play(int sndbufferindex, int flags)
+{
+	dsoundentry_t* entry = &g_SoundBuffers[sndbufferindex];
+
+	if (!entry->dsoundbuffer)
+		return;
+
+	if (entry->dsoundbuffer->SetCurrentPosition(0) < 0)
+		return;
+
+	entry->dsoundbuffer->Play(0, 0, flags);
+}
+
 void DSound_Set_Volume(int soundindex, uint32_t vol)
 {
 	animengine_assert(vol <= 100);
@@ -112,14 +125,13 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 
 	mminfo1.fccType = mmioFOURCC('W', 'A', 'V', 'E');
 	mminfo2.ckid = mmioFOURCC('f', 'm', 't', ' ');
-	if (MMSYSERR_NOERROR != mmioDescend(inputfile, &mminfo1, NULL, NULL)
+	if (MMSYSERR_NOERROR != mmioDescend(inputfile, &mminfo1, NULL, 32)
 		|| MMSYSERR_NOERROR != mmioDescend(inputfile, &mminfo2, &mminfo1, NULL) )
 	{
-		
 		goto close_n_fail;
 	}
 
-	char pch[4];
+	char pch[18];
 	uint8_t* rawdata;
 	void* dsoundmemorymap1, *dsoundmemorymap2;
 	DWORD lockedsize1, lockedsize2;
@@ -127,7 +139,7 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 	if (mmioRead(inputfile, pch, 18) != 18)
 		goto close_n_fail;
 
-	if (pch[0] != 1)
+	if (*(unsigned __int16*)pch != 1)
 		goto close_n_fail;
 
 	if(mmioAscend(inputfile, &mminfo2, NULL))
@@ -140,7 +152,7 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 	rawdata = (uint8_t*)malloc(mminfo2.cksize);
 	mmioRead(inputfile, (HPSTR)rawdata, mminfo2.cksize);
 	mmioClose(inputfile, NULL);
-	//g_SoundBuffers[soundindex].unknown2 = v2;// this local variable is never assigned a value..?
+	g_SoundBuffers[soundindex].unknown2 = *(int*)&pch[4];
 	g_SoundBuffers[soundindex].buffersize = mminfo2.cksize;
 	g_SoundBuffers[soundindex].validsound = TRUE;
 
