@@ -124,6 +124,19 @@ float g_introBaseTimings[8 * 6];
 float g_initialIntroDelay = 2.0;
 float g_startTitleFadeIn;
 
+#define NUMRECTS_PERZONE 5
+struct zone_t
+{
+	XZRectf rects[NUMRECTS_PERZONE];
+	int numrects;
+	Sprite* unknown001;
+	bool unknown002;
+};
+
+#define MAXZONES 250
+zone_t g_zones[MAXZONES];
+int g_numZones;
+
 
 /////////////////////MODEL FRAME/////////////////////
 mdlframe_t g_GraceHeadModel_modelFrame[] = {
@@ -2701,9 +2714,10 @@ void CreateRoom()
 }
 void InitEnvironment()
 {
-	//g_numZones = 0;
-	//for (i = 0; i < 250; ++i)
-	//	*(_DWORD*)g_zones[i].unknown001 = -1;
+	g_numZones = 0;
+	for (int i = 0; i < MAXZONES; ++i)
+		g_zones[i].numrects = -1;
+
 	//for (j = 0; j < 90; ++j)
 	//{
 	//	for (k = 0; k < 90; ++k)
