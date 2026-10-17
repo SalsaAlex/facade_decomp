@@ -329,3 +329,48 @@ float GetSecsSinceTicks(int ticks)
 {
 	return (GetTickCount() - ticks) / 1000.f;
 }
+
+float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
+{
+	float xdist = p1.m_x - p2.m_y;
+	float ydist = p1.m_y - p2.m_y;
+	float sqrdist = xdist * xdist + ydist * ydist;
+	animengine_assert(sqrdist >= 0);
+	return sqrt(sqrdist);
+}
+
+float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
+{
+	float xdist = p1.m_x - p2.m_y;
+	float zdist = p1.m_z - p2.m_z;
+	float sqrdist = xdist * xdist + zdist * zdist;
+	animengine_assert(sqrdist >= 0);
+	return sqrt(sqrdist);
+}
+
+static bool point_inrect_check(XZPointf p, XZPointf rectmin, XZPointf rectmax)
+{
+	if (rectmin.m_x > rectmax.m_x)
+	{
+		VAL_SWAP(float, rectmin.m_x, rectmax.m_x);
+	}
+	if (rectmin.m_z > rectmax.m_z)
+	{
+		VAL_SWAP(float, rectmin.m_z, rectmax.m_z);
+	}
+
+	return rectmin.m_x <= p.m_x && rectmax.m_x >= p.m_x 
+		&& rectmin.m_z <= p.m_z && rectmax.m_z >= p.m_z;
+}
+
+bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2)
+{
+	return point_inrect_check({rect2.m_xmin, rect2.m_zmin}, {rect1.m_xmin, rect1.m_zmin}, {rect1.m_xmax, rect1.m_zmax})
+		|| point_inrect_check({rect2.m_xmin, rect2.m_zmax}, {rect1.m_xmin, rect1.m_zmin}, {rect1.m_xmax, rect1.m_zmax})
+		|| point_inrect_check({rect2.m_xmax, rect2.m_zmin}, {rect1.m_xmin, rect1.m_zmin}, {rect1.m_xmax, rect1.m_zmax})
+		|| point_inrect_check({rect2.m_xmax, rect2.m_zmax}, {rect1.m_xmin, rect1.m_zmin}, {rect1.m_xmax, rect1.m_zmax})
+		|| point_inrect_check({rect1.m_xmin, rect1.m_zmin}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax})
+		|| point_inrect_check({rect1.m_xmin, rect1.m_zmax}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax})
+		|| point_inrect_check({rect1.m_xmax, rect1.m_zmin}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax})
+		|| point_inrect_check({rect1.m_xmax, rect1.m_zmax}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax});
+}

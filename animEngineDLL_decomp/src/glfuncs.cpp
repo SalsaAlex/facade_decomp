@@ -15,6 +15,14 @@ float g_fadeAmount;
 GLYPHMETRICSFLOAT g_FontGlyphs[255];
 GLuint g_BitmapFontBase;
 
+enum E2DPosterRotateType
+{
+	e2DPosterRotateType_normal = 0,
+	e2DPosterRotateType_nolowerbody_nopelvis,
+	e2DPosterRotateType_pelvis,
+	e2DPosterRotateType_lowerbody,
+};
+
 #define DRAW_MSG(text, verticalcursor, amnt_to_move_cursor_down) \
 	DrawArbitraryScreenText(text, -58, verticalcursor, 350, 5, 0, eColor_white, eColor_black); \
 	verticalcursor -= amnt_to_move_cursor_down
@@ -40,6 +48,158 @@ GLuint g_BitmapFontBase;
 												 (g_CursorSprite->GetPosition().m_y < ymax) && \
 												 (g_CursorSprite->GetPosition().m_y > ymin) )
 
+
+void RotateArrayOfPoints(XYZPointf* in_n_out, int numpoints, XYZPointf rotation, XYZPointf pos)
+{
+	glPushMatrix();
+	for (int i = 0; i < numpoints; ++i)
+	{
+		glLoadIdentity();
+		if (rotation.m_x != 0.0)	glRotatef(rotation.m_x, 1.0, 0.0, 0.0);
+		if (rotation.m_y != 0.0)	glRotatef(rotation.m_y, 0.0, 1.0, 0.0);
+		if (rotation.m_z != 0.0)	glRotatef(rotation.m_z, 0.0, 0.0, 1.0);
+
+		GLdouble mdlmatrix[16];
+		GLdouble mdlviewmatrix[16];
+
+		memset(mdlmatrix, 0, sizeof(mdlmatrix));
+		mdlmatrix[0] = in_n_out[i].m_x - pos.m_x;
+		mdlmatrix[1] = in_n_out[i].m_y - pos.m_y;
+		mdlmatrix[2] = in_n_out[i].m_z - pos.m_z;
+		mdlmatrix[5] = 1.0;
+		mdlmatrix[10] = 1.0;
+		mdlmatrix[15] = 1.0;
+
+		glMultMatrixd(mdlmatrix);
+		glGetDoublev(GL_MODELVIEW_MATRIX, mdlviewmatrix);
+
+		in_n_out[i].m_x = pos.m_x + mdlviewmatrix[0];
+		in_n_out[i].m_y = pos.m_y + mdlviewmatrix[1];
+		in_n_out[i].m_z = pos.m_z + mdlviewmatrix[2];
+	}
+	glPopMatrix();
+}
+
+void RotateModel(Sprite* spr, XYZPointf rotation, XYZPointf* pointsout)
+{
+	bool no_rotation_to_do = rotation.m_x == 0.0 
+		&& rotation.m_y == 0.0 
+		&& rotation.m_z == 0.0;
+
+	int pointindex = spr->a1_unknown00002;
+
+	if (spr->GetIsHeadSprite())
+	{
+		//undone
+	}
+	else
+	{
+		animengine_assert(!spr->a1_unknown00010d);
+	}
+
+
+	XYZPointf basepoint = spr->m_modelframe[pointindex];
+
+	if (!no_rotation_to_do)
+		glPushMatrix();
+
+	for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+	{
+		XYZPointf curpoint = spr->m_modelframe[i];
+
+		glLoadIdentity();
+		if (rotation.m_x != 0.0)	glRotatef(rotation.m_x, 1.0, 0.0, 0.0);
+		if (rotation.m_y != 0.0)	glRotatef(rotation.m_y, 0.0, 1.0, 0.0);
+		if (rotation.m_z != 0.0)	glRotatef(rotation.m_z, 0.0, 0.0, 1.0);
+
+		GLdouble mdlmatrix[16];
+		GLdouble mdlviewmatrix[16];
+
+		memset(mdlmatrix, 0, sizeof(mdlmatrix));
+
+		mdlmatrix[0] = curpoint.m_x - basepoint.m_x;
+		mdlmatrix[1] = curpoint.m_y - basepoint.m_y;
+		mdlmatrix[2] = curpoint.m_z - basepoint.m_z;
+
+		if (spr->a1_unknown00003 != 1.0)
+		{
+			mdlmatrix[0] *= spr->a1_unknown00003;
+			mdlmatrix[1] *= spr->a1_unknown00003;
+			mdlmatrix[2] *= spr->a1_unknown00003;
+		}
+
+		mdlmatrix[5] = 1.0;
+		mdlmatrix[10] = 1.0;
+		mdlmatrix[15] = 1.0;
+
+		glMultMatrixd(mdlmatrix);
+		glGetDoublev(GL_MODELVIEW_MATRIX, mdlviewmatrix);
+
+		pointsout[i].m_x = basepoint.m_x + mdlviewmatrix[0];
+		pointsout[i].m_y = basepoint.m_y + mdlviewmatrix[1];
+		pointsout[i].m_z = basepoint.m_z + mdlviewmatrix[2];
+	}
+
+	if (!no_rotation_to_do)
+		glPopMatrix();
+}
+
+
+void Do2DPosterRotateAndProject(
+	Sprite* spr,
+	XYZPointf* list,
+	XYZPointf a3,
+	XYZPointf rotation,
+	int index,
+	E2DPosterRotateType rotatetype)
+{
+	GLdouble winz;
+	GLdouble winy;
+	GLdouble winx;
+	GLdouble projMatrix[16];
+	GLdouble modelMatrix[16];
+	GLint viewport[4];
+
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+
+	glPushMatrix();
+
+	if (index >= 0)									glTranslatef(list[index].m_x, list[index].m_y, list[index].m_z);
+
+	XYZPointf diff = rotation - g_PlayerSprite->GetRotation();
+
+	if (diff.m_x != 0)								glRotatef(diff.m_x, 1, 0, 0);
+	if (!spr->GetIsHeadSprite() && diff.m_y != 0)	glRotatef(diff.m_y, 0, 1, 0);
+	if (diff.m_z != 0)								glRotatef(diff.m_z, 0, 0, 1);
+
+	if (index >= 0)									glTranslatef(-list[index].m_x, -list[index].m_y, -list[index].m_z);
+
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+
+	for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+	{
+		if (rotatetype != e2DPosterRotateType_normal)
+		{
+			bool IsLowerBodyModelPointIndex = ((CharacterSprite*)spr)->IsLowerBodyModelPointIndex(i);
+			bool IsPelvisModelPointIndex = ((CharacterSprite*)spr)->IsPelvisModelPointIndex(i);
+
+			if (rotatetype == e2DPosterRotateType_nolowerbody_nopelvis && (IsLowerBodyModelPointIndex || IsPelvisModelPointIndex))
+				continue;
+
+			if (rotatetype == e2DPosterRotateType_lowerbody && !IsLowerBodyModelPointIndex)
+				continue;
+
+			if (rotatetype == e2DPosterRotateType_pelvis && !IsPelvisModelPointIndex)
+				continue;
+		}
+		gluProject(list[i].m_x, list[i].m_y, list[i].m_z, modelMatrix, projMatrix, viewport, &winx, &winy, &winz);
+		spr->b1_unknown00725[i].m_x = spr->GetScale() * (winx - (g_windowWidth / 2.f)) + a3.m_x;
+		spr->b1_unknown00725[i].m_y = spr->GetScale() * (winy - (g_windowHeight / 2.f)) + a3.m_y;
+		spr->b1_unknown00725[i].m_z = winz;
+	}
+	glPopMatrix();
+}
 
 
 static float glPrintPolygonalFont(const char* text)
@@ -210,9 +370,7 @@ GLuint LoadTexture(const char* filename, bool alpha, uint32_t wraptype, uint32_t
 	//transpose red&green (?)
 	for (int i = 0; i < numpixels; i++)
 	{
-		uint8_t temp = imagehead[0];
-		imagehead[0] = imagehead[2];
-		imagehead[2] = temp;
+		VAL_SWAP(uint8_t, imagehead[0], imagehead[2]);
 		imagehead += 3;
 	}
 
@@ -539,7 +697,7 @@ static void CreditsScreenMessage() {
 #undef CREDITS_DRAW_MSG
 }
 static void EndGameMenuScreenMessage() {
-
+	//undone
 }
 static void ReplayScreenMessage() {
 	g_bPlayerInputActive = false;
@@ -626,7 +784,7 @@ static void LaunchingTipJarScreenMessage() {
 	glDisable(GL_TEXTURE_2D);
 }
 static void AboutScreenMessage() {
-
+	//undone
 }
 static void PlayerChoosesName() {
 	static int choice = 0;
@@ -688,6 +846,28 @@ void DrawScreenMessage()
 	}
 }
 
+static void GetSubjectivePosition(XYZPointf pos, XYZPointf& out, float& floatout, bool option)
+{
+	out = pos - g_PlayerSprite->GetPosition();
+
+	float v1 = atan2(out.m_z, out.m_x);
+	float v2 = sqrt(out.m_z*out.m_z + out.m_x*out.m_x);
+	float v3 = g_PlayerSprite->GetRotation().m_y * MATH_PI/180.f;
+
+	out.m_x = cos(v1 - v3) * v2;
+	out.m_z = sin(v1 - v3) * v2;
+
+	if (option)
+	{
+		float v11 = -out.m_z;
+		if (v11 < 0.1)	v11 = 0.1;
+
+		floatout = 100.0 / v11;
+		out.m_x = floatout * 1.25 * out.m_x;
+		out.m_y = floatout * 1.25 * out.m_y;
+	}
+}
+
 static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSprite* head,
 	bool option,
 	bool& optionout, XYZPointf& xyzout, float& f1out,
@@ -696,19 +876,11 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(1)))
 	{
-		//v8 = (XYZPointf*)((int(__thiscall*)(Sprite*, XYZPointf*))g_PlayerSprite->vftable->GetRotation)(
-		//	g_PlayerSprite,
-		//	&v105);
-		//v9 = (XYZPointf*)((int(__thiscall*)(Sprite*, XYZPointf*))sprite->vftable->GetPosition)(sprite, &v104);
-		//*(_QWORD*)&angle_4.y = *(_QWORD*)&v9->x;
-		//v53 = v9->z;
-		//LODWORD(angle_4.x) = &v103;
-		//v39 = *(XYZPointf*)((int(__thiscall*)(Sprite*))g_PlayerSprite->vftable->GetPosition)(g_PlayerSprite);
-		//v67 = v8->y - GetXZAngleBetweenPoints(v39, angle_4);
+		//undone
 	}
 	else
 	{
-		//v67 = 0.0;
+		//v69 = 0.0;
 	}
 
 	if (character /*&& !LOBYTE(character->unknown039[10423])*/)
@@ -740,12 +912,32 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	return true;
 }
 
+
+static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
+{
+	if (g_numFramesRun <= 1)
+		return;
+
+	//undone
+
+	if (!spr->m_modelquadlines)
+		return;
+
+	while (true)
+	{
+		while (true)
+		{
+			//if (spr->m_modelquadlines
+		}
+	}
+}
+
 void DrawSprite(Sprite* spr, bool option)
 {
 	if (!g_bShouldRenderThisFrame)
 		return;
 
-	int renderdata[235];
+	int pointsindices[MDL_MAXPOINTS];
 
 	glLoadIdentity();
 	CharacterSprite* character = nullptr;
@@ -761,7 +953,7 @@ void DrawSprite(Sprite* spr, bool option)
 	float f1;
 
 
-	if (!PrepareRenderPoints(spr, character, head, option, b1, xyz, f1, renderdata))
+	if (!PrepareRenderPoints(spr, character, head, option, b1, xyz, f1, pointsindices))
 		return;
 
 	if (g_numFramesRun > 1 && spr->GetIsCharacterSprite())

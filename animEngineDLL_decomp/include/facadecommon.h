@@ -58,6 +58,7 @@
 #define MATH_PI 3.1415
 #define MATH_PIDOUBLE 6.283
 
+#define VAL_SWAP(type, x, y) type temp = x; x = y; y = temp
 
 
 template <typename T>
@@ -69,21 +70,29 @@ public:
 };
 
 template<typename T>
-class XYZPoint_template
+class XYZPoint_Template
 {
 public:
-	XYZPoint_template() : m_x(0), m_y(0), m_z(0) {}
-	XYZPoint_template(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
+	XYZPoint_Template() : m_x(0), m_y(0), m_z(0) {}
+	XYZPoint_Template(T x, T y, T z) : m_x(x), m_y(y), m_z(z) {}
 
-	bool operator!=(const XYZPoint_template<T>& point) { return m_x != point.m_x && m_y != point.m_y && m_z != point.m_z; }
-	bool operator==(const XYZPoint_template<T>& point) { return m_x == point.m_x && m_y == point.m_y && m_z == point.m_z; }
+	bool operator!=(const XYZPoint_Template<T>& point) { return m_x != point.m_x && m_y != point.m_y && m_z != point.m_z; }
+	bool operator==(const XYZPoint_Template<T>& point) { return m_x == point.m_x && m_y == point.m_y && m_z == point.m_z; }
 
-	void operator+=(const XYZPoint_template<T>& point) { m_x += point.m_x; m_y += point.m_y; m_z += point.m_z; }
-	XYZPoint_template operator+(const XYZPoint_template<T>& point) { 
-		XYZPoint_template<T> temp;
+	void operator+=(const XYZPoint_Template<T>& point) { m_x += point.m_x; m_y += point.m_y; m_z += point.m_z; }
+	XYZPoint_Template operator+(const XYZPoint_Template<T>& point) { 
+		XYZPoint_Template<T> temp;
 		temp.m_x = m_x + point.m_x;
 		temp.m_y = m_y + point.m_y;
 		temp.m_z = m_z + point.m_z;
+		return temp;
+	}
+	void operator-=(const XYZPoint_Template<T>& point) { m_x -= point.m_x; m_y -= point.m_y; m_z -= point.m_z; }
+	XYZPoint_Template operator-(const XYZPoint_Template<T>& point) {
+		XYZPoint_Template<T> temp;
+		temp.m_x = m_x - point.m_x;
+		temp.m_y = m_y - point.m_y;
+		temp.m_z = m_z - point.m_z;
 		return temp;
 	}
 
@@ -92,6 +101,7 @@ public:
 	T m_z;
 };
 
+
 class XZPointf
 {
 public:
@@ -99,17 +109,34 @@ public:
 	float m_z;
 };
 
+template <typename T, typename U>
+class XTRect
+{
+public:
+
+	void set()
+
+	T m_xmin;
+	T m_ymin;
+
+	U m_xmax;
+	U m_ymax;
+
+	// T T U U, T U T U, or U U T T ?.. we'll never know..
+
+};
+
 class XZRectf
 {
 public:
-	float m_x1;
-	float m_z1;
+	float m_xmin;
+	float m_zmin;
 
-	float m_x2;
-	float m_z2;
+	float m_xmax;
+	float m_zmax;
 };
 
-typedef XYZPoint_template<float> XYZPointf;
+typedef XYZPoint_Template<float> XYZPointf;
 typedef XTPoint<int> XTPointi;
 
 
@@ -319,6 +346,11 @@ bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option
 void ClipFloatToRange(float& value, float min, float max);
 
 float GetSecsSinceTicks(int ticks);
+
+float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
+float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
+
+bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2);
 
 
 #endif // FACADECOMMON_H
