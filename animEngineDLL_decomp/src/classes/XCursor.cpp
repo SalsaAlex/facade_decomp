@@ -84,3 +84,29 @@ void XCursor::SetRate(int rate)
 {
 	m_iRate = rate;
 }
+
+void XCursor::Update()
+{
+	if (!(g_numFramesRun % 2))
+		return;
+
+	//if (cursorstack->IsStackEmpty())
+	//{
+	//	if (--unknown4[1] > 0 && unknown4[2] >= 0)
+	//		cursorstack->SetStackPtr(unknown4[2]);
+	//}
+	//else if (++this->unknown5 >= this->m_iRate)
+	//{
+	//	ECursorType cursortype = cursorstack->Pop();
+	//	unknown2[9] = cursortype;
+	//	ChangeCursorImage(cursortype);
+	//	unknown5 = 0;
+	//}
+	//if (unknown4[1] < 0)
+	//	unknown4[1] = 0;
+}
+void XCursor::SetCursorPosition(const XTPointi& point)
+{
+	ClipCursor(NULL);
+	SetCursorPos(point.x, point.y);
+}

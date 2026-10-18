@@ -7,6 +7,8 @@
 #include "enums/EColor.h"
 
 extern float g_opacity;
+extern int g_windowWidth;
+extern int g_windowHeight;
 
 void SetupRC();
 

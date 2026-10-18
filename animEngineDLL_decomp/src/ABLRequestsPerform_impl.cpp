@@ -349,6 +349,8 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 	AnsweringMachineSprite* answeringmachine;
 	CharacterSprite* character;
 
+	dprintf("setanimengineinfo %d", (int)type);
+
 
 	switch (type)
 	{
@@ -410,7 +412,7 @@ void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 			break;
 		case eSetAnimEngineInfo_dramaComplete:
 			g_bAtEndOfDrama = true;
-			strcpy(g_PlayerSprite->b1_unknown20323, "q");
+			strcpy(g_PlayerSprite->m_ScreenText, "q");
 			PlayerEnteredText();
 			OutputEventLog(true);
 			g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;

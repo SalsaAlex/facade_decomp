@@ -36,7 +36,7 @@ bool g_bParsingError;
 bool g_bPhoneCallBehaviourSubparts[90]; //?
 
 bool g_bPlayerChoosingName;
-bool g_bPlayerInputActive;
+bool g_bPlayerInputActive = true;
 bool g_bPlayerMoveBackwards;
 bool g_bPlayerMoveDownwards;
 bool g_bPlayerMoveForwards;
@@ -58,7 +58,7 @@ uint32_t g_numFramesRun = 0;
 uint32_t g_SkipFramesCounter = 0;
 uint32_t g_lastFrameGotAblRequest = 0;
 
-uint32_t g_whenNewPlayerTextEntered = 0;
+uint32_t g_whenNewPlayerTextEntered = -666;
 
 
 HWND g_hMainAppWindow;
@@ -71,7 +71,7 @@ int g_playerGender;
 int g_playerNameID;
 EPlayerGestureID g_playerGesture;
 ESpriteID g_playerGestureSpriteID;
-extern player_namegender_map_t g_PlayerNameStrings[95] = {
+player_namegender_map_t g_PlayerNameStrings[NUM_PLAYERNAMES] = {
 	{	"Adam", 		"m"	},
 	{	"Al", 			"m"	},
 	{	"Amy", 			"f"	},
@@ -315,11 +315,6 @@ bool rand100(int val)
 	return rand() % 100 < val;
 }
 
-float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
-{
-	return sqrt( (p1.m_x-p2.m_x)*(p1.m_x-p2.m_x) + (p1.m_y-p2.m_y)*(p1.m_y-p2.m_y) );
-}
-
 void ClipFloatToRange(float& value, float min, float max)
 {
 	value = fminf(fmaxf(value, min), max);
@@ -348,6 +343,11 @@ float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 	return sqrt(sqrdist);
 }
 
+float GetXZAngleBetweenPoints(XYZPointf p1, XYZPointf p2)
+{
+	return NormalizeNeg180to180(atan2(p2.m_z - p1.m_z, p2.m_x - p1.m_x) * (180.0 / 3.14) + 90.0);
+}
+
 static bool point_inrect_check(XZPointf p, XZPointf rectmin, XZPointf rectmax)
 {
 	if (rectmin.m_x > rectmax.m_x)
@@ -373,4 +373,26 @@ bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2)
 		|| point_inrect_check({rect1.m_xmin, rect1.m_zmax}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax})
 		|| point_inrect_check({rect1.m_xmax, rect1.m_zmin}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax})
 		|| point_inrect_check({rect1.m_xmax, rect1.m_zmax}, {rect2.m_xmin, rect2.m_zmin}, {rect2.m_xmax, rect2.m_zmax});
+}
+
+void GetGridXZFromWorldXZ(float worldx, float worldz,
+	float& outgridx, float& outgridz)
+{
+	outgridx = worldx / 15.f + 45.f;
+	outgridz = worldz / 15.f + 45.f;
+}
+
+bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset)
+{
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf playerrot = g_PlayerSprite->GetRotation();
+
+	float factor = NormalizeNeg180to180(GetXZAngleBetweenPoints(playerpos, point) - playerrot.m_y);
+	if (factor < 0.0)
+		factor = -factor;
+
+	if (addoffset)
+		return 35 > factor;
+	else
+		return 20 + 35 > factor;
 }

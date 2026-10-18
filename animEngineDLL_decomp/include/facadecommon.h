@@ -12,6 +12,7 @@
 
 
 #include "windows.h"
+#include "windowsx.h"
 
 #include "enums/EAblRequestType.h"
 #include "enums/EAlterHeadCock.h"
@@ -114,7 +115,7 @@ class XTRect
 {
 public:
 
-	void set()
+	void set();
 
 	T m_xmin;
 	T m_ymin;
@@ -175,7 +176,8 @@ struct player_namegender_map_t
 	const char* name;
 	const char* gender;
 };
-extern player_namegender_map_t g_PlayerNameStrings[95];
+#define NUM_PLAYERNAMES 95
+extern player_namegender_map_t g_PlayerNameStrings[NUM_PLAYERNAMES];
 
 struct gltexture_t
 {
@@ -203,6 +205,8 @@ extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 #include "classes/SpriteMgr.h"
 #include "classes/SoundMgr.h"
 
+extern CharacterSprite* g_GraceSprite;
+extern CharacterSprite* g_TripSprite;
 extern Sprite* g_PlayerSprite;
 extern Sprite* g_CursorSprite;
 
@@ -241,6 +245,9 @@ extern int g_AutoMovePlayerStatus;
 
 extern int g_ticksIntroStarted;
 extern int g_introEventCtr;
+
+extern int g_framesWhenLastSentPlayerTypedCue;
+extern int g_blastFlagSignalToAbl;
 
 extern int g_introChoices[8];
 extern float g_introTimings[8 + 1];
@@ -306,6 +313,7 @@ extern bool g_bWriteOutput;
 
 extern bool g_mouseLButtonClicked;
 
+extern bool g_bDisplayDialogText;
 
 
 
@@ -335,8 +343,6 @@ float Normalize0to360(float ang);
 int rand2(int min, int max);
 bool rand100(int val);
 
-float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
-
 bool PlayGlobalSound(EGlobalSounds sound);
 
 void StopAllMP3s();
@@ -349,8 +355,13 @@ float GetSecsSinceTicks(int ticks);
 
 float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
+float GetXZAngleBetweenPoints(XYZPointf p1, XYZPointf p2);
 
 bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2);
+void GetGridXZFromWorldXZ(float worldx, float worldz,
+	float& outgridx, float& outgridz);
+
+bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
 
 
 #endif // FACADECOMMON_H

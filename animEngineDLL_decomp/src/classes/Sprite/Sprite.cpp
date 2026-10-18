@@ -211,9 +211,25 @@ void Sprite::SetTextureFrameAnimation(int a1, int a2, int a3, bool a4)
     b1_unknown20297 = a3;
     //LOBYTE(this->data.b1_unknown20298) = a4;
 }
-void Sprite::SetScreenText(const char* text, bool)
+void Sprite::SetScreenText(char* text, bool option)
 {
-    //undone
+    if (strlen(text) >= 256)
+    {
+        ShouldntBeHere("truncating requested screen text");
+        text[255] = 0;
+    }
+    if (option)
+    {
+        strcpy(m_ScreenText, text);
+        b1_unknown20515 = 0;
+        b1_unknown20516 = 0;
+    }
+    else
+    {
+        strcat(m_ScreenText, " ");
+        strcat(m_ScreenText, text);
+    }
+    b1_unknown20517 = 0;
 }
 
 bool Sprite::GetAmIHoldingSprite()
@@ -280,6 +296,11 @@ bool Sprite::GetAmIStillGrabDropAnimating()
 }
 
 void Sprite::AddSurface(int i1, int i2, int i3, int i4, ESurfacePickupAngle surfpickangle)
+{
+    //undone
+}
+
+void Sprite::GetModelPointXRect(int mdlpointindex, XTRect<int, long>& rectout)
 {
     //undone
 }

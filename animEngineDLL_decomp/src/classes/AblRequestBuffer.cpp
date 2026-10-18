@@ -8,11 +8,26 @@ extern bool IsAblConnected();
 extern void GetAccessToRequestBuffer(const char* name);
 extern void AblBufferPostSemaphore();
 
+bool (*AblCallbackAPI_PlayerGestured)(int, int, int) = nullptr;
+bool (*AblCallbackAPI_PlayerEnteredText)(const char*) = nullptr;
+
+
+static bool IsTherePlayerTextToSendToAbl(){
+    return g_numFramesRun == g_whenNewPlayerTextEntered + 1;
+}
+static const char* GetLastPlayerText() {
+    return g_PlayerSprite->m_playerTextInput;
+}
+
 void AblRequestBuffer::InitBuffer(void* mappedmemptr, bool resetmemory)
 {
 	m_pAblRequests = (AblRequest*)mappedmemptr;
 	unknown001 = (unknownablstructure1*)(&m_pAblRequests[REQUESTBUFFERSIZE]);
 	unknown002 = (unknownablstructure2*)(&unknown001[1]);
+
+    HMODULE nativeanimint = LoadLibrary("nativeaniminterface.dll");
+    AblCallbackAPI_PlayerGestured = (bool(*)(int, int, int))GetProcAddress(nativeanimint, "?AblCallbackAPI_PlayerGestured@@YA_NHHH@Z");
+    AblCallbackAPI_PlayerEnteredText = (bool(*)(const char*))GetProcAddress(nativeanimint, "?AblCallbackAPI_PlayerEnteredText@@YA_NQAD@Z");
 
 	if (resetmemory)
 	{
@@ -35,9 +50,41 @@ void AblRequestBuffer::InitBuffer(void* mappedmemptr, bool resetmemory)
 	}
 }
 
+static void CheckForAnimEngineCommand(char* text)
+{
+    if (!strcmp(text, "printinfo"))
+    {
+        dprintf("");
+        XYZPointf pos, rot;
+
+        pos = g_GraceSprite->GetPosition();
+        dprintf("Grace position  = (%.2f, %.2f, %.2f)", pos.m_x, pos.m_y, pos.m_z);
+        rot = g_GraceSprite->GetPosition();
+        dprintf("Grace rotation  = (%.2f, %.2f, %.2f)", rot.m_x, rot.m_y, rot.m_z);
+
+
+        pos = g_TripSprite->GetPosition();
+        dprintf("Trip position   = (%.2f, %.2f, %.2f)", pos.m_x, pos.m_y, pos.m_z);
+        rot = g_TripSprite->GetPosition();
+        dprintf("Trip rotation   = (%.2f, %.2f, %.2f)", rot.m_x, rot.m_y, rot.m_z);
+
+
+        pos = g_PlayerSprite->GetPosition();
+        dprintf("Player position = (%.2f, %.2f, %.2f)", pos.m_x, pos.m_y, pos.m_z);
+        rot = g_PlayerSprite->GetPosition();
+        dprintf("Player rotation = (%.2f, %.2f, %.2f)", rot.m_x, rot.m_y, rot.m_z);
+
+        dprintf("");
+    }
+    if (!strcmp(text, "q") && !g_bAtEndOfDrama)
+        g_quitAppCountdown = 15;
+}
+
 int AblRequestBuffer::PerformAllRequests()
 {
 	int performedrequests = 0;
+
+    char textbuffer[256];
 
 	//for (int i = 0; i < 2; ++i)
 	//{
@@ -61,13 +108,82 @@ int AblRequestBuffer::PerformAllRequests()
 	{
 		g_ToldAblPlayerInfo = true;
 		AblBufferPostSemaphore();
-        bool playerentered = true; //AblCallbackAPI_PlayerGestured(ePlayerGesture_playerInfoEntered, g_playerNameID, g_playerGender);
+        bool playerentered = AblCallbackAPI_PlayerGestured(ePlayerGesture_playerInfoEntered, g_playerNameID, g_playerGender);
 		GetAccessToRequestBuffer("PerformAllRequests playergestured");
 		if (!playerentered)
 			dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
 	}
-
-	//undone
+    for (int i = 0; i <= 1; ++i)
+    {
+        //SpritePtrByID = SpriteMgr::GetSpritePtrByID(g_spriteMgr, (ESpriteID)i);
+        //if (SpritePtrByID)
+        //{
+        //    for (int j = 0; j < 8; ++j)
+        //    {
+        //        if (j != 7)
+        //        {
+        //            v13 = sub_10001D43((int*)SpritePtrByID, j);
+        //            if (v13 >= 0)
+        //                AddAnimCueToAnimCueBuffers(i, j, v13);
+        //        }
+        //    }
+        //}
+        //v13 = sub_10001E97(SpritePtrByID);
+        //if (v13 >= 0)
+        //{
+        //    v13 -= 4;
+        //    AddAnimCueToAnimCueBuffers(i, 7, v13);
+        //}
+    }
+    for (int i = 0; i <= eSpriteID_LAST_OBJECT; ++i)
+    {
+        Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+        if (spr && spr->b1_unknown20584 != -1)
+        {
+            ESpriteID objact = g_spriteMgr.GetSpriteIDBySpritePtr(spr->b1_unknown20585);
+            //AddObjectActivationToObjectActivationBuffers(i, v11->data.b1_unknown20584, SpriteIDBySpritePtr);
+        }
+    }
+    if (IsTherePlayerTextToSendToAbl())
+    {
+        const char* lasttext = GetLastPlayerText();
+        animengine_assert(strlen(lasttext) < sizeof(textbuffer));
+        strcpy(textbuffer, GetLastPlayerText());
+        AblBufferPostSemaphore();
+        bool result = AblCallbackAPI_PlayerEnteredText(textbuffer);
+        GetAccessToRequestBuffer("PerformAllRequests enternewtext");
+        if (!result)
+            dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
+        CheckForAnimEngineCommand(textbuffer);
+    }
+    else if (g_bTextCharWasPressed && g_numFramesRun - g_framesWhenLastSentPlayerTypedCue >= 30)
+    {
+       strcpy(textbuffer, " ");
+       g_framesWhenLastSentPlayerTypedCue = g_numFramesRun;
+       AblBufferPostSemaphore();
+       bool result = AblCallbackAPI_PlayerEnteredText(textbuffer);
+       GetAccessToRequestBuffer("PerformAllRequests justhitakey");
+       if (!result)
+           dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
+    }
+    if (g_playerGesture)
+    {
+        AblBufferPostSemaphore();
+        bool result = AblCallbackAPI_PlayerGestured(g_playerGesture, g_playerGestureSpriteID, -1);
+        GetAccessToRequestBuffer("PerformAllRequests playergestured");
+        if (!result)
+            dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
+    }
+    if (g_blastFlagSignalToAbl <= 0)
+    {
+        g_bTextCharWasPressed = false;
+    }
+    else
+    {
+        g_bTextCharWasPressed = true;
+        if (--g_blastFlagSignalToAbl <= 0)
+            dprintf("ABL flag blast done\n");
+    }
 
 	return performedrequests;
 }

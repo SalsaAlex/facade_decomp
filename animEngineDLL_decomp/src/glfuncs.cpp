@@ -49,6 +49,92 @@ enum E2DPosterRotateType
 												 (g_CursorSprite->GetPosition().m_y > ymin) )
 
 
+struct font_charinfo_t
+{
+	char character;
+	int unknown001;
+	int unknown002;
+	int unknown003;
+	int unknown004;
+};
+
+font_charinfo_t g_fontInfo[] = {
+	{'a',		  1,	 -1,	55, 85},
+	{'b',		 64,	 -1,	55, 85},
+	{'c',		131,	 -1,	49, 85},
+	{'d',		192,	 -1,	56, 85},
+	{'e',		260,	 -1,	49, 85},
+	{'f',		322,	 -1,	42, 85},
+	{'g',		367,	 -1,	53, 85},
+	{'h',		430,	 -1,	59, 85},
+	{'i',		  1,	 81,	32, 85},
+	{'j',		 36,	 81,	38, 85},
+	{'k',		 88,	 81,	58, 85},
+	{'l',		157,	 81,	32, 85},
+	{'m',		203,	 81,	78, 85},
+	{'n',		293,	 81,	58, 85},
+	{'o',		362,	 81,	52, 85},
+	{'p',		425,	 81,	56, 85},
+	{'q',		  0,	166,	55, 85},
+	{'r',		 66,	166,	44, 85},
+	{'s',		120,	166,	47, 85},
+	{'t',		181,	166,	38, 85},
+	{'u',		228,	166,	61, 85},
+	{'v',		301,	166,	53, 85},
+	{'w',		361,	166,	71, 85},
+	{'x',		441,	166,	53, 85},
+	{'y',		  0,	252,	56, 85},
+	{'z',		 61,	252,	48, 85},
+	{'0',		119,	252,	55, 85},
+	{'1',		196,	252,	39, 85},
+	{'2',		256,	252,	52, 85},
+	{'3',		324,	252,	53, 85},
+	{'4',		390,	252,	54, 85},
+	{'5',		459,	252,	51, 85},
+	{'6',		  2,	338,	54, 85},
+	{'7',		 69,	338,	53, 85},
+	{'8',		135,	338,	54, 85},
+	{'9',		202,	338,	56, 85},
+	{'!',		274,	338,	26, 85},
+	{'?',		316,	338,	50, 85},
+	{'.',		381,	338,	26, 85},
+	{',',		427,	338,	27, 85},
+	{'\"',		470,	338,	34, 85},
+	{'\'',		  1,	425,	24, 85},
+	{';',		 43,    425,	27, 85},
+	{':',		 89,    425,	25, 85},
+	{'(',		134,    425,	29, 85},
+	{')',		176,    425,	29, 85},
+	{'-',		222,    425,	36, 85},
+	{'A',		  6,	 15,	68, 85},
+	{'B',		 81,     15,	68, 85},
+	{'C',		157,     15,	67, 85},
+	{'D',		235,     15,	71, 85},
+	{'E',		315,     15,	66, 85},
+	{'F',		390,     15,	62, 85},
+	{'G',		  9,	101,	72, 85},
+	{'H',		 92,    101,	69, 85},
+	{'I',		170,    101,	38, 85},
+	{'J',		214,    101,	61, 85},
+	{'K',		285,    101,	68, 85},
+	{'L',		360,    101,	60, 85},
+	{'M',		426,    101,	78, 85},
+	{'N',		 10,    186,	67, 85},
+	{'O',		 85,    186,	72, 85},
+	{'P',		168,    186,	61, 85},
+	{'Q',		234,    186,	72, 85},
+	{'R',		315,    186,	67, 85},
+	{'S',		390,    186,	61, 85},
+	{'T',		  6,	272,	65, 85},
+	{'U',		 77,    272,	70, 85},
+	{'V',		153,    272,	70, 85},
+	{'W',		227,    272,	86, 85},
+	{'X',		318,    272,	71, 85},
+	{'Y',		  6,	358,	66, 85},
+	{'Z',		 77,    358,	63, 85},
+};
+
+
 void RotateArrayOfPoints(XYZPointf* in_n_out, int numpoints, XYZPointf rotation, XYZPointf pos)
 {
 	glPushMatrix();
@@ -619,7 +705,7 @@ static void HintsScreenMessage() {
 	bool cursoronlink = ISCURSORINBOUNDS(-25, 31, verticaltextcursor-8, verticaltextcursor);
 	if (cursoronlink && g_mouseLButtonClicked)
 	{
-		ShellExecuteA(g_hMainAppWindow, "open", "http://www.interactivestory.net/help", 0, 0, 1);
+		ShellExecute(g_hMainAppWindow, "open", "http://www.interactivestory.net/help", 0, 0, 1);
 		g_quitAppCountdown = 1;
 	}
 	DrawArbitraryScreenText(
@@ -788,6 +874,8 @@ static void AboutScreenMessage() {
 }
 static void PlayerChoosesName() {
 	static int choice = 0;
+	static int blinkCountdown = 40;
+	static int delayTillNextScroll = 0;
 	if (g_curTextCharInput == '\r')
 	{
 		g_playerNameID = choice;
@@ -802,9 +890,106 @@ static void PlayerChoosesName() {
 	DrawArbitraryScreenText("press enter to begin",			 -1, -14, 200,  7, 0, eColor_white, eColor_black);
 
 	bool cursorininstructionsbutton = ISCURSORINBOUNDS(-12, 18, -68, -60);
-	if (cursorininstructionsbutton) g_baseScreenMessage = eBaseScreenMessage_Instructions;
+	if (cursorininstructionsbutton && g_mouseLButtonClicked) 
+		g_baseScreenMessage = eBaseScreenMessage_Instructions;
+	DrawArbitraryScreenText("Instructions", 10.5, -60, 200, 7, 0, cursorininstructionsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
 	
-	//unfinished
+	bool cursorinhintsbutton = ISCURSORINBOUNDS(-12, 18, -78, -70);
+	if (cursorinhintsbutton && g_mouseLButtonClicked) 
+		g_baseScreenMessage = eBaseScreenMessage_Hints;
+	DrawArbitraryScreenText("Hints", 18.5, -70, 200, 7, 0, cursorinhintsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+
+	bool cursorinsubtitlesbutton = ISCURSORINBOUNDS(-12, 18, -88, -80);
+	if (cursorinsubtitlesbutton && g_mouseLButtonClicked)
+		g_bDisplayDialogText = !g_bDisplayDialogText;
+
+	const char* subtitlesbutton = g_bDisplayDialogText ? "Subtitles: On" : "Subtitles: Off";
+	float subtitlesbuttonx = g_bDisplayDialogText ? 9 : 8;
+	DrawArbitraryScreenText(subtitlesbutton, subtitlesbuttonx, -80, 200, 7, 0, cursorinsubtitlesbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+
+
+	bool cursorinaboutbutton = ISCURSORINBOUNDS(-12, 18, -98, -90);
+	if (cursorinaboutbutton && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_Credits;
+	DrawArbitraryScreenText("About", 17.5, -90, 200, 7, 0, cursorinhintsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+
+	if (g_curTextCharInput >= 'a' && g_curTextCharInput <= 'z')
+		g_curTextCharInput -= ' ';
+	if (g_curTextCharInput >= 'A' && g_curTextCharInput <= 'Z')
+	{
+		choice = 0;
+		for (int i = 0; i < NUM_PLAYERNAMES; i++)
+		{
+			if (g_curTextCharInput > *g_PlayerNameStrings[choice].name)
+				break;
+			choice++;
+		}
+
+		if (choice >= NUM_PLAYERNAMES)	choice = NUM_PLAYERNAMES-1;
+
+		blinkCountdown = 60;
+	}
+
+	bool choosegoleft = g_bPlayerMoveForwards || g_bPlayerRotateLeft;
+	bool choosegoright = g_bPlayerMoveBackwards || g_bPlayerRotateRight;
+	g_bPlayerMoveForwards = false;
+	g_bPlayerMoveBackwards = false;
+	g_bPlayerRotateLeft = false;
+	g_bPlayerRotateRight = false;
+
+	if (delayTillNextScroll > 0)
+	{
+		--delayTillNextScroll;
+	}
+	else
+	{
+		if (choosegoleft && choice > 0)						--choice;
+		if (choosegoright && choice < NUM_PLAYERNAMES-1)	++choice;
+
+		if (choosegoleft || choosegoright)
+		{
+			blinkCountdown = 60;
+			delayTillNextScroll = 4;
+		}
+	}
+
+	if (blinkCountdown > 10)
+	{
+		bool v37 = true;
+
+		char textbuffer[100];
+		animengine_assert(choice <= NUM_PLAYERNAMES - 1);
+		strcpy(textbuffer, g_PlayerNameStrings[choice].name);
+		if (choice < NUM_PLAYERNAMES - 1
+			&& !strcmp(
+				g_PlayerNameStrings[choice].name,
+				g_PlayerNameStrings[choice + 1].name))
+		{
+			strcat(textbuffer, " (female)");
+		}
+		else if (choice > 0
+			&& !strcmp(
+				g_PlayerNameStrings[choice].name,
+				g_PlayerNameStrings[choice - 1].name))
+		{
+			strcat(textbuffer, " (male)");
+		}
+		float textx = 20.0 - strlen(textbuffer) * 1.4;
+		DrawArbitraryScreenText(textbuffer, textx, -32, 200, 10, 0, v37 ? eColor_unnamed035 : eColor_grey, eColor_black);
+	}
+
+	if (--blinkCountdown <= 0)
+		blinkCountdown = 40;
+	glLoadIdentity();
+	glTranslatef(-50.0, -50.0, -4.0);
+	SetColorFromIndex(eColor_greyshade_20);
+		glBegin(GL_QUADS);
+			glVertex3f(0.0, 0.0, 0.0);
+			glVertex3f(100, 0.0, 0.0);
+			glVertex3f(100, 75, 0.0);
+			glVertex3f(0.0, 75, 0.0);
+		glEnd();
+	glLoadIdentity();
 
 }
 
@@ -812,22 +997,25 @@ void DrawScreenMessage()
 {
 	static int fadeCurtainInCtr = 0;
 
-	if (g_bAtEndOfDrama)
-	{
-		DrawRedCurtain();
-		if (!fadeCurtainInCtr)
-		{
-			CutToBlack();
-			StartFade(0.015);
-		}
+	if (!g_bAtEndOfDrama)
+		goto LABEL_6;
 
-		if (fadeCurtainInCtr <= 59)
-			++fadeCurtainInCtr;
-	}
-	if (fadeCurtainInCtr <= 59)
-		return;
-	switch (g_baseScreenMessage)
+	DrawRedCurtain();
+	if (!fadeCurtainInCtr)
 	{
+		CutToBlack();
+		StartFade(0.015);
+	}
+
+	if (fadeCurtainInCtr < 60)
+	{
+		++fadeCurtainInCtr;
+	}
+	else
+	{
+	LABEL_6:
+		switch (g_baseScreenMessage)
+		{
 		case eBaseScreenMessage_Instructions:	InstructionsScreenMessage();	break;
 		case eBaseScreenMessage_Hints:			HintsScreenMessage();			break;
 		case eBaseScreenMessage_Credits:		CreditsScreenMessage();			break;
@@ -843,6 +1031,7 @@ void DrawScreenMessage()
 				PlayerChoosesName();
 			}
 			break;
+		}
 	}
 }
 
@@ -874,7 +1063,7 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	int* renderdata)
 {
 
-	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(1)))
+	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(true)))
 	{
 		//undone
 	}
@@ -1124,12 +1313,228 @@ void UpdateFade()
 	}
 }
 
+static char g_origTextCharInput = '\0';
+extern void PlayerEnteredText();
+
+static void ProcessRealtimeTypedPlayerScreenText()
+{
+	if (!g_bPlayerInputActive)
+		return;
+
+	g_bNewPlayerTextEntered = false;
+	g_origTextCharInput = g_curTextCharInput;
+	int screentext_len = strlen(g_PlayerSprite->m_ScreenText);
+	if (g_curTextCharInput == '\r')
+	{
+		PlayerEnteredText();
+	}
+	else if (g_curTextCharInput == '<' && screentext_len > 0)
+	{
+		g_PlayerSprite->m_ScreenText[screentext_len - 1] = '\0';
+		g_bTextCharWasPressed = true;
+	}
+	else if (screentext_len < sizeof(g_PlayerSprite->m_ScreenText) && g_curTextCharInput)
+	{
+		bool shouldenterchar = false;
+		for (int i = 0; i < 73; ++i)
+		{
+			if (g_fontInfo[i].character == g_curTextCharInput || g_curTextCharInput == ' ')
+				shouldenterchar = 1;
+		}
+		if (shouldenterchar)
+		{
+			g_PlayerSprite->m_ScreenText[screentext_len] = g_curTextCharInput;
+			g_PlayerSprite->m_ScreenText[screentext_len + 1] = '\0';
+		}
+		g_bTextCharWasPressed = true;
+	}
+	g_curTextCharInput = '\0';
+}
+
+static bool textcheck(const char* txt) {
+	return !strcmp("q", txt) || !strcmp("g", txt) || txt[0] == ':';
+}
+
+static bool UpdateScreenText(Sprite* spr)
+{
+	int screentxtlen = strlen(spr->m_ScreenText);
+	if (screentxtlen <= 0)
+		return false;
+
+	int diff = spr->b1_unknown20516 - spr->b1_unknown20515;
+	float v7 = 0;
+	if (spr->b1_unknown20516 != screentxtlen || textcheck(spr->m_ScreenText))
+		v7 = 1.0 * 0.75;
+	else
+		v7 = 60.0 / diff;
+	if (spr->b1_unknown20517 + diff * v7 < g_numFramesRun
+		|| spr->b1_unknown20516 == 0)
+	{
+		if (spr->b1_unknown20515 == screentxtlen)
+		{
+			spr->m_ScreenText[0] = '\0';
+			spr->m_playerTextOnScreen[0] = '\0';
+			return false;
+		}
+		spr->b1_unknown20515 = spr->b1_unknown20516;
+		for (int i = spr->b1_unknown20516; 
+			i < screentxtlen 
+			&& !spr->m_ScreenText[spr->b1_unknown20516]; 
+			++i)
+			++spr->b1_unknown20516;
+		strcpy(spr->m_playerTextOnScreen, spr->m_ScreenText);
+		spr->m_playerTextOnScreen[spr->b1_unknown20516] = 0;
+		spr->b1_unknown20517 = g_numFramesRun;
+	}
+	return true;
+}
+
+extern int g_textDisplayState;
 void DrawPlayerScreenText()
 {
 	if (g_bAtEndOfDrama)
 		return;
 
-	//undone
+	static int g_textCursorBlinkCounter = 0;
+
+	if (g_textDisplayState != 0)
+	{
+		if(g_textDisplayState == 1)
+		{
+			g_textDisplayState = 2;
+			return;
+		}
+		if (!UpdateScreenText(g_PlayerSprite))
+			g_textDisplayState = 0;
+		g_curTextCharInput = '\0';
+	}
+	else
+	{
+		ProcessRealtimeTypedPlayerScreenText();
+		strcpy(g_PlayerSprite->m_playerTextOnScreen, g_PlayerSprite->m_playerTextInput);
+	}
+
+	//tidy this up...
+
+	const float v35 = 512.0;
+	const float v30 = 95.0;
+	const float v29 = 0.125;
+
+	float v31;
+	float v32;
+	float v33;
+	float v34;
+
+	for (int i = 0; i < 2; ++i)
+	{
+		v31 = -v30;
+		v32 = -80.0;
+		v33 = -5.0;
+		v34 = 0;
+		for (int j = 0; j < strlen(g_PlayerSprite->m_playerTextOnScreen); ++j)
+		{
+			if (v30 - 5.0 < v31)
+			{
+				g_PlayerSprite->m_playerTextOnScreen[j] = '\0';
+				g_PlayerSprite->m_ScreenText[j] = '\0';
+				PlayGlobalSound(eGlobalSound_keystop);
+				break;
+			}
+			if (g_PlayerSprite->m_playerTextOnScreen[j] == ' ')
+			{
+				v31 = 30 * v29 + v31;
+			}
+			else
+			{
+				int fontinfo_index = -1;
+				for (int k = 0; k < sizeof(g_fontInfo)/sizeof(font_charinfo_t) && fontinfo_index == -1; ++k)
+				{
+					if (g_PlayerSprite->m_playerTextOnScreen[j] == g_fontInfo[k].character)
+						fontinfo_index = k;
+				}
+				if (fontinfo_index != -1)
+				{
+					font_charinfo_t* fontinfo = &g_fontInfo[fontinfo_index];
+					ETextureFilmstrip fontstrip;
+					if (g_PlayerSprite->m_playerTextOnScreen[j] < 'A' 
+						|| g_PlayerSprite->m_playerTextOnScreen[j] > 'Z')
+						fontstrip = eTextureFilmstrip_YellowFont1;
+					else
+						fontstrip = eTextureFilmstrip_YellowFont2;
+					float unknown001 = fontinfo->unknown001;
+					float unknown002 = fontinfo->unknown002;
+					float v21 = fontinfo->unknown003 + unknown001;
+					float v20 = fontinfo->unknown004 + unknown002;
+
+					float x = v31;
+					float y = v32;
+					float v17 = (v21 - unknown001) * v29 + v31;
+					float v16 = (v20 - unknown002) * v29 + v32;
+					float s = unknown001 / v35;
+					float t = 1.0 - v20 / v35;
+					float v12 = v21 / v35;
+					float v11 = 1.0 - unknown002 / v35;
+					if (i == 1)
+					{
+						g_opacity = 1.0;
+						SetColorFromIndex(eColor_white);
+						glDisable(GL_BLEND);
+						glAlphaFunc(GL_LESS, g_opacity);
+						glEnable(GL_ALPHA_TEST);
+						glEnable(GL_TEXTURE_2D);
+						glBindTexture(GL_TEXTURE_2D, g_TextureFilmstrips[fontstrip].entries[0].texid);
+							glBegin(GL_QUADS);
+								glTexCoord2f(s, t);
+								glVertex3f(x, y, -5);
+								glTexCoord2f(s, v11);
+								glVertex3f(x, v16, -5);
+								glTexCoord2f(v12, v11);
+								glVertex3f(v17, v16, -5);
+								glTexCoord2f(v12, t);
+								glVertex3f(v17, y, -5);
+							glEnd();
+						glDisable(GL_TEXTURE_2D);
+						glDisable(GL_ALPHA_TEST);
+						glEnable(GL_BLEND);
+					}
+					v31 = v17 - x - 0.40000001 + v31;
+				}
+			}
+
+		}
+		//if(i == 0 && 0)
+	}
+	glLoadIdentity();
+	animengine_assert(true); //some macro assertion that we'll never know..
+	if (g_origTextCharInput > 0 && strlen(g_PlayerSprite->m_playerTextOnScreen) > 1)
+		g_textCursorBlinkCounter = 0;
+	if (!strlen(g_PlayerSprite->m_playerTextOnScreen) || g_textDisplayState != 0)
+		g_textCursorBlinkCounter = 25;
+
+	if (++g_textCursorBlinkCounter < 25)
+	{
+		XYZPointf p1(v31 - 0.6875 + 1.25, v32 - 4.6875 + 6.75, v33);
+		XYZPointf p2(v31 + 0.6875 + 1.25, v32 + 4.6875 + 6.75, v33);
+
+		SetColorFromIndex(eColor_unnamed031);
+		glBegin(GL_QUADS);
+			glVertex3f(p1.m_x, p1.m_y, p1.m_z - 1);
+			glVertex3f(p2.m_x, p1.m_y, p1.m_z - 1);
+			glVertex3f(p2.m_x, p2.m_y, p1.m_z - 1);
+			glVertex3f(p1.m_x, p2.m_y, p1.m_z - 1);
+		glEnd();
+
+		glLineWidth(2);
+		SetColorFromIndex(eColor_black);
+		glBegin(GL_LINE_LOOP);
+			glVertex3f(p1.m_x, p1.m_y, p1.m_z);
+			glVertex3f(p2.m_x, p1.m_y, p1.m_z);
+			glVertex3f(p2.m_x, p2.m_y, p1.m_z);
+			glVertex3f(p1.m_x, p2.m_y, p1.m_z);
+		glEnd();
+	}
+	if (g_textCursorBlinkCounter >= 35)
+		g_textCursorBlinkCounter = 0;
 }
 void DrawNPCsScreenText()
 {

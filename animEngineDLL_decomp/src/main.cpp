@@ -1,20 +1,20 @@
 #include "facadecommon.h"
+#include "glfuncs.h"
 #include "keyboarddevice.h"
 #include "sounddevice.h"
-#include "glfuncs.h"
 
-#include "classes/SoundSource.h"
 #include "classes/AblRequestBuffer.h"
-#include "classes/Sprite/CharacterSprite.h"
-#include "classes/XCursor.h"
 #include "classes/Controller.h"
 #include "classes/SoundMgr.h"
+#include "classes/SoundSource.h"
+#include "classes/Sprite/CharacterSprite.h"
+#include "classes/XCursor.h"
 
+#include "classes/Sprite/AnsweringMachineSprite.h"
 #include "classes/Sprite/DoorSprite.h"
 #include "classes/Sprite/DrinkSprite.h"
 #include "classes/Sprite/EightballMessageSprite.h"
 #include "classes/Sprite/PhoneSprite.h"
-#include "classes/Sprite/AnsweringMachineSprite.h"
 
 #include "ABLRequestsPerform_impl.h"
 
@@ -40,6 +40,8 @@ Sprite* g_CursorSprite;
 Sprite* g_cursorContextSprite;
 
 XYZPointf g_cursorPositionHistory[MAX_CURSORPOSHISTORY];
+
+bool g_bDisplayDialogText;
 
 float g_curFps = 30.0;
 int g_millisecondsToSleep = 30;
@@ -80,6 +82,8 @@ int g_numFramesStillAtFoyerWallEdge;
 int g_ticksIntroStarted = -1;
 int g_introEventCtr = -1;
 
+int g_framesWhenLastSentPlayerTypedCue = 0;
+
 
 bool g_bLockedInMSToSleep;
 
@@ -99,7 +103,7 @@ bool g_bSpacePressed = false;
 
 static bool g_bAblDisconnect = false;
 
-static int g_textDisplayState;
+int g_textDisplayState;
 
 SpriteMgr g_spriteMgr;
 
@@ -1138,6 +1142,7 @@ static void ProcessAblRequests(bool clear) {
 	{
 		g_bQuittingApp = true;
 		g_bAblDisconnect = true;
+		MessageBox(NULL, "USER WARNING\n", "façade is closing due to a lack of response from abl.\n", MB_OK);
 		SendMessage(g_hMainAppWindow, WM_CLOSE, 0, 0);
 		return;
 	}
@@ -1172,9 +1177,177 @@ static void ProcessAblRequests(bool clear) {
 
 }
 
+static int CreateNewZone(Sprite* sprite, bool option) {
+	animengine_assert(g_numZones < MAXZONES);
+	zone_t* zone = &g_zones[g_numZones];
+
+	zone->numrects = 0;
+	zone->unknown001 = sprite;
+	zone->unknown002 = option;
+	if (sprite)
+		sprite->a1_unknown00011c = true;
+
+	return g_numZones++;
+}
+
+static void AddRectToZone(int zoneindex, XZRectf rect) {
+	animengine_assert(zoneindex < g_numZones);
+
+	zone_t* zone = &g_zones[zoneindex];
+	animengine_assert(zone->numrects <= NUMRECTS_PERZONE - 1);
+
+	zone->rects[zone->numrects] = rect;
+	++zone->numrects;
+}
+
+static bool IsRectWithinZone(XZRectf rect, int zoneindex) {
+	animengine_assert(zoneindex < g_numZones);
+
+	zone_t* zone = &g_zones[zoneindex];
+
+	for (int i = 0; i < zone->numrects; i++)
+	{
+		if (DoXZRectsIntersect(rect, zone->rects[i]))
+			return true;
+	}
+	return false;
+}
+
+static void ModifyZoneRect(int zoneindex, int rectindex, XZRectf rect) {
+	animengine_assert(zoneindex < g_numZones);
+
+	zone_t* zone = &g_zones[zoneindex];
+	animengine_assert(rectindex < zone->numrects);
+
+	zone->rects[rectindex] = rect;
+}
+
+static bool IsPointWithinZone(XYZPointf point, int zoneindex) {
+	XZRectf rect;
+	rect.m_xmin = rect.m_xmax = point.m_x;
+	rect.m_zmin = rect.m_zmax = point.m_z;
+
+	return IsRectWithinZone(rect, zoneindex);
+}
+
+
+static XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
+	XZRectf rect;
+
+	XYZPointf spritepos = spr->GetPosition();
+	if (spr->GetCollidableType() == eCollidableType_AABB)
+	{
+		rect.m_xmin = spritepos.m_x - 10;
+		rect.m_zmin = spritepos.m_z - 10;
+
+		rect.m_xmax = spritepos.m_x + 10;
+		rect.m_zmax = spritepos.m_z + 10;
+	}
+	else
+	{
+		for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+		{
+			XYZPointf mdlpointworldpos;
+			if (g_numFramesRun > 1)
+			{
+				mdlpointworldpos = spr->b1_unknown00020[i] + spritepos;
+			}
+			else
+			{
+				mdlpointworldpos.m_x = spritepos.m_x + spr->m_modelframe[i].m_x;
+				mdlpointworldpos.m_z = spritepos.m_z + spr->m_modelframe[i].m_z;
+			}
+			if (i == 0)
+			{
+				rect.m_xmin = mdlpointworldpos.m_x;
+				rect.m_zmin = mdlpointworldpos.m_z;
+
+				rect.m_xmax = mdlpointworldpos.m_x;
+				rect.m_zmax = mdlpointworldpos.m_z;
+			}
+			else
+			{
+				if (rect.m_xmin >= mdlpointworldpos.m_x)	rect.m_xmin = mdlpointworldpos.m_x;
+				if (rect.m_zmin >= mdlpointworldpos.m_z)	rect.m_zmin = mdlpointworldpos.m_z;
+
+				if (rect.m_xmax <= mdlpointworldpos.m_x)	rect.m_xmax = mdlpointworldpos.m_x;
+				if (rect.m_zmax <= mdlpointworldpos.m_z)	rect.m_zmax = mdlpointworldpos.m_z;
+			}
+		}
+
+		if (spr->GetCollidableType() == eCollidableType_unknown)
+		{
+			float rectsizex;
+			if (rect.m_xmin - rect.m_xmax < 0.0)
+				rectsizex = -(rect.m_xmin - rect.m_xmax);
+			else
+				rectsizex = rect.m_xmin - rect.m_xmax;
+
+			if (rectsizex > 0.001)
+			{
+				float rectsizez;
+				if (rect.m_zmin - rect.m_zmax < 0.0)
+					rectsizez = -(rect.m_zmin - rect.m_zmax);
+				else
+					rectsizez = rect.m_zmin - rect.m_zmax;
+
+				if (rectsizez > 0.001)
+				{
+					//v17 = 0; //unused variable..
+				}
+				else
+				{
+					rect.m_zmin = rect.m_zmin - 10.0;
+					rect.m_zmax = rect.m_zmax + 10.0;
+				}
+			}
+			else
+			{
+				rect.m_xmin = rect.m_xmin - 10.0;
+				rect.m_xmax = rect.m_xmax + 10.0;
+			}
+		}
+	}
+
+	return rect;
+}
+
 bool PlayGlobalSound(EGlobalSounds sound)
 {
 	return g_soundMgr.PlaySound(g_soundSourceID, sound, true);
+}
+
+void UpdateFrontDoorCollisionZone(bool dooropen)
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		Sprite* spr = nullptr;
+		bool isdoor = i == 0;
+		switch (i)
+		{
+			case 0: spr = g_spriteMgr.GetSpritePtrByName("front door"); break;
+			case 1: spr = g_spriteMgr.GetSpritePtrByName("FD_leftpanel"); break;
+			case 2: spr = g_spriteMgr.GetSpritePtrByName("FD_rightpanel"); break;
+		}
+		
+		for (int j = 0; j < g_numZones; ++j)
+		{
+			Sprite* zonespr = g_zones[j].unknown001;
+			if (zonespr != spr)
+				continue;
+			if (isdoor)
+			{
+				XZRectf rect = ComputeSingleCollisionRectForSprite(spr);
+				if (dooropen)
+				{
+					rect.m_xmax = rect.m_xmin;
+					rect.m_zmax = rect.m_zmin;
+				}
+				ModifyZoneRect(j, 0, rect);
+			}
+			spr->a1_unknown00011c = !dooropen;
+		}
+	}
 }
 
 static void selectglpixelformat(HDC devicecontext)
@@ -1201,6 +1374,46 @@ static void selectglpixelformat(HDC devicecontext)
 		32, /*depth bits*/};
 	int format = ChoosePixelFormat(devicecontext, &descript);
 	SetPixelFormat(devicecontext, format, &descript);
+}
+
+static void DivvyUpDiagonalWallsIntoSubzone(Sprite* spr)
+{
+	for (int i = 0; i < g_numZones; ++i)
+	{
+		Sprite* zonespr = g_zones[i].unknown001;
+		if (zonespr != spr) continue;
+
+		XZRectf rect = ComputeSingleCollisionRectForSprite(zonespr);
+
+		const int iterations = 5;
+
+		float riterations = 1.0 / iterations;
+
+		float xminfactor = 0.0;
+		float xmaxfactor = riterations;
+		float zminfactor = 1.0 - riterations;
+		float zmaxfactor = 1.0;
+
+		for (int j = 0; j < iterations; ++i)
+		{
+			XZRectf zonerect;
+			zonerect.m_xmin = (rect.m_xmax - rect.m_xmin) * xminfactor + rect.m_xmin;
+			zonerect.m_xmax = (rect.m_xmax - rect.m_xmin) * xmaxfactor + rect.m_xmin;
+			zonerect.m_zmin = (rect.m_zmax - rect.m_zmin) * zminfactor + rect.m_zmin;
+			zonerect.m_zmax = (rect.m_zmax - rect.m_zmin) * zmaxfactor + rect.m_zmin;
+
+			if (i == 0)
+				AddRectToZone(i, zonerect);
+			else
+				ModifyZoneRect(i, 0, zonerect);
+
+			xminfactor += riterations;
+			xmaxfactor += riterations;
+
+			zminfactor -= riterations;
+			zmaxfactor -= riterations;
+		}
+	}
 }
 
 static void FinishRoomInit()
@@ -1366,11 +1579,51 @@ static void UpdateTitleSequence()
 
 static void UpdateCursor()
 {
+	static int g_lastObjCursorNotice = -99999;
+
+	XCursor::theirCursor->Update();
+	g_playerGesture = ePlayerGesture_NOTAGESTURE;
+	for (int i = 0; i < g_spriteMgr.GetNumSprites(); ++i)
+	{
+		Sprite* spr = g_spriteMgr.GetSpritePtr(i);
+		spr->SetClickedThisFrame(false);
+		spr->b1_unknown20584 = -1;
+	}
+
+	if (g_CursorSprite->GetNumHeldSprites() > 0
+		&& g_numFramesRun > g_lastObjCursorNotice + 210)
+	{
+		//undone
+	}
+
+	float cursorxpos = ((g_mousePosition[0] - g_windowWidth / 2) / 5.f);
+	float cursorypos = ((g_windowHeight / 2 - g_mousePosition[1]) / 5.f) - 28.0;
+
+	g_CursorSprite->SetPosition(XYZPointf(cursorxpos, cursorypos, -30), -1);
+
+
 	//undone
 }
 static void UpdateEnvironment()
 {
-	//undone
+	for (int i = 0; i < g_numZones; ++i)
+	{
+		Sprite* spr = g_zones[i].unknown001;
+		if (!spr) continue;
+
+		if (spr->GetCollidableType() == eCollidableType_AABB)
+			ModifyZoneRect(i, 0, ComputeSingleCollisionRectForSprite(spr));
+	}
+
+	if (g_numFramesRun == 2)
+	{
+		UpdateFrontDoorCollisionZone(false);
+		DivvyUpDiagonalWallsIntoSubzone(g_spriteMgr.GetSpritePtrByName("FY_leftwall1"));
+		DivvyUpDiagonalWallsIntoSubzone(g_spriteMgr.GetSpritePtrByName("FY_rightwall1"));
+	}
+
+	//if (g_printMapCtr >= 0 && !(g_numFramesRun % 3))
+	//	PrintPathPlanGrid();
 }
 static void UpdateCinematography()
 {
@@ -1479,7 +1732,7 @@ static void UpdateAndRenderWorld()
 	}
 	UpdateFade();
 	glFlush();
-	g_mouseLButtonClicked = 0;
+	g_mouseLButtonClicked = false;
 	//if (*(int*)dword_10180DB4 >= 0 && !(g_numFramesRun % 4))
 	//	sub_1000227F();
 }
@@ -1583,28 +1836,18 @@ static void GetRotationKeyPresses()
 				|| GetForegroundWindow() == g_scriptDialogHWnd
 				|| GetForegroundWindow() == g_faceDialogHWnd)
 			{
-				if ((GetAsyncKeyState(VK_F1) & 0x8000) == 0)
-					g_bF1Pressed = 0;
-				if ((GetAsyncKeyState(VK_F2) & 0x8000) == 0)
-					g_bF2Pressed = 0;
-				if ((GetAsyncKeyState(VK_F3) & 0x8000) == 0)
-					g_bF3Pressed = 0;
-				if ((GetAsyncKeyState(VK_F4) & 0x8000) == 0)
-					g_bF4Pressed = 0;
-				if ((GetAsyncKeyState(VK_F6) & 0x8000) == 0)
-					g_bF6Pressed = 0;
-				if ((GetAsyncKeyState(VK_F7) & 0x8000) == 0)
-					g_bF7Pressed = 0;
-				if ((GetAsyncKeyState(VK_F8) & 0x8000) == 0)
-					g_bF8Pressed = 0;
-				if ((GetAsyncKeyState(VK_F9) & 0x8000) == 0)
-					g_bF9Pressed = 0;
-				if ((GetAsyncKeyState(VK_F12) & 0x8000) == 0)
-					g_bF12Pressed = 0;
-				if ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) == 0)
-					g_bEscapePressed = 0;
-				if ((GetAsyncKeyState(VK_SPACE) & 0x8000) == 0)
-					g_bSpacePressed = 0;
+				if ((GetAsyncKeyState(VK_F1) & 0x8000) == 0)		g_bF1Pressed = false;
+				if ((GetAsyncKeyState(VK_F2) & 0x8000) == 0)		g_bF2Pressed = false;
+				if ((GetAsyncKeyState(VK_F3) & 0x8000) == 0)		g_bF3Pressed = false;
+				if ((GetAsyncKeyState(VK_F4) & 0x8000) == 0)		g_bF4Pressed = false;
+				if ((GetAsyncKeyState(VK_F6) & 0x8000) == 0)		g_bF6Pressed = false;
+				if ((GetAsyncKeyState(VK_F7) & 0x8000) == 0)		g_bF7Pressed = false;
+				if ((GetAsyncKeyState(VK_F8) & 0x8000) == 0)		g_bF8Pressed = false;
+				if ((GetAsyncKeyState(VK_F9) & 0x8000) == 0)		g_bF9Pressed = false;
+				if ((GetAsyncKeyState(VK_F12) & 0x8000) == 0)		g_bF12Pressed = false;
+				if ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) == 0)	g_bEscapePressed = false;
+				if ((GetAsyncKeyState(VK_SPACE) & 0x8000) == 0)		g_bSpacePressed = false;
+
 				if (g_faceDialogHWnd)
 				{
 					//sub_100015A5();
@@ -1641,8 +1884,52 @@ static void GetRotationKeyPresses()
 		}
 	}
 }
-bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option) {
-	//undone
+
+static bool CollisionTest(int zoneindex, XZRectf rect, Sprite* spr1, Sprite* spr2)
+{
+	if (g_zones[zoneindex].unknown002 && (!spr1 || spr1 != spr2) && (!spr2 || spr2->a1_unknown00011c))
+	{
+		if (spr1 != g_PlayerSprite
+			|| !spr2
+			|| !spr2->GetIsCharacterSprite()
+			|| IsPointVisibleToPlayer(spr2->GetPosition(), true))
+		{
+			if (IsRectWithinZone(rect, zoneindex))
+				return true;
+		}
+	}
+	return false;
+}
+
+bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int expandsize, bool option) {
+
+	XZRectf rect;
+	rect.m_xmin = pos.m_x - expandsize;
+	rect.m_zmin = pos.m_z - expandsize;
+
+	rect.m_xmax = pos.m_x + expandsize;
+	rect.m_zmax = pos.m_z + expandsize;
+
+	float gridx, gridz;
+
+	GetGridXZFromWorldXZ(rect.m_xmin, rect.m_zmin, gridx, gridz);
+	if (gridx <= 2 || gridz <= 2 || gridx >= 87 || gridz >= 87)
+		return true;
+	GetGridXZFromWorldXZ(rect.m_xmax, rect.m_zmax, gridx, gridz);
+	if (gridx <= 2 || gridz <= 2 || gridx >= 87 || gridz >= 87)
+		return true;
+
+	for (int i = 0; i < g_numZones; ++i)
+	{
+		Sprite* zonespr = g_zones[i].unknown001;
+		if ( (option
+			|| !zonespr
+			|| !zonespr->GetIsCharacterSprite())
+			&& CollisionTest(i, rect, spr, zonespr))
+		{
+			return true;
+		}
+	}
 	return false;
 }
 static void ClearNavigationFlags() {
@@ -1940,9 +2227,9 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		}
 		break;
 
-	case WM_MOUSEFIRST:
-		g_mousePosition[0] = (uint16_t)lparam;
-		g_mousePosition[1] = ((uint16_t)(uint8_t*)lparam + 2);
+	case WM_MOUSEMOVE:
+		g_mousePosition[0] = GET_X_LPARAM(lparam);
+		g_mousePosition[1] = GET_Y_LPARAM(lparam);
 		break;
 	case WM_LBUTTONDOWN:
 		g_mouseLButtonClicked = true;
@@ -2470,13 +2757,13 @@ void StopAllMP3s()
 void PlayerEnteredText()
 {
 	static int g_waitingToRedisplayCtr;
-	strcpy(g_PlayerSprite->m_playerTextInput, g_PlayerSprite->b1_unknown20323);
-	g_bNewPlayerTextEntered = 1;
+	strcpy(g_PlayerSprite->m_playerTextInput, g_PlayerSprite->m_ScreenText);
+	g_bNewPlayerTextEntered = true;
 	g_whenNewPlayerTextEntered = g_numFramesRun;
-	g_PlayerSprite->SetScreenText(g_PlayerSprite->b1_unknown20323, true);
+	g_PlayerSprite->SetScreenText(g_PlayerSprite->m_ScreenText, true);
 	g_textDisplayState = 1;
 	g_waitingToRedisplayCtr = 0;
-	AddEventInfoToLog(eEventLogType_Speech, eSpriteID_player, g_PlayerSprite->b1_unknown20323, 0, eSpriteID_NOTASPRITE, 0);
+	AddEventInfoToLog(eEventLogType_Speech, eSpriteID_player, g_PlayerSprite->m_ScreenText, 0, eSpriteID_NOTASPRITE, 0);
 }
 
 void CreateRoom()
@@ -2632,11 +2919,11 @@ void CreateRoom()
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall4",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,		   eColor_black,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 200,   80, -350),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall5",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,		   eColor_black,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 200,   80, -450),		 true,	false);
     spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow1",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(-101,   77, -498),		 true,	false);
-		spr->a1_unknown00011 = true;
+		spr->a1_unknown00011b = true;
 	spr = CreatePanel(eSpriteID_viewWindow,		"LR_backwindow2",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( -30,   77, -498),		 true,	false);
-		spr->a1_unknown00011 = true;
+		spr->a1_unknown00011b = true;
 	spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow3",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	  eColor_unnamed030,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(  41,   77, -498),		 true,	false);
-		spr->a1_unknown00011 = true;
+		spr->a1_unknown00011b = true;
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallL",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf( 170,   80,   98),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1",					true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(  17,   80,   98),		 true,	false);
     CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1_real",				true,	eObjectType_Misc,		 60,	  8,	 0,		0,	0,	 true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,	eColor_none,	XYZPointf(   2,   80,  108),		 true,	false);
@@ -2716,7 +3003,7 @@ void InitEnvironment()
 {
 	g_numZones = 0;
 	for (int i = 0; i < MAXZONES; ++i)
-		g_zones[i].numrects = -1;
+		g_zones[i].numrects = -1;	
 
 	//for (j = 0; j < 90; ++j)
 	//{
@@ -2882,7 +3169,10 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 	static int g_playerMotionNoise;
 	if (!spr)
 	{
-		//undone
+		g_PlayerSprite->SetPosition(XYZPointf(-32, 97, -111), -1);
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y = 24;
+		g_PlayerSprite->SetRotation(playerrot);
 	}
 	g_playerMotionNoise = 0;
 	if (!spr && g_numFramesRun > 1 && !b1)
@@ -2898,6 +3188,61 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 	g_GraceSprite->SetTorsoRotation(XYZPointf(0, 0, 0));
 	g_GraceSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 160), -1);
 	g_GraceSprite->SetHeadRotation(XYZPointf(0, 50, 0));
+
+	//g_GraceSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
+	//g_GraceSprite->m_GestureFxnMgr6.StartGestureFxn(0, 43, 0);
+	//g_GraceSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, 0);
+	//g_GraceSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, 0);
+	//g_GraceSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, 0);
+	//g_GraceSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, 0);
+
+	if (spr != g_GraceSprite)
+		g_GraceSprite->SetGazeTrackingSprite(g_PlayerSprite, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);
+
+
+
+	if (!spr)
+	{
+		g_TripSprite->SetPosition(XYZPointf(-30, -5, -155), -1);
+		XYZPointf triprot = g_PlayerSprite->GetRotation();
+		triprot.m_y = 178;
+		g_TripSprite->SetRotation(triprot);
+	}
+
+	g_TripSprite->SetTorsoRotation(XYZPointf(0, 0, 0));
+	g_TripSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 170), -1);
+	g_TripSprite->SetHeadRotation(XYZPointf(0, 0, 0));
+
+	//g_TripSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
+	//g_TripSprite->m_GestureFxnMgr6.StartGestureFxn(0, 44, 0);
+	//g_TripSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, 0);
+	//g_TripSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, 0);
+	//g_TripSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, 0);
+	//g_TripSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, 0);
+
+	if (spr != g_TripSprite)
+		g_TripSprite->SetGazeTrackingSprite(g_PlayerSprite, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);
+
+
+
+	Sprite* roomspr = g_spriteMgr.GetSpritePtrByName("couch");
+		roomspr->SetPosition(XYZPointf(150, 0, 350), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
+	roomspr = g_spriteMgr.GetSpritePtrByName("cabinet");
+		roomspr->SetPosition(XYZPointf(-177, 0, -350), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
+	roomspr = g_spriteMgr.GetSpritePtrByName("side table");
+		roomspr->SetPosition(XYZPointf(170, 0, -210), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
+	roomspr = g_spriteMgr.GetSpritePtrByName("work table");
+		roomspr->SetPosition(XYZPointf(160, 0, -30), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
+	roomspr = g_spriteMgr.GetSpritePtrByName("bar");
+		roomspr->SetPosition(XYZPointf(-160, 0, -120), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
+	roomspr = g_spriteMgr.GetSpritePtrByName("side table 2");
+		roomspr->SetPosition(XYZPointf(-180.0, 0.0, -60.0), -1);
+		roomspr->SetRotation(XYZPointf(0, 0, 0));
 
 }
 void InitCollisionZonesAndPathPlanGrid()
