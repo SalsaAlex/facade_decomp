@@ -126,11 +126,11 @@ void CharacterSprite::SetEyesMove(float f1, float f2)
 	if (m_Controller5.GetIsMoving())
 		m_Controller5.UpdateTarget(f1);
 	else
-		m_Controller5.SetTargetByRate(f1, target, eControllerType_unknown02, -666);
+		m_Controller5.SetTargetByRate(f1, target, eControllerType_unknown02, -DATA_NULLVAL);
 
 	if (m_Controller6.GetIsMoving())	m_Controller6.UpdateTarget(f2);
 	else
-		m_Controller6.SetTargetByRate(f2, target, eControllerType_unknown02, -666);
+		m_Controller6.SetTargetByRate(f2, target, eControllerType_unknown02, -DATA_NULLVAL);
 }
 void CharacterSprite::GetEyesMove(float& f1, float& f2)
 {

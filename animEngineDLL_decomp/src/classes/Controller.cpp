@@ -16,8 +16,8 @@ void Controller::SetTargetByFrames(float target, int numframes, EControllerType 
 	if (numframes > 0)
 	{
 		float RateByFrames = GetRateByFrames(target, numframes);
-		if (RateByFrames != -666.0)
-			SetTargetByRate(target, RateByFrames, controltype, -666);
+		if (RateByFrames != -DATA_NULLVAL)
+			SetTargetByRate(target, RateByFrames, controltype, -DATA_NULLVAL);
 	}
 	else
 	{
@@ -34,12 +34,12 @@ float Controller::GetRateByFrames(float f1, int numframes)
 	if (numframes <= 0)
 	{
 		ShouldntBeHere("numFrames must be > 0 in GetRateByFrames()");
-		return -666;
+		return -DATA_NULLVAL;
 	}
 
 	//undone
 
-	return -666.0;
+	return -DATA_NULLVAL;
 }
 
 

@@ -58,7 +58,7 @@ uint32_t g_numFramesRun = 0;
 uint32_t g_SkipFramesCounter = 0;
 uint32_t g_lastFrameGotAblRequest = 0;
 
-uint32_t g_whenNewPlayerTextEntered = -666;
+uint32_t g_whenNewPlayerTextEntered = -DATA_NULLVAL;
 
 
 HWND g_hMainAppWindow;

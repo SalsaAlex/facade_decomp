@@ -200,7 +200,7 @@ mdlframe_t g_Couch_modelFrame[] = {
 		{45.0, 52.0, -30.0},
 		{45.0, 52.0, -90.0},
 		{-40.0, 52.0, -140.0},
-		{666.0, 666.0, 666.0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}
 };
 mdlframe_t g_SideTable_modelFrame[] = {
 		{-16.0, 0.0, -16.0},
@@ -243,8 +243,8 @@ mdlframe_t g_SideTable_modelFrame[] = {
 		{20.0, 29.0, -20.0},
 		{20.0, 32.0, 20.0},
 		{20.0, 29.0, 20.0},
-		{666.0, 666.0, 666.0},
-		{666.0, 0.0, 0.0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
 };
 mdlframe_t g_WorkTable_modelFrame[] = {
 		{-16.0, 0.0, -51.0},
@@ -289,8 +289,8 @@ mdlframe_t g_WorkTable_modelFrame[] = {
 		{20.0, 54.0, 55.0},
 		{-20.0, 57.0, 0.0},
 		{20.0, 57.0, 0.0},
-		{666.0, 666.0, 666.0},
-		{666.0, 0.0, 0.0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
 };
 mdlframe_t g_Cabinet_modelFrame[] = {
 		{0.0, 0.0, 90.0},
@@ -353,8 +353,8 @@ mdlframe_t g_Cabinet_modelFrame[] = {
 		{0.0, 134.0, 60.0},
 		{0.0, 100.0, 60.0},
 		{-20.0, 134.0, 90.0},
-		{666.0, 666.0, 666.0},
-		{666.0, 0.0, 0.0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
 };
 mdlframe_t g_Bar_modelFrame[] = {
 		{-40.0, 0.0, 20.0},
@@ -371,8 +371,8 @@ mdlframe_t g_Bar_modelFrame[] = {
 		{-5.0, 67.0, 0.0},
 		{-40.0, 67.0, 0.0},
 		{-40.0, 0.0, 0.0},
-		{666.0, 666.0, 666.0},
-		{666.0, 0.0, 0.0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
 };
 panelmdlframes_t g_panelModelFrames[MAX_PANELS];
 mdlframe_t g_unknown1_modelFrame[] = {
@@ -392,14 +392,14 @@ mdlframe_t g_unknown1_modelFrame[] = {
 		{-38, 120, 60}, 
 		{38, 114, 66}, 
 		{-38, 114, 66},
-		{666, 666, 666}, 
-		{666, 0, 0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, 
+		{DATA_NULLVAL, 0, 0},
 };
 mdlframe_t g_unknown2_modelFrame[] = {
 		{0, 0, 5},
 		{0, 0, 4},
 		{0, 0, 0},
-		{666, 666, 666}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}
 };
 mdlframe_t g_unknown3_modelFrame[] = {
 		{-15, 0, -15},
@@ -410,8 +410,8 @@ mdlframe_t g_unknown3_modelFrame[] = {
 		{15, 60, -15},
 		{15, 60, 15},
 		{15, 0, 15},
-		{666, 666, 666},
-		{666, 0, 0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0, 0}
 };
 mdlframe_t g_unknown4_modelFrame[] = {
 		{-10, 0, -10},
@@ -422,8 +422,8 @@ mdlframe_t g_unknown4_modelFrame[] = {
 		{10, 40, -10},
 		{10, 40, 10},
 		{10, 0, 10},
-		{666, 666, 666},
-		{666, 0, 0}
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0, 0}
 };
 /////////////////////////////////////////////////////
 
@@ -485,7 +485,7 @@ mdlinfo_t g_Couch_modelInfo[] = {
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666, 666.0, 666.0, 666.0, 666.0, 666.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
 };
 mdlinfo_t g_SideTable_modelInfo[] = {
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -528,7 +528,7 @@ mdlinfo_t g_SideTable_modelInfo[] = {
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 mdlinfo_t g_WorkTable_modelInfo[] = {
 	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -573,7 +573,7 @@ mdlinfo_t g_WorkTable_modelInfo[] = {
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 mdlinfo_t g_Cabinet_modelInfo[] = {
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -636,7 +636,7 @@ mdlinfo_t g_Cabinet_modelInfo[] = {
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 mdlinfo_t g_Bar_modelInfo[] = {
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -653,7 +653,7 @@ mdlinfo_t g_Bar_modelInfo[] = {
 	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 panelmdlinfos_t g_panelModelInfo[MAX_PANELS];
 mdlinfo_t g_unknown1_modelInfo[] = {
@@ -673,13 +673,13 @@ mdlinfo_t g_unknown1_modelInfo[] = {
 	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 666.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
 };
 mdlinfo_t g_unknown2_modelInfo[] = {
 	{0.5, eColor_unnamed008, 0.0, 20.0, 0.0, 4.0, 0.0},
 	{0.5, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{0.5, eColor_unnamed011, 0.0, 20.0, 0.0, 4.0, 0.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 666.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
 };
 mdlinfo_t g_unknown3_modelInfo[] = {
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -690,7 +690,7 @@ mdlinfo_t g_unknown3_modelInfo[] = {
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 mdlinfo_t g_unknown4_modelInfo[] = {
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
@@ -701,7 +701,7 @@ mdlinfo_t g_unknown4_modelInfo[] = {
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
 	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
-	{666.0, 666.0, 666.0, 666.0, 666.0, 666.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
 };
 /////////////////////////////////////////////////////
 
@@ -945,15 +945,15 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 		20, 20, 20, 20,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_SideTable_modelQuadPolys[] = {
 	//undone
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_WorkTable_modelQuadPolys[] = {
 	//undone
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	{
@@ -1140,7 +1140,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 		20, 20, 20, 20,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{ {666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{ {DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	{
@@ -1207,7 +1207,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 panelmdlquadpolys_t g_panelModelQuadPolys[MAX_PANELS];
 mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
@@ -1232,10 +1232,10 @@ mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
 		0,
 		eColor_black,
 		eColor_black, eColor_unnamed010, eColor_unnamed010, eColor_unnamed010,
-		12, -1, 666, 666,
-		(ETextureFilmstrip)666
+		12, -1, DATA_NULLVAL, DATA_NULLVAL,
+		(ETextureFilmstrip)DATA_NULLVAL
 	},
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 0, 0, 0, (ETextureFilmstrip)0 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, 0, 0, 0, (ETextureFilmstrip)0 },
 };
 mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 	{
@@ -1270,7 +1270,7 @@ mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 	{
@@ -1305,7 +1305,7 @@ mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{666, 666, 666, 666}, 666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, (EColor)666, 666, 666, 666, 666, (ETextureFilmstrip)666 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 /////////////////////////////////////////////////////
 
@@ -2173,12 +2173,10 @@ bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int expandsize, bool opt
 	return false;
 }
 static void ClearNavigationFlags() {
-	g_bPlayerRotateLeft = false;
-	g_bPlayerRotateRight = false;
-	g_bPlayerMoveForwards = false;
-	g_bPlayerMoveBackwards = false;
-	g_bPlayerMoveUpwards = false;
-	g_bPlayerMoveDownwards = false;
+	g_bPlayerRotateLeft = g_bPlayerRotateRight =
+		g_bPlayerMoveForwards = g_bPlayerMoveBackwards =
+		g_bPlayerMoveUpwards = g_bPlayerMoveDownwards =
+		false;
 }
 static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
 {
@@ -2196,45 +2194,27 @@ static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool
 	}
 	if (option)
 	{
-		if (playerpos.m_x >= point.m_x)
-		{
-			if (playerpos.m_x > point.m_x)
-			{
-				g_PlayerXController.SetMinVal(point.m_x);
-				g_PlayerXController.SetMaxVal(10000);
-			}
-		}
-		else
-		{
-			g_PlayerXController.SetMaxVal(point.m_x);
-			g_PlayerXController.SetMinVal(-10000);
-		}
-		if (playerpos.m_y >= point.m_y)
-		{
-			if (playerpos.m_y > point.m_y)
-			{
-				g_PlayerYController.SetMinVal(point.m_y);
-				g_PlayerYController.SetMaxVal(10000);
-			}
-		}
-		else
-		{
-			g_PlayerYController.SetMaxVal(point.m_y);
-			g_PlayerYController.SetMinVal(-10000);
-		}
-		if (playerpos.m_z >= point.m_z)
-		{
-			if (playerpos.m_z > point.m_z)
-			{
-				g_PlayerZController.SetMinVal(point.m_z);
-				g_PlayerZController.SetMaxVal(10000);
-			}
-		}
-		else
-		{
-			g_PlayerZController.SetMaxVal(point.m_z);
-			g_PlayerZController.SetMinVal(-10000);
-		}
+#define SETCONTROLLERLIMITS(controller, val1, val2) \
+	if (val1 != val2) \
+	{ \
+		if (val1 > val2) \
+		{ \
+			controller.SetMinVal(val2); \
+			controller.SetMaxVal(10000); \
+		} \
+		else \
+		{ \
+			controller.SetMaxVal(val2); \
+			controller.SetMinVal(-10000); \
+		} \
+	}
+
+		SETCONTROLLERLIMITS(g_PlayerXController, playerpos.m_x, point.m_x);
+		SETCONTROLLERLIMITS(g_PlayerYController, playerpos.m_y, point.m_y);
+		SETCONTROLLERLIMITS(g_PlayerZController, playerpos.m_z, point.m_z);
+
+#undef SETCONTROLLERLIMITS
+
 	}
 	g_PlayerXController.SetVal(playerpos.m_x, false);
 	g_PlayerXController.SetTargetByRate(point.m_x, f2, eControllerType_unknown03, playerpos.m_x - g_prevPlayerPosition.m_x);
@@ -2254,8 +2234,7 @@ static void DoHugComfortKissPlayerMotion(Sprite* spr, float f1) {
 
 	XYZPointf pointatangle = PointAtAngleAndDist(actorpos, angle + 180, f1);
 
-	XYZPointf v4(pointatangle.m_x, playerpos.m_y, playerpos.m_z);
-	StartPlayerMoveControllers(v4, angle, 1, 0);
+	StartPlayerMoveControllers(XYZPointf(pointatangle.m_x, playerpos.m_y, playerpos.m_z), angle, 1, 0);
 	g_AutoMovePlayerStatus = 4;
 }
 static void EndPlayerAutoMove(bool option) {
@@ -2268,7 +2247,7 @@ static void EndPlayerAutoMove(bool option) {
 		XYZPointf cursorpos = g_cursorContextSprite->GetPosition();
 		XYZPointf playerpos = g_PlayerSprite->GetPosition();
 		if (GetXZDistanceBetweenPoints(playerpos, cursorpos) < 30)
-			b1 = 1;
+			b1 = true;
 		break;
 	}
 	g_AutoMovePlayerStatus = 0;
@@ -2285,9 +2264,10 @@ static bool HackToFixStuckPlayerAtFoyerWallEdge(XYZPointf point) {
 		return false;
 	}
 	if (++g_numFramesStillAtFoyerWallEdge <= 600)
-		return 0;
+		return false;
 	dprintf("## Repositioning player away from foyer wall\n");
 	g_PlayerSprite->SetPosition(XYZPointf(-172, point.m_y, 107));
+	return true;
 }
 static void GetNewPlayerPosition(float yaw, XYZPointf& out) {
 	float factor = ConvertWorldDegreesToRadians(yaw);
@@ -2392,12 +2372,14 @@ static void UpdatePlayerNavigation() {
 
 	bool moving = false;
 	bool rotating = false;
+
 	float playermovforward_limit = FrameRateAdjust(1.5, 1);
 	float playermovbackward_limit = FrameRateAdjust(-0.75, 1);
 	float playerrotleft_limit = FrameRateAdjust(1.5, 1);
 	float playerrotright_limit = FrameRateAdjust(-1.5, 1);
-	float playerrot_factor = FrameRateAdjust(0.09, 1);
-	float playermove_factor = FrameRateAdjust(0.09, 1);
+
+	const float playerrot_factor = FrameRateAdjust(0.09, 1);
+	const float playermove_factor = FrameRateAdjust(0.09, 1);
 	if (GetAsyncKeyState(VK_CONTROL) < 0)
 	{
 		playermovforward_limit = FrameRateAdjust(6.0, 1);
@@ -2520,10 +2502,8 @@ static void UpdatePlayerNavigation() {
 
 	if (g_bPlayerMoveUpwards || g_bPlayerMoveDownwards)
 	{
-		if (g_bPlayerMoveUpwards)
-			playernextpos.m_y = playernextpos.m_y + playermovforward_limit;
-		if (g_bPlayerMoveDownwards)
-			playernextpos.m_y = playernextpos.m_y - playermovforward_limit;
+		if (g_bPlayerMoveUpwards)	playernextpos.m_y += playermovforward_limit;
+		if (g_bPlayerMoveDownwards)	playernextpos.m_y -= playermovforward_limit;
 		moving = true;
 	}
 	ClearNavigationFlags();
@@ -2572,11 +2552,9 @@ static void UpdatePlayerNavigation() {
 					if (playernextpos.m_z >= -400)
 					{
 						target.m_z = playernextpos.m_z;
-						if (playernextpos.m_z >= -350)
-							target.m_z = -350;
 
-						if (target.m_z <= -460)
-							target.m_z = -460;
+						if (playernextpos.m_z >= -350)	target.m_z = -350;
+						if (target.m_z <= -460)	target.m_z = -460;
 
 						if (NormalizeNeg180to180(playerrot.m_y) >= 90)
 							rottarget = 240;
@@ -2598,8 +2576,10 @@ static void UpdatePlayerNavigation() {
 				{
 					bool inarea = playerpos.m_x > -213.0 && playerpos.m_z < 109.0 && playerpos.m_x < -166.0 && playerpos.m_z > 13.0
 						|| playerpos.m_x > -161.0 && playerpos.m_z < 148.0 && playerpos.m_x < -83.0 && playerpos.m_z > 74.0;
+					
 					if (inarea && g_moveTowardsCenterOfRoomCountdown <= 0)
 						g_moveTowardsCenterOfRoomCountdown = 20;
+
 					if (g_moveTowardsCenterOfRoomCountdown <= 0 && !g_bVeryNearCharacter && !inarea)
 					{
 						playernextpos = playerpos;
@@ -2692,9 +2672,6 @@ static void UpdatePlayerNavigation() {
 
 	if(collided)
 		g_playerTransAmt = 0;
-
-
-	//undone
 	
 }
 
@@ -3336,7 +3313,6 @@ static int GetFullDrinkLevel(bool isplayer)
 {
 	if (isplayer)
 		return 8;
-	
 	return rand2(-2, 2) + 10;
 }
 
@@ -3373,9 +3349,8 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	mdlpoints[4] = XYZPointf(mdlpoints[3].m_x, mdlpoints[1].m_y, 0);
 
 	if (!norotation)
-	{
 		RotateArrayOfPoints(mdlpoints, 5, XYZPointf(rotx, roty, rotz), XYZPointf(0, 0, 0));
-	}
+
 
 	panelmdlframes_t* panelmdlframe = &g_panelModelFrames[g_numPanels];
 	panelmdlinfos_t* panelmdlinfos = &g_panelModelInfo[g_numPanels];
@@ -3383,7 +3358,7 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 
 	for (int i = 0; i < 5; ++i)
 		panelmdlframe->frames[i] = mdlpoints[i];
-	panelmdlframe->frames[5] = XYZPointf(666, 666, 666);
+	panelmdlframe->frames[5] = XYZPointf(DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL);
 
 	if (texturefilmstrip == eTextureFilmstrip_NOTATEXTURE)
 	{
@@ -3404,13 +3379,13 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 		panelmdlinfos->infos[i].unknown006 = 1.0;
 		panelmdlinfos->infos[i].unknown007 = 1.0;
 	}
-	panelmdlinfos->infos[5].unknown001 = 666;
-	panelmdlinfos->infos[5].color = 666;
-	panelmdlinfos->infos[5].unknown003 = 666;
-	panelmdlinfos->infos[5].unknown004 = 666;
-	panelmdlinfos->infos[5].unknown005 = 666;
-	panelmdlinfos->infos[5].unknown006 = 666;
-	panelmdlinfos->infos[5].unknown007 = 666;
+	panelmdlinfos->infos[5].unknown001 = DATA_NULLVAL;
+	panelmdlinfos->infos[5].color = DATA_NULLVAL;
+	panelmdlinfos->infos[5].unknown003 = DATA_NULLVAL;
+	panelmdlinfos->infos[5].unknown004 = DATA_NULLVAL;
+	panelmdlinfos->infos[5].unknown005 = DATA_NULLVAL;
+	panelmdlinfos->infos[5].unknown006 = DATA_NULLVAL;
+	panelmdlinfos->infos[5].unknown007 = DATA_NULLVAL;
 
 	panelmdlquadpoly->polys[0].mdlinfoindex[0] = 4;
 	panelmdlquadpoly->polys[0].mdlinfoindex[1] = 1;
@@ -3428,21 +3403,21 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	panelmdlquadpoly->polys[0].linewidth4 = 12;
 	panelmdlquadpoly->polys[0].m_eFilmstrip = texturefilmstrip;
 
-	panelmdlquadpoly->polys[1].mdlinfoindex[0] = 666;
-	panelmdlquadpoly->polys[1].mdlinfoindex[1] = 666;
-	panelmdlquadpoly->polys[1].mdlinfoindex[2] = 666;
-	panelmdlquadpoly->polys[1].mdlinfoindex[3] = 666;
-	panelmdlquadpoly->polys[1].unknown005 = 666;
-	panelmdlquadpoly->polys[1].facecolor =  (EColor)666;
-	panelmdlquadpoly->polys[1].linecolor1 = (EColor)666;
-	panelmdlquadpoly->polys[1].linecolor2 = (EColor)666;
-	panelmdlquadpoly->polys[1].linecolor3 = (EColor)666;
-	panelmdlquadpoly->polys[1].linecolor4 = (EColor)666;
-	panelmdlquadpoly->polys[1].linewidth1 = 666;
-	panelmdlquadpoly->polys[1].linewidth2 = 666;
-	panelmdlquadpoly->polys[1].linewidth3 = 666;
-	panelmdlquadpoly->polys[1].linewidth4 = 666;
-	panelmdlquadpoly->polys[1].m_eFilmstrip = (ETextureFilmstrip)666;
+	panelmdlquadpoly->polys[1].mdlinfoindex[0] = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].mdlinfoindex[1] = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].mdlinfoindex[2] = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].mdlinfoindex[3] = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].unknown005 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].facecolor =  (EColor)DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linecolor1 = (EColor)DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linecolor2 = (EColor)DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linecolor3 = (EColor)DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linecolor4 = (EColor)DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linewidth1 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linewidth2 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linewidth3 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].linewidth4 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].m_eFilmstrip = (ETextureFilmstrip)DATA_NULLVAL;
 
 	Sprite* spr;
 	switch (objtype)
@@ -3776,17 +3751,14 @@ static void InitPlayerNavigationVars()
 {
 	g_playerTransAmt = 0;
 	g_playerRotAmt = 0;
-	g_bPlayerRotateLeft = false;
-	g_bPlayerRotateRight = false;
-	g_bPlayerMoveForwards = false;
-	g_bPlayerMoveBackwards = false;
-	g_bPlayerMoveUpwards = false;
-	g_bPlayerMoveDownwards = false;
+	g_bPlayerRotateLeft = g_bPlayerRotateRight = 
+		g_bPlayerMoveForwards = g_bPlayerMoveBackwards = 
+		g_bPlayerMoveUpwards = g_bPlayerMoveDownwards = false;
 	g_AutoMovePlayerStatus = 0;
 	g_bSeatedOnCouch = false;
 	g_bTripCarry = false;
 }
-void InitPlayerNavigation()
+static void InitPlayerNavigation()
 {
 	InitPlayerNavigationVars();
 	g_PlayerXController.InitController(&g_autoMovePlayerPt.m_x, -10000, 10000, false);
@@ -3797,7 +3769,7 @@ void InitPlayerNavigation()
 Sprite* CreateCursorSprite()
 {
 	Sprite* spr = new Sprite();
-	spr->InitSprite(eSpriteID_cursor, "cursor", false, true, -1);
+	spr->InitSprite(eSpriteID_cursor, "cursor", false, true);
 	return spr;
 }
 CharacterSprite* CreateGraceSprite()
@@ -4007,14 +3979,11 @@ void InitCollisionZonesAndPathPlanGrid()
 			continue;
 
 		XZRectf rect = ComputeSingleCollisionRectForSprite(spr);
-		if (spr->m_eID == eSpriteID_bar)
-			rect.m_xmax += 15;
 
-		if (spr->m_eID == eSpriteID_workTable)
-			rect.m_xmax -= 15;
+		if (spr->m_eID == eSpriteID_bar)	rect.m_xmax += 15;
+		if (spr->m_eID == eSpriteID_workTable)	rect.m_xmax -= 15;
 
-		int zoneindex = CreateNewZone(spr, true);
-		AddRectToZone(zoneindex, rect);
+		AddRectToZone(CreateNewZone(spr, true), rect);
 		if (!spr->GetIsCharacterSprite()
 			&& spr->m_eID == eSpriteID_frontDoor)
 		{

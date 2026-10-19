@@ -40,7 +40,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
 	{
 		for (int i = 0; ; ++i)
 		{
-			if (m_modelframe[i].m_x == 666.0)
+			if (m_modelframe[i].m_x == DATA_NULLVAL)
 			{
 				m_iNumModelPoints = i;
 				goto LABEL_11;
@@ -58,19 +58,19 @@ void Sprite::InitSprite(ESpriteID spriteid,
         if (m_iNumModelPoints > MDL_MAXPOINTS)
             ShouldntBeHere("ERROR: Too many model points in sprite!");
         int j, k, m, n, ii, jj;
-        for (j = 0; m_modelquadlines && m_modelquadlines[j].unknown001 != 666; ++j)
+        for (j = 0; m_modelquadlines && m_modelquadlines[j].unknown001 != DATA_NULLVAL; ++j)
         {
             if (j >= 1175)
                 goto LABEL_41;
         }
         m_iNumQuadLines = j;
-        for (k = 0; m_modelquadpoly && m_modelquadpoly[k].mdlinfoindex[0] != 666; ++k)
+        for (k = 0; m_modelquadpoly && m_modelquadpoly[k].mdlinfoindex[0] != DATA_NULLVAL; ++k)
         {
             if (k >= 1175)
                 goto LABEL_41;
         }
         m_iNumQuadPolys = k;
-        //for (m = 0; m_characterarms && m_characterarms[m] != 666; ++m)
+        //for (m = 0; m_characterarms && m_characterarms[m] != DATA_NULLVAL; ++m)
         //{
         //    if (m >= 15)
         //        goto LABEL_41;
@@ -86,7 +86,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
         //    }
         //    -- * (&b1_unknown00004 + n);
         //}
-        //for (jj = 0; m_outlineconnectors && m_outlineconnectors[8 * jj] != 666; ++jj)
+        //for (jj = 0; m_outlineconnectors && m_outlineconnectors[8 * jj] != DATA_NULLVAL; ++jj)
         //{
         //    if (jj >= 1175)
         //        goto LABEL_41;

@@ -264,7 +264,7 @@ void PerformSetObjectToHold(ESpriteID holder, int i1, ESpriteID victim)
 	animengine_assert(victim <= eSpriteID_LAST_OBJECT);
 	Sprite* object = g_spriteMgr.GetSpritePtrByID(victim);
 	if (object)
-		character->SetSpriteToHold(object, i1, -666);
+		character->SetSpriteToHold(object, i1, -DATA_NULLVAL);
 }
 
 void PerformGetAllObjectPickupRotations(ESpriteID spriteid, ObjSensePacket* sensepacket)

@@ -61,6 +61,8 @@
 
 #define VAL_SWAP(type, x, y) type temp = x; x = y; y = temp
 
+#define DATA_NULLVAL 666
+
 
 template <typename T>
 class XTPoint
@@ -230,11 +232,11 @@ extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 
 struct panelmdlframes_t
 {
-	mdlframe_t frames[6]; //frames[5] is 666
+	mdlframe_t frames[6]; //frames[5] is DATA_NULLVAL
 };
 struct panelmdlinfos_t
 {
-	mdlinfo_t infos[6]; //infos[5] is 666
+	mdlinfo_t infos[6]; //infos[5] is DATA_NULLVAL
 };
 struct panelmdlquadpolys_t
 {

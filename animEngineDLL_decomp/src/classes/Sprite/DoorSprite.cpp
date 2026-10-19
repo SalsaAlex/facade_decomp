@@ -26,7 +26,7 @@ void DoorSprite::UpdateSprite()
 
 void DoorSprite::OpenDoor(Sprite* actor, float speed)
 {
-	b1_unknown20299.SetTargetByRate(-65, speed, eControllerType_unknown02, -666);
+	b1_unknown20299.SetTargetByRate(-65, speed, eControllerType_unknown02, -DATA_NULLVAL);
 	PlayGlobalSound((EGlobalSounds)((int)eGlobalSound_opendoor1 + rand2(0, 1)));
 	//UpdateFrontDoorCollisionZone(true);
 	unknown002 = true;
@@ -38,7 +38,7 @@ void DoorSprite::OpenDoor(Sprite* actor, float speed)
 }
 void DoorSprite::CloseDoor(Sprite* actor, float speed)
 {
-	b1_unknown20299.SetTargetByRate(30, speed, eControllerType_unknown02, -666);
+	b1_unknown20299.SetTargetByRate(30, speed, eControllerType_unknown02, -DATA_NULLVAL);
 	unknown003 = false;
 	AddEventInfoToLog(eEventLogType_StopInteraction,
 		g_spriteMgr.GetSpriteIDBySpritePtr(actor),

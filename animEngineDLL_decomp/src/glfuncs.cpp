@@ -1394,7 +1394,7 @@ static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 	{
 		while (true)
 		{
-			if (spr->m_modelquadpoly[i].mdlinfoindex[0] == 666)
+			if (spr->m_modelquadpoly[i].mdlinfoindex[0] == DATA_NULLVAL)
 				return;
 
 			poly = &spr->m_modelquadpoly[i];

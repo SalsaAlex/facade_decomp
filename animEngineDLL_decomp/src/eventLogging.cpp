@@ -83,12 +83,12 @@ void AddEventInfoToLog(EEventLogType type, ESpriteID perpetrator,
 		&& g_eventLog[g_eventLogCtr - 1].perpetrator == eSpriteID_player)
 	{
 		//why didnt they just do a memcpy here?..
-		g_eventLog[g_eventLogCtr].eventtime			= g_eventLog[g_eventLogCtr-1].eventtime;
-		g_eventLog[g_eventLogCtr].logtype			= g_eventLog[g_eventLogCtr-1].logtype;
-		g_eventLog[g_eventLogCtr].perpetrator		= g_eventLog[g_eventLogCtr-1].perpetrator;
-		strcpy(g_eventLog[g_eventLogCtr].buffer, g_eventLog[g_eventLogCtr -1].buffer);
-		g_eventLog[g_eventLogCtr].speechinterrupted = g_eventLog[g_eventLogCtr -1].speechinterrupted;
-		g_eventLog[g_eventLogCtr].victim			= g_eventLog[g_eventLogCtr-1].victim;
+		g_eventLog[logindex].eventtime			= g_eventLog[logindex-1].eventtime;
+		g_eventLog[logindex].logtype			= g_eventLog[logindex-1].logtype;
+		g_eventLog[logindex].perpetrator		= g_eventLog[logindex-1].perpetrator;
+		strcpy(g_eventLog[logindex].buffer, g_eventLog[logindex -1].buffer);
+		g_eventLog[logindex].speechinterrupted = g_eventLog[logindex -1].speechinterrupted;
+		g_eventLog[logindex].victim			= g_eventLog[logindex -1].victim;
 		logindex--;
 	}
 
@@ -168,12 +168,14 @@ void OutputEventLog(bool stageplay)
 
 		animengine_assert(latesttime != 0);
 
-		g_eventLog[logindex].outputted = true;
+		logevent_t* eventlog = &g_eventLog[logindex];
+
+		eventlog->outputted = true;
 
 		extern bool g_bPrintBetaInfo;
 
-		if ((!g_bPrintBetaInfo && stageplay && g_eventLog[logindex].logtype == eEventLogType_Speech)
-			|| (stageplay && g_eventLog[logindex].logtype == eEventLogType_Miscellaneous))
+		if ((!g_bPrintBetaInfo && stageplay && eventlog->logtype == eEventLogType_Speech)
+			|| (stageplay && eventlog->logtype == eEventLogType_Miscellaneous))
 		{
 			return;
 		}
@@ -184,23 +186,23 @@ void OutputEventLog(bool stageplay)
 		{
 			if (last_eventindex != -1
 				&& (g_eventLog[last_eventindex].logtype == eEventLogType_unknown00 || g_eventLog[last_eventindex].logtype == eEventLogType_Miscellaneous)
-				&& g_eventLog[logindex].logtype != eEventLogType_unknown00
-				&& g_eventLog[logindex].logtype != eEventLogType_Miscellaneous)
+				&& eventlog->logtype != eEventLogType_unknown00
+				&& eventlog->logtype != eEventLogType_Miscellaneous)
 			{
 				sprintf(datastream, "\n");
 				fwrite(datastream, 1, strlen(datastream), hfile);
 			}
 			last_eventindex = logindex;
-			if (g_eventLog[logindex].logtype != eEventLogType_unknown00 && g_eventLog[logindex].logtype != eEventLogType_Miscellaneous)
-				sprintf(datastream, "%d\n", g_eventLog[logindex].eventtime);
+			if (eventlog->logtype != eEventLogType_unknown00 && eventlog->logtype != eEventLogType_Miscellaneous)
+				sprintf(datastream, "%d\n", eventlog->eventtime);
 			else
-				sprintf(datastream, "%d ", g_eventLog[logindex].eventtime);
+				sprintf(datastream, "%d ", eventlog->eventtime);
 			fwrite(datastream, 1, strlen(datastream), hfile);
 		}
 		
 		char perpetratorname[52], perpetratorpronoun[12];
 		const char* playername = g_PlayerSprite->GetName();
-		switch (g_eventLog[logindex].perpetrator)
+		switch (eventlog->perpetrator)
 		{
 			case eSpriteID_trip:	strcpy(perpetratorname, "Trip");	strcpy(perpetratorpronoun, "his"); break;
 			case eSpriteID_grace:	strcpy(perpetratorname, "Grace");	strcpy(perpetratorpronoun, "her"); break;
@@ -217,13 +219,13 @@ void OutputEventLog(bool stageplay)
 		}
 
 		char action[52], article[12];
-		Sprite* obj = g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim);
-		switch (g_eventLog[logindex].logtype)
+		Sprite* obj = g_spriteMgr.GetSpritePtrByID(eventlog->victim);
+		switch (eventlog->logtype)
 		{
 			case eEventLogType_unknown00:
-			case eEventLogType_Miscellaneous:	sprintf(datastream, "%s", g_eventLog[logindex].buffer);	break;
+			case eEventLogType_Miscellaneous:	sprintf(datastream, "%s", eventlog->buffer);	break;
 			case eEventLogType_Speech:
-				switch (g_eventLog[logindex].perpetrator)
+				switch (eventlog->perpetrator)
 				{
 					case eSpriteID_grace: sprintf(datastream, "GRACE\n"); break;
 					case eSpriteID_trip: sprintf(datastream, "TRIP\n"); break;
@@ -233,52 +235,52 @@ void OutputEventLog(bool stageplay)
 					default: break;
 				}
 				fwrite(datastream, 1, strlen(datastream), hfile);
-				if (g_eventLog[logindex].speechinterrupted)
-					sprintf(datastream, "%s%s\n", g_eventLog[logindex].buffer, " -- (interrupted)");
+				if (eventlog->speechinterrupted)
+					sprintf(datastream, "%s%s\n", eventlog->buffer, " -- (interrupted)");
 				else
-					sprintf(datastream, "%s%s\n", g_eventLog[logindex].buffer, "");
+					sprintf(datastream, "%s%s\n", eventlog->buffer, "");
 				break;
 			case eEventLogType_EnterInteraction:
-				switch (g_eventLog[logindex].victim)
+				switch (eventlog->victim)
 				{
 					case eSpriteID_couch: strcpy(action, "sits on"); break;
 					case eSpriteID_frontDoor: strcpy(action, "opens"); break;
 					default: strcpy(action, "picks up"); break;
 				}
-				GetArticleForSpriteType(g_eventLog[logindex].victim, article);
+				GetArticleForSpriteType(eventlog->victim, article);
 				sprintf(datastream, "(%s %s %s %s.)\n", perpetratorname, action, article, obj->GetName());
 				break;
 			case eEventLogType_StopInteraction:
-				switch (g_eventLog[logindex].victim)
+				switch (eventlog->victim)
 				{
 					case eSpriteID_couch: strcpy(action, "gets up from"); break;
 					case eSpriteID_frontDoor: strcpy(action, "closes"); break;
 					default: strcpy(action, "puts down"); break;
 				}
-				GetArticleForSpriteType(g_eventLog[logindex].victim, article);
+				GetArticleForSpriteType(eventlog->victim, article);
 				sprintf(datastream, "(%s %s %s %s.)\n", perpetratorname, action, article, obj->GetName());
 				break;
 			case eEventLogType_DoInteraction:
-				switch (g_eventLog[logindex].victim)
+				switch (eventlog->victim)
 				{
 					case eSpriteID_eightball: strcpy(action, "shakes"); break;
 					case eSpriteID_frontDoor: strcpy(action, "knocks on"); break;
 					default:
-						if(g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->a1_unknown00010)
+						if(g_spriteMgr.GetSpritePtrByID(eventlog->victim)->a1_unknown00010)
 							strcpy(action, "points to");
 						else
 							strcpy(action, "uses");
 						break;
 				}
 
-				if (g_eventLog[logindex].victim == eSpriteID_eightball && g_eventLog[logindex].buffer[0] != '\0')
+				if (eventlog->victim == eSpriteID_eightball && eventlog->buffer[0] != '\0')
 				{
-					sprintf(datastream, "(The advice ball reads, \"%s\")\n", g_eventLog[logindex].buffer);
+					sprintf(datastream, "(The advice ball reads, \"%s\")\n", eventlog->buffer);
 				}
 				else
 				{
-					GetArticleForSpriteType(g_eventLog[logindex].victim, article);
-					if (g_spriteMgr.GetSpritePtrByID(g_eventLog[logindex].victim)->m_eObjectType == eObjectType_Drink) //if drink is not empty ?
+					GetArticleForSpriteType(eventlog->victim, article);
+					if (g_spriteMgr.GetSpritePtrByID(eventlog->victim)->m_eObjectType == eObjectType_Drink) //if drink is not empty ?
 					{
 						strcpy(action, "sips");
 						strcpy(article, perpetratorpronoun);
