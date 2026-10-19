@@ -345,7 +345,7 @@ float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 
 float GetXZAngleBetweenPoints(XYZPointf p1, XYZPointf p2)
 {
-	return NormalizeNeg180to180(atan2(p2.m_z - p1.m_z, p2.m_x - p1.m_x) * (180.0 / 3.14) + 90.0);
+	return NormalizeNeg180to180(atan2(p2.m_z - p1.m_z, p2.m_x - p1.m_x) * (180.0/MATH_PI) + 90.0);
 }
 
 static bool point_inrect_check(XZPointf p, XZPointf rectmin, XZPointf rectmax)

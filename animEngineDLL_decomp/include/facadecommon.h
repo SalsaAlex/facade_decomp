@@ -105,6 +105,19 @@ public:
 		return temp;
 	}
 
+	void operator*=(const float& f) {
+		m_x *= f;
+		m_y *= f;
+		m_z *= f;
+	}
+	XYZPoint_Template operator*(const float& f) {
+		XYZPoint_Template<T> temp;
+		temp.m_x = m_x * f;
+		temp.m_y = m_y * f;
+		temp.m_z = m_z * f;
+		return temp;
+	}
+
 	T m_x;
 	T m_y;
 	T m_z;

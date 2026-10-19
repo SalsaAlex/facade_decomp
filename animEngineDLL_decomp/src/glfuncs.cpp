@@ -292,8 +292,8 @@ void Do2DPosterRotateAndProject(
 				continue;
 		}
 		gluProject(list[i].m_x, list[i].m_y, list[i].m_z, modelMatrix, projMatrix, viewport, &winx, &winy, &winz);
-		spr->m_renderPoints1[i].m_x = spr->GetScale() * (winx - (g_windowWidth / 2.f)) + a3.m_x;
-		spr->m_renderPoints1[i].m_y = spr->GetScale() * (winy - (g_windowHeight / 2.f)) + a3.m_y;
+		spr->m_renderPoints1[i].m_x = spr->GetScale() * (winx - (double)(g_windowWidth / 2)) + a3.m_x;
+		spr->m_renderPoints1[i].m_y = spr->GetScale() * (winy - (double)(g_windowHeight / 2)) + a3.m_y;
 		spr->m_renderPoints1[i].m_z = winz;
 	}
 	glPopMatrix();
@@ -625,7 +625,7 @@ void DrawExtraEnvironmentStuff()
 		return;
 
 	glLoadIdentity();
-	float playerz1 = (g_PlayerSprite->GetPosition().m_z / 20) + 100;
+	float playerz1 = (-g_PlayerSprite->GetPosition().m_z / 20) + 100;
 
 	SetColorFromIndex(eColor_white);
 	textureentry_t* skytexture = &g_TextureFilmstrips[eTextureFilmstrip_NYC_Sky];
@@ -1065,26 +1065,31 @@ static void GetSubjectivePosition(XYZPointf pos, XYZPointf& out, float& floatout
 		if (v11 < 0.1)	v11 = 0.1;
 
 		floatout = 100.0 / v11;
-		out.m_x = floatout * 1.25 * out.m_x;
-		out.m_y = floatout * 1.25 * out.m_y;
+		out.m_x *= floatout * 1.25;
+		out.m_y *= floatout * 1.25;
 	}
 }
 
 static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSprite* head,
 	bool option,
-	bool& optionout, XYZPointf& xyzout, float& f1out,
+	bool& optionout, XYZPointf& spritesubjpos, float& f1out,
 	int* renderdata)
 {
 	XYZPointf spritepos = spr->GetPosition();
 
 
-	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(true)))
+	if (!spr->a1_unknown00010d || head || (character && character->AreWeInAnEditor(true)))
 	{
-		//undones
+		spr->b1_unknown20315 = NormalizeNeg180to180(0) * 0.5;
 	}
 	else
 	{
-		spr->b1_unknown20315 = NormalizeNeg180to180(0)*0.5;
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		XYZPointf playerpos = g_PlayerSprite->GetPosition();
+		XYZPointf spritepos = spr->GetPosition();
+
+		float factor = playerrot.m_y - GetXZAngleBetweenPoints(playerpos, spritepos);
+		spr->b1_unknown20315 = NormalizeNeg180to180(factor) * 0.5;
 	}
 
 	if (character /*&& !LOBYTE(character->unknown039[10423])*/)
@@ -1118,7 +1123,6 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	}
 
 	float f1;
-	XYZPointf spritesubjpos;
 	GetSubjectivePosition(spr->GetPosition(), spritesubjpos, f1, true);
 	f1out = spritesubjpos.m_z;
 
@@ -1171,9 +1175,9 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	}
 	else
 	{
-		XYZPointf rot = -spr->GetRotation();
 		RotateModel(spr, -spr->GetRotation(), spr->b1_unknown00020);
 	}
+
 	animengine_assert(spr->m_iNumModelPoints < MDL_MAXPOINTS);
 
 	if (spr->a1_unknown00010d)
@@ -1187,7 +1191,8 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		}
 		else
 		{
-			Do2DPosterRotateAndProject(spr, spr->b1_unknown00020,
+			Do2DPosterRotateAndProject(spr, 
+				spr->b1_unknown00020,
 				spritesubjpos,
 				rot,
 				spr->a1_unknown00002,
@@ -1200,18 +1205,86 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		{
 			if (option)
 			{
-				//undone
+				spr->m_renderPoints1[i] = spr->GetAttachPosition() + (spr->b1_unknown00020[i] * spr->GetScale());
+
+				spr->m_renderPoints1[i].m_z = spr->GetAttachPosition().m_z;
+				f1out = spr->GetAttachPosition().m_z;
 			}
 			else
 			{
 				XYZPointf pos = spr->b1_unknown00020[i] + spritepos;
-				GetSubjectivePosition(pos, spr->m_renderPoints1[i], f1, spr->a1_unknown00010 || option);
+				GetSubjectivePosition(pos, spr->m_renderPoints1[i], f1, !(spr->a1_unknown00010 && !option));
 				if (cursor_holding_us && !spr->GetAmIStillGrabDropAnimating())
 					spr->m_renderPoints1[i].m_z = -8.0;
 				if (spr->a1_unknown00004 != 0.0)
 					spr->m_renderPoints1[i].m_z = spr->a1_unknown00004;
 			}
 		}
+
+		if (spr->a1_unknown00010 && !option)
+		{
+			float offset = 0.0;
+			XYZPointf panelpoints[4];
+			animengine_assert(spr->m_iNumModelPoints == 5);
+			for (int i = 1; i < spr->m_iNumModelPoints; ++i)
+			{
+				panelpoints[i - 1] = spr->m_renderPoints1[i];
+			}
+			for (int i = 0; ; ++i)
+			{
+				if (i >= 4)
+				{
+					for (int j = 0; j < spr->m_iNumModelPoints; ++j)
+					{
+						float f1 = -spr->m_renderPoints1[j].m_z;
+						if (f1 < 0.1) f1 = 0.1;
+						spr->m_renderPoints1[j].m_x *= (100.0 / f1) * 1.25;
+						spr->m_renderPoints1[j].m_y *= (100.0 / f1) * 1.25;
+					}
+					break;
+				}
+				if (panelpoints[i].m_z > offset)
+				{
+					XYZPointf point2;
+					XYZPointf point1 = panelpoints[i];
+
+					int i1 = i - 1;
+					int i2 = i + 1;
+
+					if (i - 1 < 0)	i1 = 3;
+					if (i + 1 > 3)	i2 = 0;
+
+					if (panelpoints[i1].m_z >= offset)
+					{
+						if (panelpoints[i2].m_z >= offset)
+							continue;
+						point2 = panelpoints[i2];
+					}
+					else
+					{
+						point2 = panelpoints[i1];
+					}
+					animengine_assert(point1.m_y == point2.m_y);
+
+					float v1;
+
+					if (point1.m_x - point2.m_x < 0.0)
+						v1 = -(point1.m_x - point2.m_x);
+					else
+						v1 = point1.m_x - point2.m_x;
+
+					if (v1 > 0.1)
+					{
+						float v2 = (point1.m_z - point2.m_z) / (point1.m_x - point2.m_x);
+						float v3 = point1.m_z - v2 * point1.m_x;
+						point1.m_x = (offset - v3) / v2;
+					}
+					point1.m_z = offset;
+					spr->m_renderPoints1[i + 1] = point1;
+				}
+			}
+		}
+
 	}
 
 	//spr->UpdateSurfaces(spr->GetPosition());

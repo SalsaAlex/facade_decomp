@@ -169,9 +169,9 @@ void Sprite::SetDrawMe(bool option)
     }
 }
 
-void Sprite::SetPosition(XYZPointf pos, float unknown)
+void Sprite::SetPosition(XYZPointf pos, float collidesize)
 {
-    if (unknown < 0.0 || !CollisionTestWithWorld(this, pos, unknown, true))
+    if (collidesize < 0.0 || !CollisionTestWithWorld(this, pos, collidesize, true))
         m_Pos = pos;
 }
 void Sprite::SetRotation(XYZPointf rot)

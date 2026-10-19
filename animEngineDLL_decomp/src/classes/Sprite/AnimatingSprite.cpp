@@ -38,10 +38,9 @@ void AnimatingSprite::SetOrigRotation(XYZPointf rot)
 	m_originalRot = rot;
 }
 
-void AnimatingSprite::SetPosition(XYZPointf pos, float unknown)
+void AnimatingSprite::SetPosition(XYZPointf pos, float collidesize)
 {
-
-	if (unknown < 0.0 || !CollisionTestWithWorld(this, pos, unknown, true))
+	if (collidesize < 0.0 || !CollisionTestWithWorld(this, pos, collidesize, true))
 	{
 		m_Pos = pos;
 		m_originalPos = pos;

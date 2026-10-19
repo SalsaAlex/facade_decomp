@@ -1792,7 +1792,7 @@ static void UpdateTitleSequence()
 		StartFade(-1.0);
 		InitTransRotScale(nullptr, false);
 
-		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39), -1);
+		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39));
 
 		XYZPointf playerrot = g_PlayerSprite->GetRotation();
 		playerrot.m_y = 24;
@@ -1824,7 +1824,7 @@ static void UpdateCursor()
 	float cursorxpos = ((g_mousePosition[0] - g_windowWidth / 2) / 5.f);
 	float cursorypos = ((g_windowHeight / 2 - g_mousePosition[1]) / 5.f) - 28.0;
 
-	g_CursorSprite->SetPosition(XYZPointf(cursorxpos, cursorypos, -30), -1);
+	g_CursorSprite->SetPosition(XYZPointf(cursorxpos, cursorypos, -30));
 
 
 	//undone
@@ -1945,8 +1945,8 @@ static void UpdateAndRenderAllSprites(bool option)
 
 		bool shoulddraw = shouldupdate && sprite->GetDrawMe();
 
-		//if (shouldupdate)	sprite->UpdateSprite();
-		//if (shoulddraw)		DrawSprite(sprite, holder != g_CursorSprite && !sprite->a1_unknown00005);
+		if (shouldupdate)	sprite->UpdateSprite();
+		if (shoulddraw)		DrawSprite(sprite, holder != g_CursorSprite && !sprite->a1_unknown00005);
 	}
 }
 
@@ -2173,12 +2173,12 @@ bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int expandsize, bool opt
 	return false;
 }
 static void ClearNavigationFlags() {
-	g_bPlayerRotateLeft = 0;
-	g_bPlayerRotateRight = 0;
-	g_bPlayerMoveForwards = 0;
-	g_bPlayerMoveBackwards = 0;
-	g_bPlayerMoveUpwards = 0;
-	g_bPlayerMoveDownwards = 0;
+	g_bPlayerRotateLeft = false;
+	g_bPlayerRotateRight = false;
+	g_bPlayerMoveForwards = false;
+	g_bPlayerMoveBackwards = false;
+	g_bPlayerMoveUpwards = false;
+	g_bPlayerMoveDownwards = false;
 }
 static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
 {
@@ -2287,13 +2287,65 @@ static bool HackToFixStuckPlayerAtFoyerWallEdge(XYZPointf point) {
 	if (++g_numFramesStillAtFoyerWallEdge <= 600)
 		return 0;
 	dprintf("## Repositioning player away from foyer wall\n");
-	g_PlayerSprite->SetPosition(XYZPointf(-172, point.m_y, 107), -1);
+	g_PlayerSprite->SetPosition(XYZPointf(-172, point.m_y, 107));
 }
+static void GetNewPlayerPosition(float yaw, XYZPointf& out) {
+	float factor = ConvertWorldDegreesToRadians(yaw);
+	out.m_x += cos(factor) * g_playerTransAmt;
+	out.m_z += sin(factor) * g_playerTransAmt;
+}
+static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
+	if (!CollisionTestWithWorld(g_PlayerSprite, nextpos, 10, true))
+		return false;
+
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf pointtest = XYZPointf(
+		(playerpos.m_x + nextpos.m_x) / 2,
+		playerpos.m_y,
+		(playerpos.m_z + nextpos.m_x) / 2
+	);
+	if (!CollisionTestWithWorld(g_PlayerSprite, pointtest, 10, true))
+	{
+		g_PlayerSprite->SetPosition(nextpos);
+		return true;
+	}
+
+	return false;
+}
+
+bool IsPlayerOutsideApt() {
+	return g_PlayerSprite->GetPosition().m_x < -150
+		&& g_PlayerSprite->GetPosition().m_y > 120;
+}
+
+static bool CollisionTestWithSprite(Sprite* collider1, XYZPointf point, int expandsize, Sprite* collider2) {
+	animengine_assert(collider1 && collider2);
+
+	for (int i = 0; i < g_numZones; i++)
+	{
+		Sprite* spr = g_zones[i].unknown001;
+		if (spr != collider2)
+			continue;
+
+		XZRectf rect;
+		rect.m_xmin = point.m_x - expandsize;
+		rect.m_zmin = point.m_z - expandsize;
+
+		rect.m_xmax = point.m_x + expandsize;
+		rect.m_zmax = point.m_z + expandsize;
+		if(CollisionTest(i, rect, collider1, collider2))
+			return true;
+	}
+
+	return false;
+}
+
 static void UpdatePlayerNavigation() {
 	if (g_bQuittingApp || !g_bPlayerInputActive)
 		return;
 
 	static bool bAlreadyCollided = false;
+	static int g_moveTowardsCenterOfRoomCountdown = 0;
 
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf playerrot = g_PlayerSprite->GetRotation();
@@ -2321,7 +2373,7 @@ static void UpdatePlayerNavigation() {
 			if (!CollisionTestWithWorld(g_PlayerSprite, playerpos, 10, false)
 				|| g_AutoMovePlayerStatus == 1)
 			{
-				g_PlayerSprite->SetPosition(playerpos, -1);
+				g_PlayerSprite->SetPosition(playerpos);
 				g_PlayerSprite->SetRotation(playerrot);
 			}
 			else
@@ -2333,118 +2385,317 @@ static void UpdatePlayerNavigation() {
 		{
 			EndPlayerAutoMove(false);
 		}
+		return;
 	}
-	else
+
+	XYZPointf playernextpos = playerpos;
+
+	bool moving = false;
+	bool rotating = false;
+	float playermovforward_limit = FrameRateAdjust(1.5, 1);
+	float playermovbackward_limit = FrameRateAdjust(-0.75, 1);
+	float playerrotleft_limit = FrameRateAdjust(1.5, 1);
+	float playerrotright_limit = FrameRateAdjust(-1.5, 1);
+	float playerrot_factor = FrameRateAdjust(0.09, 1);
+	float playermove_factor = FrameRateAdjust(0.09, 1);
+	if (GetAsyncKeyState(VK_CONTROL) < 0)
 	{
-		bool moving = false;
-		bool rotating = false;
-		float playermovforward_limit = FrameRateAdjust(1.5, 1);
-		float playermovbackward_limit = FrameRateAdjust(-0.75, 1);
-		float playerrotleft_limit = FrameRateAdjust(1.5, 1);
-		float playerrotright_limit = FrameRateAdjust(-1.5, 1);
-		float playerrot_factor = FrameRateAdjust(0.09, 1);
-		float playermove_factor = FrameRateAdjust(0.09, 1);
-		if (GetAsyncKeyState(VK_CONTROL) < 0)
-		{
-			playermovforward_limit = FrameRateAdjust(6.0, 1);
-			playermovbackward_limit = FrameRateAdjust(-3.0, 1);
-			playerrotleft_limit = FrameRateAdjust(2.4000001, 1);
-			playerrotright_limit = FrameRateAdjust(-2.4000001, 1);
-		}
+		playermovforward_limit = FrameRateAdjust(6.0, 1);
+		playermovbackward_limit = FrameRateAdjust(-3.0, 1);
+		playerrotleft_limit = FrameRateAdjust(2.4000001, 1);
+		playerrotright_limit = FrameRateAdjust(-2.4000001, 1);
+	}
 
-		bool bVeryNearCharacter = false;
-		bool dramaActorInView = false;
-		bool dramaActorInTightView = false;
-		for (int i = 0; i < 2 && !bVeryNearCharacter; ++i)
-		{
-			//undone
-		}
-
-		if (dramaActorInView)
-		{
-			if (g_bVeryNearCharacter)
-			{
-				//undone
-			}
-			else if (dramaActorInTightView)
-			{
-				//undone
-			}
-			//undone
-		}
-
-		if (g_bPlayerRotateLeft || g_bPlayerRotateRight)
-		{
-			if (g_bPlayerRotateLeft && g_playerRotAmt < (double)playerrotleft_limit)
-			{
-				if (g_playerRotAmt + playerrot_factor >= playerrotleft_limit)
-					g_playerRotAmt = playerrotleft_limit;
-				else
-					g_playerRotAmt += playerrot_factor;
-			}
-			if (g_bPlayerRotateRight && g_playerRotAmt > (double)playerrotright_limit)
-			{
-				if (g_playerRotAmt - playerrot_factor <= playerrotright_limit)
-					g_playerRotAmt = playerrotright_limit;
-				else
-					g_playerRotAmt -= playerrot_factor;
-			}
-			rotating = true;
-		}
-		bool rotation_within_limits = g_playerRotAmt > playerrotleft_limit
-			|| g_playerRotAmt < playerrotright_limit;
-		if (g_playerRotAmt != 0.0 && (!rotating || rotation_within_limits))
-		{
-			if (g_playerRotAmt > 0.001 || g_playerRotAmt < -0.001)
-			{
-				if (rotation_within_limits)
-					g_playerRotAmt *= 0.935;
-				else
-					g_playerRotAmt *= 0.855;
-			}
-			else
-			{
-				g_playerRotAmt = 0;
-			}
-			rotating = true;
-		}
-		if (rotating)
-		{
-			playerrot.m_y = Normalize0to360(playerrot.m_y - g_playerRotAmt);
-			g_PlayerSprite->SetRotation(playerrot);
-		}
-
-		if (g_bSeatedOnCouch && g_playerTransAmt != 0.0)
-		{
-			//undone
-		}
-
-		if (g_bTripCarry)
-		{
-			//undone
-		}
-
-		if (g_bPlayerMoveForwards || g_bPlayerMoveBackwards)
-		{
-			//undone
-		}
-
-		bool movement_within_limits = g_playerRotAmt > playermovforward_limit 
-			|| g_playerTransAmt < playermovbackward_limit;
-		if (g_playerTransAmt != 0.0 && (!moving || movement_within_limits))
-		{
-			//undone
-		}
-
-		if (g_bPlayerMoveUpwards || g_bPlayerMoveDownwards)
-		{
-			//undone
-		}
-		ClearNavigationFlags();
-
-
+	bool bVeryNearCharacter = false;
+	bool dramaActorInView = false;
+	bool dramaActorInTightView = false;
+	for (int i = 0; i < 2 && !bVeryNearCharacter; ++i)
+	{
 		//undone
 	}
+
+	if (dramaActorInView)
+	{
+		if (g_bVeryNearCharacter)
+		{
+			//undone
+		}
+		else if (dramaActorInTightView)
+		{
+			//undone
+		}
+		//undone
+	}
+
+	if (g_bPlayerRotateLeft || g_bPlayerRotateRight)
+	{
+		if (g_bPlayerRotateLeft && g_playerRotAmt < (double)playerrotleft_limit)
+		{
+			if (g_playerRotAmt + playerrot_factor >= playerrotleft_limit)
+				g_playerRotAmt = playerrotleft_limit;
+			else
+				g_playerRotAmt += playerrot_factor;
+		}
+		if (g_bPlayerRotateRight && g_playerRotAmt > (double)playerrotright_limit)
+		{
+			if (g_playerRotAmt - playerrot_factor <= playerrotright_limit)
+				g_playerRotAmt = playerrotright_limit;
+			else
+				g_playerRotAmt -= playerrot_factor;
+		}
+		rotating = true;
+	}
+	bool rotation_within_limits = g_playerRotAmt > playerrotleft_limit
+		|| g_playerRotAmt < playerrotright_limit;
+	if (g_playerRotAmt != 0.0 && (!rotating || rotation_within_limits))
+	{
+		if (g_playerRotAmt > 0.001 || g_playerRotAmt < -0.001)
+		{
+			if (rotation_within_limits)
+				g_playerRotAmt *= 0.935;
+			else
+				g_playerRotAmt *= 0.855;
+		}
+		else
+		{
+			g_playerRotAmt = 0;
+		}
+		rotating = true;
+	}
+	if (rotating)
+	{
+		playerrot.m_y = Normalize0to360(playerrot.m_y - g_playerRotAmt);
+		g_PlayerSprite->SetRotation(playerrot);
+	}
+
+	if (g_bSeatedOnCouch && g_playerTransAmt != 0.0)
+	{
+		//undone
+	}
+
+	if (g_bTripCarry)
+	{
+		//undone
+	}
+
+	if (g_bPlayerMoveForwards || g_bPlayerMoveBackwards)
+	{
+		if (g_bPlayerMoveForwards && g_playerTransAmt < playermovforward_limit)
+		{
+			if (g_playerTransAmt + playermove_factor >= playermovforward_limit)
+				g_playerTransAmt = playermovforward_limit;
+			else
+				g_playerTransAmt += playermove_factor;
+		}
+		if (g_bPlayerMoveBackwards && g_playerTransAmt > playermovbackward_limit)
+		{
+			if (g_playerTransAmt - playermove_factor / 2 <= playermovbackward_limit)
+				g_playerTransAmt = playermovbackward_limit;
+			else
+				g_playerTransAmt -= playermove_factor / 2;
+		}
+		moving = true;
+	}
+
+	bool movement_within_limits = g_playerRotAmt > playermovforward_limit 
+		|| g_playerTransAmt < playermovbackward_limit;
+	if (g_playerTransAmt != 0 && (!moving || movement_within_limits))
+	{
+		if (g_playerTransAmt > 0.0099999998 || g_playerTransAmt < -0.0099999998)
+		{
+			if (movement_within_limits)
+				g_playerTransAmt *= 0.92;
+			else
+				g_playerTransAmt *= 0.86;
+		}
+		else
+		{
+			g_playerTransAmt = 0;
+		}
+		moving = true;
+	}
+
+	if (moving)
+		GetNewPlayerPosition(playerrot.m_y, playernextpos);
+
+	if (g_bPlayerMoveUpwards || g_bPlayerMoveDownwards)
+	{
+		if (g_bPlayerMoveUpwards)
+			playernextpos.m_y = playernextpos.m_y + playermovforward_limit;
+		if (g_bPlayerMoveDownwards)
+			playernextpos.m_y = playernextpos.m_y - playermovforward_limit;
+		moving = true;
+	}
+	ClearNavigationFlags();
+
+	bool collided = false;
+
+	if (g_moveTowardsCenterOfRoomCountdown > 0)
+	{
+		--g_moveTowardsCenterOfRoomCountdown;
+		playernextpos = playerpos;
+		float xzangle = GetXZAngleBetweenPoints(playerpos, XYZPointf(-20, 0, -100));
+		GetNewPlayerPosition(xzangle, playernextpos);
+		g_PlayerSprite->SetPosition(playernextpos);
+		if (NormalizeNeg180to180(xzangle - playerrot.m_y) >= 0.0)
+			g_bPlayerRotateRight = true;
+		else
+			g_bPlayerRotateLeft = true;
+		return;
+	}
+
+	if (moving)
+	{
+		if (!bAlreadyCollided)
+			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playerpos, 0, true);
+
+		//if (bAlreadyCollided)
+		//temporary :(
+		if(1)
+		{
+			g_PlayerSprite->SetPosition(playernextpos);
+			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playernextpos, 10, true);
+		}
+		else
+		{
+			collided = PlayerNavCollisionTest(g_PlayerSprite, playernextpos);
+			if (collided)
+			{
+				Sprite* couch = g_spriteMgr.GetSpritePtrByName("couch");
+				if (CollisionTestWithSprite(g_PlayerSprite, playernextpos, 10, couch) &&
+						IsPointVisibleToPlayer(couch->GetPosition(), false))
+				{
+					dprintf("Collision with couch, sitting");
+					g_PlayerSprite->SetPosition(playernextpos);
+					XYZPointf target(183, 73, 0);
+					float rottarget = 0;
+					if (playernextpos.m_z >= -400)
+					{
+						target.m_z = playernextpos.m_z;
+						if (playernextpos.m_z >= -350)
+							target.m_z = -350;
+
+						if (target.m_z <= -460)
+							target.m_z = -460;
+
+						if (NormalizeNeg180to180(playerrot.m_y) >= 90)
+							rottarget = 240;
+						else
+							rottarget = 300;
+					}
+					else
+					{
+						target.m_z = -470.0;
+						rottarget = 213.0;
+					}
+					StartPlayerMoveControllers(target, rottarget, 3.0, 1);
+					g_AutoMovePlayerStatus = 1;
+					AddEventInfoToLog(eEventLogType_EnterInteraction, eSpriteID_player, nullptr, false, eSpriteID_couch, 0);
+					return;
+				}
+
+				if (!IsPlayerOutsideApt())
+				{
+					bool inarea = playerpos.m_x > -213.0 && playerpos.m_z < 109.0 && playerpos.m_x < -166.0 && playerpos.m_z > 13.0
+						|| playerpos.m_x > -161.0 && playerpos.m_z < 148.0 && playerpos.m_x < -83.0 && playerpos.m_z > 74.0;
+					if (inarea && g_moveTowardsCenterOfRoomCountdown <= 0)
+						g_moveTowardsCenterOfRoomCountdown = 20;
+					if (g_moveTowardsCenterOfRoomCountdown <= 0 && !g_bVeryNearCharacter && !inarea)
+					{
+						playernextpos = playerpos;
+						GetNewPlayerPosition(playerrot.m_y - 90, playernextpos);
+						bool collidedleft = PlayerNavCollisionTest(g_PlayerSprite, playernextpos);
+						playernextpos = playerpos;
+						GetNewPlayerPosition(playerrot.m_y + 90.0, playernextpos);
+						bool collidedright = PlayerNavCollisionTest(g_PlayerSprite, playernextpos);
+						if (!collidedleft || !collidedright)
+						{
+							float v61 = 0;
+							int v60 = collidedleft ? -15 : 15;
+							int v6 = collidedleft ? 16 : 0;
+							int v59 = v6 + 120;
+							while (collided)
+							{
+								float v25 = v61 < 0 ? -v61 : v61;
+								float v24 = v59 < 0 ? -v59 : v59;
+								if (v25 >= v24)
+									break;
+								v61 += v60;
+								playernextpos = playerpos;
+								GetNewPlayerPosition(v61 + playerrot.m_y, playernextpos);
+								collided = PlayerNavCollisionTest(g_PlayerSprite, playernextpos);
+							}
+						}
+						if (collided)
+							playernextpos = playerpos;
+					}
+				}
+
+				XYZPointf testingpoint;
+				testingpoint = XYZPointf(playerpos.m_x + 20, playerpos.m_y, playerpos.m_z);
+				bool collided1 = CollisionTestWithWorld(g_PlayerSprite, testingpoint, 10, 1);
+				testingpoint = XYZPointf(playerpos.m_x - 20, playerpos.m_y, playerpos.m_z);
+				bool collided2 = CollisionTestWithWorld(g_PlayerSprite, testingpoint, 10, 1);
+				testingpoint = XYZPointf(playerpos.m_x, playerpos.m_y, playerpos.m_z + 20);
+				bool collided3 = CollisionTestWithWorld(g_PlayerSprite, testingpoint, 10, 1);
+				testingpoint = XYZPointf(playerpos.m_x, playerpos.m_y, playerpos.m_z - 20);
+				bool collided4 = CollisionTestWithWorld(g_PlayerSprite, testingpoint, 10, 1);
+				float playeryaw = g_PlayerSprite->GetRotation().m_y;
+
+				animengine_assert(playeryaw >= 0 && playeryaw < 360);
+
+				if (collided1 && collided2)
+				{
+					if ((playeryaw < 270 || playeryaw >= 360) 
+						&& (playeryaw < 90 || playeryaw > 180))
+						g_bPlayerRotateRight = true;
+					else
+						g_bPlayerRotateLeft = true;
+				}
+				else if (collided3 && collided4)
+				{
+					if ((playeryaw < 270 || playeryaw >= 360) 
+						&& (playeryaw < 90 || playeryaw > 180))
+						g_bPlayerRotateLeft = true;
+					else
+						g_bPlayerRotateRight = true;
+				}
+				else if (collided1 || collided2)
+				{
+					if (playeryaw < 90 || playeryaw > 270)
+					{
+						g_bPlayerRotateLeft = collided1;
+						g_bPlayerRotateRight = collided2;
+					}
+					else
+					{
+						g_bPlayerRotateRight = collided1;
+						g_bPlayerRotateLeft = collided2;
+					}
+				}
+				else if (collided3 || collided4)
+				{
+					if (playeryaw < 0 || playeryaw > 180)
+					{
+						g_bPlayerRotateRight = collided3;
+						g_bPlayerRotateLeft = collided4;
+					}
+					else
+					{
+						g_bPlayerRotateLeft = collided3;
+						g_bPlayerRotateRight = collided4;
+					}
+				}
+			}
+		}
+	}
+
+	if(collided)
+		g_playerTransAmt = 0;
+
+
+	//undone
+	
 }
 
 static HPALETTE CreateWinGLPalette(HDC devicecontext)
@@ -2569,7 +2820,10 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 			if (!g_bQuittingApp)
 			{
-				//UNDONE
+				g_prevPlayerPosition = g_PlayerSprite->GetPosition();
+				g_prevPlayerRotation = g_PlayerSprite->GetRotation();
+
+				//undone
 			}
 			s_frameTimeAccum += GetTickCount() - tickcount_atstart;
 			s_framesSinceLastStatistic++;
@@ -3209,10 +3463,11 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	spr->a1_unknown00010 = b1 && !norotation;
 	spr->m_bSpriteFollowsCamera = norotation;
 	spr->m_iPanelIndex = g_numPanels;
+	spr->a1_unknown00010c = unknownbool001;
 
 	spr->InitSprite(sprid, sprname, true, drawable);
 	spr->SetVolume(XYZPointf(1, 1, 1));
-	spr->SetPosition(pos, -1);
+	spr->SetPosition(pos);
 	if (collide)
 		spr->SetCollidableType(eCollidableType_unknown);
 	if (b3)
@@ -3250,160 +3505,160 @@ void CreateRoom()
 	CreateBarSprite(eSpriteID_bar, "bar");
 	CreateLuxTableSprite(eSpriteID_luxTable, "side table 2");
 
-	CreatePanel(	eSpriteID_plant,	"plant",											true,	eObjectType_Misc,		120,	120,	0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Plant,			eColor_none,	XYZPointf(160, 60, 65),						false,	false);
-	spr = CreatePanel(	eSpriteID_ashtray,	"ashtray",										false,	eObjectType_Misc,		10,		5,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Ashtray,			eColor_none,	XYZPointf(165, 60, 10),						false,	false);
+	CreatePanel(eSpriteID_plant,	"plant",											true,	eObjectType_Misc,		120,	120,	0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Plant,			eColor_none,	XYZPointf(160, 60, 65),						false,	false);
+	spr = CreatePanel(eSpriteID_ashtray,	"ashtray",										false,	eObjectType_Misc,		10,		5,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Ashtray,			eColor_none,	XYZPointf(165, 60, 10),						false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 5, 10));
-	spr = CreatePanel(	eSpriteID_phone,			"phone",								true,	eObjectType_Phone,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Phone,			eColor_none,	XYZPointf(145, 60, -60),					false,	false);
+	spr = CreatePanel(eSpriteID_phone,			"phone",								true,	eObjectType_Phone,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Phone,			eColor_none,	XYZPointf(145, 60, -60),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 5, 10));
-	spr = CreatePanel(	eSpriteID_answeringMachine,	"answering machine",					true,	eObjectType_AnsweringMachine,	16,	16,	0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_AnsweringMachine,	eColor_none,	XYZPointf(170, 60, -70),					false,	false);
+	spr = CreatePanel(eSpriteID_answeringMachine,	"answering machine",					true,	eObjectType_AnsweringMachine,	16,	16,	0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_AnsweringMachine,	eColor_none,	XYZPointf(170, 60, -70),					false,	false);
 		spr->SetClickable(true);
 		spr->SetVolume(XYZPointf(10, 5, 10));
-	spr = CreatePanel(	eSpriteID_FIRSTDRINKITEM,	"red wine bottle",						true,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_RedWineBottle,	eColor_none,	XYZPointf(-185, 80, -108),					false,	false);
+	spr = CreatePanel(eSpriteID_FIRSTDRINKITEM,	"red wine bottle",						true,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_RedWineBottle,	eColor_none,	XYZPointf(-185, 80, -108),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 25, 10));
-	spr = CreatePanel(	eSpriteID_whitewinebottle,	"white wine bottle",					true,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_WhiteWineBottle,	eColor_none,	XYZPointf(-193, 80, -112),					false,	false);
+	spr = CreatePanel(eSpriteID_whitewinebottle,	"white wine bottle",					true,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_WhiteWineBottle,	eColor_none,	XYZPointf(-193, 80, -112),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 25, 10));
-	spr = CreatePanel(	eSpriteID_martiniDisplay1,	"martini glass 1",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-184, 41, -274),					false,	false);
+	spr = CreatePanel(eSpriteID_martiniDisplay1,	"martini glass 1",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-184, 41, -274),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = 0;
-	spr = CreatePanel(	eSpriteID_martiniDisplay2,	"martini glass 2",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183, 41, -286),					false,	false);
+	spr = CreatePanel(eSpriteID_martiniDisplay2,	"martini glass 2",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183, 41, -286),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = 0;
-	spr = CreatePanel(	eSpriteID_martiniDisplay3,	"martini glass 3",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183.5, 41, -297),				false,	false);
+	spr = CreatePanel(eSpriteID_martiniDisplay3,	"martini glass 3",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183.5, 41, -297),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = 0;
-	spr = CreatePanel(	eSpriteID_martiniDisplay4,	"martini glass 4",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183, 41, -308),					false,	false);
+	spr = CreatePanel(eSpriteID_martiniDisplay4,	"martini glass 4",						true,	eObjectType_Misc,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniEmpty,		eColor_none,	XYZPointf(-183, 41, -308),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = 0;
-	spr = CreatePanel(	eSpriteID_bar_redwinebottle,	"bar_redwinebottle",				false,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_RedWineBottle,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
+	spr = CreatePanel(eSpriteID_bar_redwinebottle,	"bar_redwinebottle",				false,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_RedWineBottle,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 25, 10));
-	spr = CreatePanel(	eSpriteID_bar_whitewinebottle,	"bar_whitewinebottle",				false,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_WhiteWineBottle,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
+	spr = CreatePanel(eSpriteID_bar_whitewinebottle,	"bar_whitewinebottle",				false,	eObjectType_Misc,		25,		25,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_WhiteWineBottle,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 25, 10));
-	spr = CreatePanel(	eSpriteID_playerDrink,		"player's drink",						false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniCosmo,		eColor_none,	XYZPointf(-170, 73, -110),					false,	false);
+	spr = CreatePanel(eSpriteID_playerDrink,		"player's drink",						false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniCosmo,		eColor_none,	XYZPointf(-170, 73, -110),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = GetFullDrinkLevel(true);
-	spr = CreatePanel(	eSpriteID_tripDrink,		"Trip's drink",							false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniCosmo,		eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
+	spr = CreatePanel(eSpriteID_tripDrink,		"Trip's drink",							false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniCosmo,		eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = GetFullDrinkLevel(false);
-	spr = CreatePanel(	eSpriteID_graceDrink,		"Grace's drink",						false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniClassic,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
+	spr = CreatePanel(eSpriteID_graceDrink,		"Grace's drink",						false,	eObjectType_Drink,		12,		12,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_MartiniClassic,	eColor_none,	XYZPointf(-100, -100, -100),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(12, 12, 12));
 		spr->a1_unknown00007 = 2;
 		spr->c1_unknown00001 = GetFullDrinkLevel(false);
-	spr = CreatePanel(	eSpriteID_bigAbstractPainting,	"big abstract painting",			true,	eObjectType_Misc,		52,		70,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Painting,			eColor_black,	XYZPointf(190, 100, -380),					false,	false);
+	spr = CreatePanel(eSpriteID_bigAbstractPainting,	"big abstract painting",			true,	eObjectType_Misc,		52,		70,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Painting,			eColor_black,	XYZPointf(190, 100, -380),					false,	false);
 		spr->SetVolume(XYZPointf(50, 50, 70));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_littleTreePainting,	"little painting",					true,	eObjectType_Misc,		20,		32,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_LittlePainting,	eColor_black,	XYZPointf(190, 118, -335),					false,	false);
+	spr = CreatePanel(eSpriteID_littleTreePainting,	"little painting",					true,	eObjectType_Misc,		20,		32,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_LittlePainting,	eColor_black,	XYZPointf(190, 118, -335),					false,	false);
 		spr->SetVolume(XYZPointf(20, 20, 30));
 		spr->SetClickable(true);
-	CreatePanel(	eSpriteID_maoPainting,			"maoPainting",							false,	eObjectType_Misc,		40,		50,		0,		270,	0,		true,	false,	eColor_white,			eTextureFilmstrip_LittlePainting,	eColor_black,	XYZPointf(215, 100, 400),					false,	false);
-	CreatePanel(	eSpriteID_rug,					"rug",									true,	eObjectType_Misc,		50,		100,	90,		0,		0,		false,	false,	eColor_white,			eTextureFilmstrip_Rug,	eColor_black,	XYZPointf(85, 3, -350),									false,	false);
-	spr = CreatePanel(	eSpriteID_weddingPicture,	"wedding photo",						true,	eObjectType_Misc,		60,		70,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WeddingPicture,	eColor_black,	XYZPointf(190, 90, -145),					false,	false);
+	CreatePanel(eSpriteID_maoPainting,			"maoPainting",							false,	eObjectType_Misc,		40,		50,		0,		270,	0,		true,	false,	eColor_white,			eTextureFilmstrip_LittlePainting,	eColor_black,	XYZPointf(215, 100, 400),					false,	false);
+	CreatePanel(eSpriteID_rug,					"rug",									true,	eObjectType_Misc,		50,		100,	90,		0,		0,		false,	false,	eColor_white,			eTextureFilmstrip_Rug,	eColor_black,	XYZPointf(85, 3, -350),									false,	false);
+	spr = CreatePanel(eSpriteID_weddingPicture,	"wedding photo",						true,	eObjectType_Misc,		60,		70,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WeddingPicture,	eColor_black,	XYZPointf(190, 90, -145),					false,	false);
 		spr->SetVolume(XYZPointf(60, 60, 90));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_italyPicture,		"italy picture",						true,	eObjectType_Misc,		32,		32,		0,		270,	0,		true,	false,	eColor_white,			eTextureFilmstrip_Tuscany_Romance,	eColor_none,	XYZPointf(-199, 90, -60),					false,	false);
+	spr = CreatePanel(eSpriteID_italyPicture,		"italy picture",						true,	eObjectType_Misc,		32,		32,		0,		270,	0,		true,	false,	eColor_white,			eTextureFilmstrip_Tuscany_Romance,	eColor_none,	XYZPointf(-199, 90, -60),					false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_gownsketch1,		"wedding gown sketch",					true,	eObjectType_Misc,		32,		32,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(190, 90, 0),						false,	false);
+	spr = CreatePanel(eSpriteID_gownsketch1,		"wedding gown sketch",					true,	eObjectType_Misc,		32,		32,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(190, 90, 0),						false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_gownsketch2,		"wedding gown post its",				true,	eObjectType_Misc,		36,		36,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_PostIts,			eColor_none,	XYZPointf(190, 50, -28),					false,	false);
+	spr = CreatePanel(eSpriteID_gownsketch2,		"wedding gown post its",				true,	eObjectType_Misc,		36,		36,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_PostIts,			eColor_none,	XYZPointf(190, 50, -28),					false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_gownsketch3,		"wedding gown sketch 3",				false,	eObjectType_Misc,		25,		25,		90,		0,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(160, 58, -60),					false,	false);
+	spr = CreatePanel(eSpriteID_gownsketch3,		"wedding gown sketch 3",				false,	eObjectType_Misc,		25,		25,		90,		0,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(160, 58, -60),					false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_gownsketch4,		"wedding gown sketch 4",				true,	eObjectType_Misc,		30,		30,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch4,		eColor_none,	XYZPointf(190, 83, -35),					false,	false);
+	spr = CreatePanel(eSpriteID_gownsketch4,		"wedding gown sketch 4",				true,	eObjectType_Misc,		30,		30,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch4,		eColor_none,	XYZPointf(190, 83, -35),					false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_tuxedosketch1,	"tuxedosketch1",						false,	eObjectType_Misc,		32,		32,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(190, 95, 25),						false,	false);
+	spr = CreatePanel(eSpriteID_tuxedosketch1,	"tuxedosketch1",						false,	eObjectType_Misc,		32,		32,		0,		90,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(190, 95, 25),						false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_tuxedosketch2,	"tuxedosketch2",						false,	eObjectType_Misc,		25,		25,		90,		0,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(160, 58, -15),					false,	false);
+	spr = CreatePanel(eSpriteID_tuxedosketch2,	"tuxedosketch2",						false,	eObjectType_Misc,		25,		25,		90,		0,		0,		true,	false,	eColor_unknown,			eTextureFilmstrip_GownSketch1,		eColor_none,	XYZPointf(160, 58, -15),					false,	false);
 		spr->SetVolume(XYZPointf(30, 30, 30));
 		spr->SetClickable(true);
-	spr = CreatePanel(	eSpriteID_eightball,		"advice ball",							true,	eObjectType_Misc,		8,		8,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_EightBall,		eColor_none,	XYZPointf(-149, 71, -170),					false,	false);
+	spr = CreatePanel(eSpriteID_eightball,		"advice ball",							true,	eObjectType_Misc,		8,		8,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_EightBall,		eColor_none,	XYZPointf(-149, 71, -170),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(8, 8, 8));
 		spr->a1_unknown00006 = 1;
 		spr->a1_unknown00007 = 6;
 	spr = CreatePanel(	(ESpriteID)((int)eSpriteID_LAST_OBJECT|(int)eSpriteID_cabinet),	"advice ball message",	false,	eObjectType_EightballMessage,	5,	5,	0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_EightBallAnims,	eColor_none,	XYZPointf(0, 0, 0),							false,	false);
 		spr->SetVolume(XYZPointf(4, 4, 1));
-	spr = CreatePanel(	eSpriteID_brassbull,		"brass bull",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Brassbull,		eColor_none,	XYZPointf(-185, 75, -300),					false,	false);
+	spr = CreatePanel(eSpriteID_brassbull,		"brass bull",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Brassbull,		eColor_none,	XYZPointf(-185, 75, -300),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(16, 16, 10));
-	spr = CreatePanel(	eSpriteID_trinket1,			"trinket 1",							true,	eObjectType_Misc,		28,		28,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket1,			eColor_none,	XYZPointf(-185, 48, -450),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket1,			"trinket 1",							true,	eObjectType_Misc,		28,		28,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket1,			eColor_none,	XYZPointf(-185, 48, -450),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 28, 10));
-	spr = CreatePanel(	eSpriteID_trinket2,			"trinket 2",							true,	eObjectType_Misc,		28,		28,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket2,			eColor_none,	XYZPointf(-186, 48, -425),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket2,			"trinket 2",							true,	eObjectType_Misc,		28,		28,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket2,			eColor_none,	XYZPointf(-186, 48, -425),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 28, 10));
-	spr = CreatePanel(	eSpriteID_trinket3,			"trinket 3",							true,	eObjectType_Misc,		20,		20,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket3,			eColor_none,	XYZPointf(-184.5, 46, -400),				false,	false);
+	spr = CreatePanel(eSpriteID_trinket3,			"trinket 3",							true,	eObjectType_Misc,		20,		20,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket3,			eColor_none,	XYZPointf(-184.5, 46, -400),				false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 20, 10));
-	spr = CreatePanel(	eSpriteID_trinket4,			"trinket 4",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket4,			eColor_none,	XYZPointf(-185, 75, -443),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket4,			"trinket 4",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket4,			eColor_none,	XYZPointf(-185, 75, -443),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 16, 10));
-	spr = CreatePanel(	eSpriteID_trinket5,			"trinket 5",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket5,			eColor_none,	XYZPointf(-186, 75, -405),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket5,			"trinket 5",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket5,			eColor_none,	XYZPointf(-186, 75, -405),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 16, 10));
-	spr = CreatePanel(	eSpriteID_trinket6,			"trinket 6",							true,	eObjectType_Misc,		20,		20,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket6,			eColor_none,	XYZPointf(-186, 98, -399),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket6,			"trinket 6",							true,	eObjectType_Misc,		20,		20,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket6,			eColor_none,	XYZPointf(-186, 98, -399),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 20, 10));
-	spr = CreatePanel(	eSpriteID_trinket7,			"trinket 7",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket7,			eColor_none,	XYZPointf(-186, 96, -424),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket7,			"trinket 7",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket7,			eColor_none,	XYZPointf(-186, 96, -424),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 16, 10));
-	spr = CreatePanel(	eSpriteID_trinket8,			"trinket 8",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket8,			eColor_none,	XYZPointf(-186, 96, -450),					false,	false);
+	spr = CreatePanel(eSpriteID_trinket8,			"trinket 8",							true,	eObjectType_Misc,		16,		16,		0,		0,		0,		true,	true,	eColor_unknown,			eTextureFilmstrip_Trinket8,			eColor_none,	XYZPointf(-186, 96, -450),					false,	false);
 		spr->SetGrabable(true);
 		spr->SetVolume(XYZPointf(10, 16, 10));
 		
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwall1",							true,	eObjectType_Misc,		70,		160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-165, 80, -500),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwallsliver1",					true,	eObjectType_Misc,		6.5,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-66, 80, -500),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwallsliver2",					true,	eObjectType_Misc,		6.5,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(6, 80, -500),					true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwall3",							true,	eObjectType_Misc,		30,		160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(85, 80, -500),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwall4",							true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(150, 80, -500),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwalltoppanel",					true,	eObjectType_Misc,		200,	10,		0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-30, 155, -500),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall0",							true,	eObjectType_Misc,		70,		160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -5),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall1",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -90),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall2",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -190),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall3",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -290),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall4",							true,	eObjectType_Misc,		60,		160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -370),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_leftwall5",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -450),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall0",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, 50),					true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -50),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -150),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall3",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -250),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall4",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -350),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_rightwall5",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwall1",							true,	eObjectType_Misc,		70,		160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-165, 80, -500),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwallsliver1",					true,	eObjectType_Misc,		6.5,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-66, 80, -500),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwallsliver2",					true,	eObjectType_Misc,		6.5,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(6, 80, -500),					true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwall3",							true,	eObjectType_Misc,		30,		160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(85, 80, -500),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwall4",							true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(150, 80, -500),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwalltoppanel",					true,	eObjectType_Misc,		200,	10,		0,		0,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-30, 155, -500),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall0",							true,	eObjectType_Misc,		70,		160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -5),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall1",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -90),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall2",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -190),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall3",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -290),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall4",							true,	eObjectType_Misc,		60,		160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -370),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_leftwall5",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-200, 80, -450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall0",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, 50),					true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -50),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -150),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall3",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -250),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall4",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -350),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall5",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -450),				true,	false);
 	
-	spr = CreatePanel(	eSpriteID_NOTASPRITE,		"LR_backwindow1",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-101, 77, -498),				true,	false);
+	spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow1",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-101, 77, -498),				true,	false);
 		spr->a1_unknown00011b = true;
 	CreatePanel(	eSpriteID_viewWindow,			"LR_backwindow2",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-30, 77, -498),				true,	false);
 		spr->a1_unknown00011b = true;
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_backwindow3",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(41, 77, -498),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwindow3",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(41, 77, -498),				true,	false);
 		spr->a1_unknown00011b = true;
 		
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_frontwallL",						true,	eObjectType_Misc,		60,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(170, 80, 98),					true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_frontwallR1",						true,	eObjectType_Misc,		66,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(17, 80, 98),					false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_frontwallR1_real",					true,	eObjectType_Misc,		50,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(2, 80, 108),					true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"LR_frontwallR2",						true,	eObjectType_Misc,		80,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-46, 80, 98),					true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallL",						true,	eObjectType_Misc,		60,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(170, 80, 98),					true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1",						true,	eObjectType_Misc,		66,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(17, 80, 98),					false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1_real",					true,	eObjectType_Misc,		50,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(2, 80, 108),					true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR2",						true,	eObjectType_Misc,		80,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-46, 80, 98),					true,	false);
 	
 	int zoneid = CreateNewZone(0, 0);
 	XZRectf rect;
@@ -3421,80 +3676,80 @@ void CreateRoom()
 	AddRectToZone(zoneid, rect);
 	g_roomZoneIDs[0] = zoneid;
 	
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FY_leftwall1",							true,	eObjectType_Misc,		100,	160,	0,		60,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-225, 80, 72),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FY_leftwall1",							true,	eObjectType_Misc,		100,	160,	0,		60,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-225, 80, 72),			true,	false);
 	
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FY_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		60,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 80, 140),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FY_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		60,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 80, 140),			true,	false);
 	spr = CreatePanel(	eSpriteID_frontDoor,		"front door",							true,	eObjectType_Door,		60,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_FrontDoor,			eColor_black,		XYZPointf(-190, 65, 130),			true,	false);
 		spr->a1_unknown00002 = 1;
 		spr->SetClickable(true);
 		spr->SetVolume(XYZPointf(60, 130, 5));
 		spr->SetRotation(XYZPointf(0, 30, 0));
 		
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_abovefrontdoor",					true,	eObjectType_Misc,		60,		30,		0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-195, 145, 145),			false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftpanel",							true,	eObjectType_Misc,		40,		160,	0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-235, 80, 122),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_rightpanel",						true,	eObjectType_Misc,		44,		160,	0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-150, 80, 171),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftwall1",							true,	eObjectType_Misc,		124,	160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-311, 80, 115),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftwall2",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 150),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftwall3",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 250),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftwall4",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 350),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_leftwall5",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 450),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 232),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 332),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_rightwall3",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 432),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_rightwall4",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 532),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_backwall1",							true,	eObjectType_Misc,		80,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-340, 80, 480),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_backwall2",							true,	eObjectType_Misc,		60,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-165, 80, 480),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_backwall_top",						true,	eObjectType_Misc,		110,	 30,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-245, 145, 480),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_elevator1",							true,	eObjectType_Misc,		55,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Elevator,				eColor_black,		XYZPointf(-221, 65, 480.5),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"FD_elevator2",							true,	eObjectType_Misc,		55,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Elevator,				eColor_black,		XYZPointf(-274, 65, 480.5),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_abovefrontdoor",					true,	eObjectType_Misc,		60,		30,		0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-195, 145, 145),			false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftpanel",							true,	eObjectType_Misc,		40,		160,	0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-235, 80, 122),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_rightpanel",						true,	eObjectType_Misc,		44,		160,	0,		-30,	0,		true,	false,	eColor_greyshade_20,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-150, 80, 171),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftwall1",							true,	eObjectType_Misc,		124,	160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-311, 80, 115),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftwall2",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 150),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftwall3",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 250),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftwall4",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 350),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_leftwall5",							true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-370, 80, 450),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_rightwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 232),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 332),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_rightwall3",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 432),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_rightwall4",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-135, 80, 532),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_backwall1",							true,	eObjectType_Misc,		80,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-340, 80, 480),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_backwall2",							true,	eObjectType_Misc,		60,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-165, 80, 480),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_backwall_top",						true,	eObjectType_Misc,		110,	 30,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-245, 145, 480),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_elevator1",							true,	eObjectType_Misc,		55,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Elevator,				eColor_black,		XYZPointf(-221, 65, 480.5),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"FD_elevator2",							true,	eObjectType_Misc,		55,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_Elevator,				eColor_black,		XYZPointf(-274, 65, 480.5),			true,	false);
 	
 	spr = CreatePanel(	eSpriteID_elevatorButton,	"elevator button",						true,	eObjectType_Misc,		7,		15,		0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_ElevatorButton,		eColor_black,		XYZPointf(-315, 65, 479.5),			true,	false);
 		spr->SetVolume(XYZPointf(10, 10, 20));
 		spr->SetClickable(true);
 		
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 450),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall2",						true,	eObjectType_Misc,		80,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 360),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall2_sliver",				true,	eObjectType_Misc,		20,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 310),				false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwallabovekitchendoor",		true,	eObjectType_Misc,		60,		40,		0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 140, 270),			false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall3",						true,	eObjectType_Misc,		40,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 220),				false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall4",						true,	eObjectType_Misc,		102,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 149),				false,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_lefthallwall_3_4_real",				true,	eObjectType_Misc,		105,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(40, 80, 175),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_righthallwall1",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 450),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_righthallwall2",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 350),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_righthallwall3",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 250),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_righthallwall4",					true,	eObjectType_Misc,		102,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 149),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"bedroom door",							true,	eObjectType_Misc,		60,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_BedroomDoor,			eColor_black,		XYZPointf(95, 65, 450),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_backwall1",							true,	eObjectType_Misc,		20,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(135, 80, 450),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_backwall2",							true,	eObjectType_Misc,		20,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(55, 80, 450),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"HW_aboveBedroomDoor",					true,	eObjectType_Misc,		60,		30,		0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(95, 145, 450),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_rightwall1",						true,	eObjectType_Misc,		86,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(7, 80, 200),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-85, 80, 200),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_backwall1",							true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(0, 80, 450),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_backwall2",							true,	eObjectType_Misc,		90,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-85, 80, 450),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabfront1",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 230),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabfront2",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 290),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabfront3",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 350),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabfront4",					true,	eObjectType_Misc,		20,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 390),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabtop1",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 230),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabtop2",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 290),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabtop3",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 350),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_longwallcabtop4",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 410),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_backwallcabfront1",					true,	eObjectType_Misc,		20,		50,		0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-90, 25, 400),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_backwallcabfront2",					true,	eObjectType_Misc,		60,		50,		0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-50, 25, 400),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_backwallcabtop2",					true,	eObjectType_Misc,		80,		40,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-60, 50, 420),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_fridgeside1",						true,	eObjectType_Misc,		60,		120,	0,		90,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(-20, 60, 430),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_fridgeside2",						true,	eObjectType_Misc,		60,		120,	0,		90,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(40, 60, 430),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_fridgefront1",						true,	eObjectType_Misc,		60,		40,		0,		0,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 100, 400),			true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_fridgefront2",						true,	eObjectType_Misc,		60,		72,		0,		0,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 44, 400),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"KI_fridgefrontbottom",					true,	eObjectType_Misc,		60,		8,		0,		0,		0,		true,	false,	eColor_unnamed015,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 4, 401),				true,	false);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"ceiling1",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 160, 300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"ceiling2",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 160, 300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"ceiling3",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 160, -300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"ceiling4",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 160, -300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"floor1",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 0, 300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"floor2",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 0, 300),				false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"floor3",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 0, -300),			false,	true);
-	CreatePanel(	eSpriteID_NOTASPRITE,			"floor4",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 0, -300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall1",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall2",						true,	eObjectType_Misc,		80,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 360),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall2_sliver",				true,	eObjectType_Misc,		20,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 310),				false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwallabovekitchendoor",		true,	eObjectType_Misc,		60,		40,		0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 140, 270),			false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall3",						true,	eObjectType_Misc,		40,		160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 220),				false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall4",						true,	eObjectType_Misc,		102,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(50, 80, 149),				false,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_lefthallwall_3_4_real",				true,	eObjectType_Misc,		105,	160,	0,		90,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(40, 80, 175),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_righthallwall1",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 450),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_righthallwall2",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 350),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_righthallwall3",					true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 250),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_righthallwall4",					true,	eObjectType_Misc,		102,	160,	0,		90,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(140, 80, 149),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"bedroom door",							true,	eObjectType_Misc,		60,		130,	0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_BedroomDoor,			eColor_black,		XYZPointf(95, 65, 450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_backwall1",							true,	eObjectType_Misc,		20,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(135, 80, 450),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_backwall2",							true,	eObjectType_Misc,		20,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(55, 80, 450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"HW_aboveBedroomDoor",					true,	eObjectType_Misc,		60,		30,		0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(95, 145, 450),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_rightwall1",						true,	eObjectType_Misc,		86,		160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(7, 80, 200),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_rightwall2",						true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_greyshade_15,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-85, 80, 200),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_backwall1",							true,	eObjectType_Misc,		100,	160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(0, 80, 450),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_backwall2",							true,	eObjectType_Misc,		90,		160,	0,		0,		0,		true,	false,	eColor_greyshade_05,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-85, 80, 450),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabfront1",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 230),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabfront2",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 290),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabfront3",					true,	eObjectType_Misc,		60,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 350),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabfront4",					true,	eObjectType_Misc,		20,		50,		0,		90,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-100, 25, 390),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabtop1",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 230),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabtop2",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 290),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabtop3",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 350),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_longwallcabtop4",					true,	eObjectType_Misc,		20,		60,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-110, 50, 410),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_backwallcabfront1",					true,	eObjectType_Misc,		20,		50,		0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-90, 25, 400),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_backwallcabfront2",					true,	eObjectType_Misc,		60,		50,		0,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_WhiteCabinetDoor1,	eColor_black,		XYZPointf(-50, 25, 400),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_backwallcabtop2",					true,	eObjectType_Misc,		80,		40,		90,		0,		0,		true,	false,	eColor_white,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-60, 50, 420),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_fridgeside1",						true,	eObjectType_Misc,		60,		120,	0,		90,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(-20, 60, 430),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_fridgeside2",						true,	eObjectType_Misc,		60,		120,	0,		90,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(40, 60, 430),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_fridgefront1",						true,	eObjectType_Misc,		60,		40,		0,		0,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 100, 400),			true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_fridgefront2",						true,	eObjectType_Misc,		60,		72,		0,		0,		0,		true,	false,	eColor_unnamed034,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 44, 400),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"KI_fridgefrontbottom",					true,	eObjectType_Misc,		60,		8,		0,		0,		0,		true,	false,	eColor_unnamed015,		eTextureFilmstrip_NOTATEXTURE,			eColor_black,		XYZPointf(10, 4, 401),				true,	false);
+	CreatePanel(eSpriteID_NOTASPRITE,			"ceiling1",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 160, 300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"ceiling2",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 160, 300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"ceiling3",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 160, -300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"ceiling4",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_30,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 160, -300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"floor1",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 0, 300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"floor2",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 0, 300),				false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"floor3",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(-250, 0, -300),			false,	true);
+	CreatePanel(eSpriteID_NOTASPRITE,			"floor4",								true,	eObjectType_Misc,		500,	600,	90,		0,		0,		false,	false,	eColor_greyshade_45,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,		XYZPointf(250, 0, -300),			false,	true);
 }
 void InitEnvironment()
 {
@@ -3666,7 +3921,7 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 	static int g_playerMotionNoise;
 	if (!spr)
 	{
-		g_PlayerSprite->SetPosition(XYZPointf(-32, 97, -111), -1);
+		g_PlayerSprite->SetPosition(XYZPointf(-32, 97, -111));
 		XYZPointf playerrot = g_PlayerSprite->GetRotation();
 		playerrot.m_y = 24;
 		g_PlayerSprite->SetRotation(playerrot);
@@ -3677,13 +3932,13 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 
 	if (!spr)
 	{
-		g_GraceSprite->SetPosition(XYZPointf(-2, -5, -140), -1);
+		g_GraceSprite->SetPosition(XYZPointf(-2, -5, -140));
 		XYZPointf gracerot = g_GraceSprite->GetRotation();
 		gracerot.m_y = 226;
 		g_GraceSprite->SetRotation(gracerot);
 	}
 	g_GraceSprite->SetTorsoRotation(XYZPointf(0, 0, 0));
-	g_GraceSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 160), -1);
+	g_GraceSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 160));
 	g_GraceSprite->SetHeadRotation(XYZPointf(0, 50, 0));
 
 	//g_GraceSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
@@ -3700,14 +3955,14 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 
 	if (!spr)
 	{
-		g_TripSprite->SetPosition(XYZPointf(-30, -5, -155), -1);
+		g_TripSprite->SetPosition(XYZPointf(-30, -5, -155));
 		XYZPointf triprot = g_PlayerSprite->GetRotation();
 		triprot.m_y = 178;
 		g_TripSprite->SetRotation(triprot);
 	}
 
 	g_TripSprite->SetTorsoRotation(XYZPointf(0, 0, 0));
-	g_TripSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 170), -1);
+	g_TripSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 170));
 	g_TripSprite->SetHeadRotation(XYZPointf(0, 0, 0));
 
 	//g_TripSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
@@ -3723,28 +3978,49 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 
 
 	Sprite* roomspr = g_spriteMgr.GetSpritePtrByName("couch");
-		roomspr->SetPosition(XYZPointf(150, 0, 350), -1);
+		roomspr->SetPosition(XYZPointf(150, 0, 350));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 	roomspr = g_spriteMgr.GetSpritePtrByName("cabinet");
-		roomspr->SetPosition(XYZPointf(-177, 0, -350), -1);
+		roomspr->SetPosition(XYZPointf(-177, 0, -350));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 	roomspr = g_spriteMgr.GetSpritePtrByName("side table");
-		roomspr->SetPosition(XYZPointf(170, 0, -210), -1);
+		roomspr->SetPosition(XYZPointf(170, 0, -210));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 	roomspr = g_spriteMgr.GetSpritePtrByName("work table");
-		roomspr->SetPosition(XYZPointf(160, 0, -30), -1);
+		roomspr->SetPosition(XYZPointf(160, 0, -30));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 	roomspr = g_spriteMgr.GetSpritePtrByName("bar");
-		roomspr->SetPosition(XYZPointf(-160, 0, -120), -1);
+		roomspr->SetPosition(XYZPointf(-160, 0, -120));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 	roomspr = g_spriteMgr.GetSpritePtrByName("side table 2");
-		roomspr->SetPosition(XYZPointf(-180.0, 0.0, -60.0), -1);
+		roomspr->SetPosition(XYZPointf(-180.0, 0.0, -60.0));
 		roomspr->SetRotation(XYZPointf(0, 0, 0));
 
 }
 void InitCollisionZonesAndPathPlanGrid()
 {
-	//undone
+	for (int i = 0; i < g_spriteMgr.GetNumSprites(); ++i)
+	{
+		Sprite* spr = g_spriteMgr.GetSpritePtr(i);
+		if (!spr->m_modelframe && !spr->GetIsCharacterSprite()
+			|| spr->GetCollidableType() == eCollidableType_NonSolid)
+			continue;
+
+		XZRectf rect = ComputeSingleCollisionRectForSprite(spr);
+		if (spr->m_eID == eSpriteID_bar)
+			rect.m_xmax += 15;
+
+		if (spr->m_eID == eSpriteID_workTable)
+			rect.m_xmax -= 15;
+
+		int zoneindex = CreateNewZone(spr, true);
+		AddRectToZone(zoneindex, rect);
+		if (!spr->GetIsCharacterSprite()
+			&& spr->m_eID == eSpriteID_frontDoor)
+		{
+			//AddRectToPathPlanGrid(rect);
+		}
+	}
 }
 static void SetupSqrtTable() {
 	//undone

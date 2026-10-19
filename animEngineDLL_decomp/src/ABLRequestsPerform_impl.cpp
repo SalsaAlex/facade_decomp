@@ -222,7 +222,7 @@ void PerformSetObjectPosition(ESpriteID spriteid, float x, float y, float z)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_OBJECT);
 	Sprite* spr = g_spriteMgr.GetSpritePtrByID(spriteid);
-	spr->SetPosition(XYZPointf(x, y, z), -1);
+	spr->SetPosition(XYZPointf(x, y, z));
 }
 
 void PerformGetObjectRotation(ESpriteID spriteid, float& x, float& y, float& z)

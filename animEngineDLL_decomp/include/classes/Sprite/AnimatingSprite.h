@@ -15,7 +15,7 @@ public:
 	void SetOrigPosition(XYZPointf pos) { m_originalPos = pos; }
 	void SetOrigRotation(XYZPointf rot);
 
-	void SetPosition(XYZPointf pos, float unknown) override;
+	void SetPosition(XYZPointf pos, float collidesize = -1) override;
 	void SetRotation(XYZPointf rot) override;
 
 

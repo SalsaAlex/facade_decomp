@@ -193,7 +193,7 @@ void CharacterSprite::SetGazeTrackingSprite(Sprite* sprite, EGazeSpeed speed, EG
 void CharacterSprite::SetGazeTrackingPoint(XYZPointf point, EGazeSpeed speed, EGazeType type, EAlterHeadCock cock)
 {
 	animengine_assert(unknown001 != 0);
-	unknown001->SetPosition(point, -1);
+	unknown001->SetPosition(point);
 	SetGazeTrackingSprite(unknown001, speed, type, cock);
 }
 void CharacterSprite::SetCueFromSpeakDialog(int i1)

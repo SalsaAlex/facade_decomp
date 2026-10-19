@@ -81,7 +81,7 @@ public:
 	virtual XYZPointf GetRotation()									{ return m_Rot; };
 	virtual float GetScale()										{ return m_fScale; };
 	virtual XYZPointf GetVolume()									{ return m_Volume; };
-	virtual void SetPosition(XYZPointf pos, float unknown);
+	virtual void SetPosition(XYZPointf pos, float collidesize = -1);
 	virtual void SetRotation(XYZPointf rot);
 	virtual void SetScale(float scale)								{ m_fScale = scale; }
 	virtual void SetVolume(XYZPointf vol)							{ m_Volume = vol; }
@@ -142,7 +142,7 @@ public:
 	// padding byte
 	int a1_unknown00002 = 0;
 	float a1_unknown00003 = 1.0;
-	int a1_unknown00004 = 0;
+	float a1_unknown00004 = 0;
 	bool a1_unknown00005 = 0;
 	// padding byte
 	// padding byte
