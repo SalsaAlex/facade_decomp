@@ -7,10 +7,7 @@
 
 struct mdlquadpoly_t
 {
-	int mdlinfoindex_1;
-    int mdlinfoindex_2;
-    int mdlinfoindex_3;
-    int mdlinfoindex_4;
+	int mdlinfoindex[4];
     int unknown005;
     EColor facecolor;
     EColor linecolor1;
@@ -26,7 +23,7 @@ struct mdlquadpoly_t
 struct mdlinfo_t
 {
 	float unknown001;
-    float color;
+    float color; //is this a float? is this a int? who knows!!!!!!!!!!!!!!!!!
     float unknown003;
     float unknown004;
     float unknown005;
@@ -133,41 +130,41 @@ public:
 
 	ESpriteID m_eID;
 	char m_name[64];
-	mdlframe_t * m_modelframe;
-	mdlinfo_t* m_modelinfo;
-	mdlline_t * m_modelquadlines;
-	void* m_characterarms;
-	mdloutlineconnector_t * m_outlineconnectors;
-	mdlquadpoly_t* m_modelquadpoly;
-	bool a1_unknown00001;
-	bool boolean1;
+	mdlframe_t * m_modelframe = nullptr;
+	mdlinfo_t* m_modelinfo = nullptr;
+	mdlline_t * m_modelquadlines = nullptr;
+	void* m_characterarms = nullptr;
+	mdloutlineconnector_t * m_outlineconnectors = nullptr;
+	mdlquadpoly_t* m_modelquadpoly = nullptr;
+	bool a1_unknown00001 = false;
+	bool boolean1 = false;
 	// padding byte
 	// padding byte
-	int a1_unknown00002;
-	float a1_unknown00003;
-	int a1_unknown00004;
-	bool a1_unknown00005;
-	// padding byte
-	// padding byte
-	// padding byte
-	float a1_unknown00006;
-	float a1_unknown00007;
-	bool a1_unknown00008;
+	int a1_unknown00002 = 0;
+	float a1_unknown00003 = 1.0;
+	int a1_unknown00004 = 0;
+	bool a1_unknown00005 = 0;
 	// padding byte
 	// padding byte
 	// padding byte
-	int a1_unknown00009;
-	bool a1_unknown00010;
-	bool a1_unknown00010b;
-	bool a1_unknown00010c;
-	bool a1_unknown00010d;
-	bool a1_unknown00011a;
-	bool a1_unknown00011b;
-	bool a1_unknown00011c;
-	int a1_unknown00012;
-	int m_iNumModelPoints;
-	int m_iNumQuadLines;
-	int m_iNumQuadPolys;
+	float a1_unknown00006 = 0;
+	float a1_unknown00007 = 0;
+	bool a1_unknown00008 = false;
+	// padding byte
+	// padding byte
+	// padding byte
+	int m_iPanelIndex;
+	bool a1_unknown00010 = false;
+	bool m_bSpriteFollowsCamera = false;
+	bool a1_unknown00010c = false;
+	bool a1_unknown00010d = false;
+	bool a1_unknown00011a = false;
+	bool a1_unknown00011b = false;
+	bool a1_unknown00011c = false;
+	int a1_unknown00012 = -1;
+	int m_iNumModelPoints = 0;
+	int m_iNumQuadLines = 0;
+	int m_iNumQuadPolys = 0;
 	int m_iNumArms;
 	int b1_unknown00004;
 	int b1_unknown00005;
@@ -184,9 +181,9 @@ public:
 	int b1_unknown00016;
 	int b1_unknown00017;
 	int b1_unknown00018;
-	int m_iNumOutlineConnectors;
+	int m_iNumOutlineConnectors = 0;
 	XYZPointf b1_unknown00020[MDL_MAXPOINTS];
-	XYZPointf b1_unknown00725[MDL_MAXPOINTS];
+	XYZPointf m_renderPoints1[MDL_MAXPOINTS];
 	float b1_unknown01430[MDL_MAXPOINTS];
 	int b1_unknown01665;
 	int b1_unknown01666;
@@ -18816,21 +18813,22 @@ public:
 	int b1_unknown20290;
 	int b1_unknown20291;
 	int b1_unknown20292;
-	int m_iSpriteFrame;
+	int m_iSpriteFrame = 0;
 	int b1_unknown20294;
-	int b1_unknown20295;
+	int b1_unknown20295 = 0;
 	int b1_unknown20296;
 	int b1_unknown20297;
-	int b1_unknown20298;
+	bool b1_unknown20298 = false;
 	Controller b1_unknown20299;
-	int b1_unknown20315;
-	float b1_unknown20316;
+	float b1_unknown20315;
+	float b1_unknown20316 = 0.0;
 	XYZPointf b1_unknown20317;
-	int b1_unknown20320;
+	bool b1_unknown20320a = false;
+	bool b1_unknown20320b = false;
 	Sprite * b1_unknown20321;
 	int b1_unknown20322;
-	char m_ScreenText[256];
-	char m_playerTextInput[32];
+	char m_ScreenText[256] = "\0";
+	char m_playerTextInput[32] = "\0";
 	int b1_unknown20395;
 	int b1_unknown20396;
 	int b1_unknown20397;
@@ -18887,11 +18885,11 @@ public:
 	int b1_unknown20448;
 	int b1_unknown20449;
 	int b1_unknown20450;
-	char m_playerTextOnScreen[256];
-	int b1_unknown20515;
-	int b1_unknown20516;
-	int b1_unknown20517;
-	bool b1_unknown20518;
+	char m_playerTextOnScreen[256] = "\0";
+	int b1_unknown20515 = 0;
+	int b1_unknown20516 = 0;
+	int b1_unknown20517 = 0;
+	bool b1_unknown20518 = false;
 	int b1_unknown20519;
 	int b1_unknown20520;
 	int b1_unknown20521;
@@ -18955,24 +18953,24 @@ public:
 	int b1_unknown20579;
 	int b1_unknown20580;
 	int b1_unknown20581;
-	int b1_unknown20582;
-	bool b1_unknown20583;
-	int b1_unknown20584;
-	Sprite* b1_unknown20585;
-	EObjectType m_eObjectType;
-	int c1_unknown00001;
-	bool m_bUpdateMe;
-	bool m_bDrawMe;
-	bool m_bGrabable;
-	bool m_bClickable;
+	int b1_unknown20582 = 0;
+	bool b1_unknown20583 = false;
+	int b1_unknown20584 = -1;
+	Sprite* m_pInteractor;
+	EObjectType m_eObjectType = eObjectType_Misc;
+	int c1_unknown00001 = 0;
+	bool m_bUpdateMe = true;
+	bool m_bDrawMe = false;
+	bool m_bGrabable = false;
+	bool m_bClickable = false;
 	bool m_bClickedThisFrame;
 	bool boolean3;
 	bool boolean4;
 	bool boolean5;
-	ECollidableType m_eCollidableType;
+	ECollidableType m_eCollidableType = eCollidableType_NonSolid;
 	XYZPointf m_Pos;
 	XYZPointf m_Rot;
-	float m_fScale;
+	float m_fScale = 1.0;
 	XYZPointf m_Volume;
 	XYZPointf m_attachPos;
 	XYZPointf c1_unknown00018;
@@ -19329,23 +19327,11 @@ public:
 	int c1_unknown00377;
 	int c1_unknown00378;
 	int c1_unknown00379;
-	int c1_unknown00380;
-	int c1_unknown00381;
-	int c1_unknown00382;
-	int c1_unknown00383;
-	int c1_unknown00384;
-	int c1_unknown00385;
-	int c1_unknown00386;
-	int c1_unknown00387;
-	int c1_unknown00388;
-	int c1_unknown00389;
-	int c1_unknown00390;
-	int c1_unknown00391;
-	int c1_unknown00392;
-	int c1_unknown00393;
-	int c1_unknown00394;
-	int c1_unknown00395;
-	Sprite* m_pSpriteHoldingMe;
+	int m_iNumSurfaces = 0;
+	Sprite* m_pSpritesBeingHeld[5];
+	int m_iSpriteHeldInfo1[5];
+	int m_iSpriteHeldInfo2[5];
+	Sprite* m_pSpriteHoldingMe = nullptr;
 	int c1_unknown00397;
 	int c1_unknown00398;
 	int c1_unknown00399;

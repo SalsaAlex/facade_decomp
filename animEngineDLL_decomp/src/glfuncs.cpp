@@ -173,15 +173,15 @@ void RotateModel(Sprite* spr, XYZPointf rotation, XYZPointf* pointsout)
 		&& rotation.m_z == 0.0;
 
 	int pointindex = spr->a1_unknown00002;
+	HeadSprite* headsprite = nullptr;
 
 	if (spr->GetIsHeadSprite())
 	{
+		headsprite = (HeadSprite*)spr;
 		//undone
 	}
 	else
-	{
 		animengine_assert(!spr->a1_unknown00010d);
-	}
 
 
 	XYZPointf basepoint = spr->m_modelframe[pointindex];
@@ -192,6 +192,18 @@ void RotateModel(Sprite* spr, XYZPointf rotation, XYZPointf* pointsout)
 	for (int i = 0; i < spr->m_iNumModelPoints; ++i)
 	{
 		XYZPointf curpoint = spr->m_modelframe[i];
+
+		bool headspritebool =  headsprite
+			//&& (i == LODWORD(headspriteptr[1].data.b1_unknown00020[19].m_y)
+			//	|| i == LODWORD(headspriteptr[1].data.b1_unknown00020[17].m_y) + 2
+			//	|| i == LODWORD(headspriteptr[1].data.b1_unknown00020[17].m_y) + 5)
+			;
+
+		if ((no_rotation_to_do || headspritebool) && spr->a1_unknown00003 == 1.0)
+		{
+			pointsout[i] = curpoint;
+			continue;
+		}
 
 		glLoadIdentity();
 		if (rotation.m_x != 0.0)	glRotatef(rotation.m_x, 1.0, 0.0, 0.0);
@@ -280,9 +292,9 @@ void Do2DPosterRotateAndProject(
 				continue;
 		}
 		gluProject(list[i].m_x, list[i].m_y, list[i].m_z, modelMatrix, projMatrix, viewport, &winx, &winy, &winz);
-		spr->b1_unknown00725[i].m_x = spr->GetScale() * (winx - (g_windowWidth / 2.f)) + a3.m_x;
-		spr->b1_unknown00725[i].m_y = spr->GetScale() * (winy - (g_windowHeight / 2.f)) + a3.m_y;
-		spr->b1_unknown00725[i].m_z = winz;
+		spr->m_renderPoints1[i].m_x = spr->GetScale() * (winx - (g_windowWidth / 2.f)) + a3.m_x;
+		spr->m_renderPoints1[i].m_y = spr->GetScale() * (winy - (g_windowHeight / 2.f)) + a3.m_y;
+		spr->m_renderPoints1[i].m_z = winz;
 	}
 	glPopMatrix();
 }
@@ -392,9 +404,9 @@ static void* LoadDIBitmap(const char* filename, BITMAPINFOHEADER** imginfo)
 	bytestoread = (*imginfo)->biSizeImage;
 	if (!(*imginfo)->biSizeImage)
 	{
-		int pitch[2];
-		*(int64_t*)&pitch = (*imginfo)->biBitCount * (*imginfo)->biWidth + 7;//wtf
-		bytestoread = abs((*imginfo)->biHeight) * ( ( (pitch[1] & 7) + pitch[0]) >> 3);
+		bytestoread = ((*imginfo)->biWidth *
+			(*imginfo)->biBitCount + 7) / 8 *
+			abs((*imginfo)->biHeight);
 	}
 
 	if ((imagedata = malloc(bytestoread)) == nullptr)
@@ -451,7 +463,7 @@ GLuint LoadTexture(const char* filename, bool alpha, uint32_t wraptype, uint32_t
 	BITMAPINFOHEADER* imginfo;
 	void* imagedata = LoadDIBitmap(filename, &imginfo);
 	uint8_t* imagehead = (uint8_t*)imagedata;
-	uint32_t numpixels = imginfo->biHeight * imginfo->biHeight;
+	uint32_t numpixels = imginfo->biWidth * imginfo->biHeight;
 
 	//transpose red&green (?)
 	for (int i = 0; i < numpixels; i++)
@@ -630,7 +642,7 @@ void DrawExtraEnvironmentStuff()
 	for (int i = 0; i < 2; ++i)
 	{
 		float v9, v8, v7, v14;
-		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().m_z);
+		float v16 = NormalizeNeg180to180(g_PlayerSprite->GetRotation().m_y);
 		float v15 = (g_PlayerSprite->GetPosition().m_z + 500.0) / 50.0;
 
 		v9 = v15 >= 4 ? 4 : v15;
@@ -932,6 +944,7 @@ static void PlayerChoosesName() {
 
 	bool choosegoleft = g_bPlayerMoveForwards || g_bPlayerRotateLeft;
 	bool choosegoright = g_bPlayerMoveBackwards || g_bPlayerRotateRight;
+
 	g_bPlayerMoveForwards = false;
 	g_bPlayerMoveBackwards = false;
 	g_bPlayerRotateLeft = false;
@@ -1062,14 +1075,16 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	bool& optionout, XYZPointf& xyzout, float& f1out,
 	int* renderdata)
 {
+	XYZPointf spritepos = spr->GetPosition();
+
 
 	if (spr->a1_unknown00010d && !head && !(character && character->AreWeInAnEditor(true)))
 	{
-		//undone
+		//undones
 	}
 	else
 	{
-		//v69 = 0.0;
+		spr->b1_unknown20315 = NormalizeNeg180to180(0)*0.5;
 	}
 
 	if (character /*&& !LOBYTE(character->unknown039[10423])*/)
@@ -1082,9 +1097,16 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		//undone
 	}
 
-	if (spr->a1_unknown00010b)
+	if (spr->m_bSpriteFollowsCamera)
 	{
-		//undone
+		XYZPointf spriterot = spr->GetRotation();
+		spriterot.m_y = g_PlayerSprite->GetRotation().m_y + 180.0;
+		if (option)
+		{
+			spriterot.m_x = spriterot.m_z = 0.0;
+			spriterot.m_y = 180;
+		}
+		spr->SetRotation(spriterot);
 	}
 
 	animengine_assert(!spr->a1_unknown00010d || !option);
@@ -1095,12 +1117,162 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		//undone
 	}
 
+	float f1;
+	XYZPointf spritesubjpos;
+	GetSubjectivePosition(spr->GetPosition(), spritesubjpos, f1, true);
+	f1out = spritesubjpos.m_z;
+
+	if (head)
+	{
+		//undone
+	}
+
+	if (spr->a1_unknown00010d)
+	{
+		spr->SetScale(f1 * 0.625);
+	}
+	else
+	{
+		spr->SetScale(f1);
+	}
+
+
+	if (spr->GetScale() <= 0 && !spr->a1_unknown00011a)
+	{
+		spr->boolean1 = false;
+		return false;
+	}
+
+	spr->boolean1 = true;
+
 	//undone
+
+	if (head)
+	{
+		//undone
+	}
+	else if (spr->a1_unknown00010d)
+	{
+		for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+		{
+			XYZPointf *modelpoint = &spr->m_modelframe[i];
+			//for (int j = 0; j < 2; ++j)
+			//{
+			//	if (character && *(&character->unknown009 + 4 * j) == i)
+			//	{
+			//		v124->p.m_x = v124->p.m_x + *((float*)&character->data.unknown010 + 4 * j);
+			//		v124->p.m_y = v124->p.m_y + *((float*)&character->data.unknown011 + 4 * j);
+			//		v124->p.m_z = v124->p.m_z + *((float*)&character->data.unknown012 + 4 * j);
+			//	}
+			//}
+
+			spr->b1_unknown00020[i] = *modelpoint;
+		}
+	}
+	else
+	{
+		XYZPointf rot = -spr->GetRotation();
+		RotateModel(spr, -spr->GetRotation(), spr->b1_unknown00020);
+	}
+	animengine_assert(spr->m_iNumModelPoints < MDL_MAXPOINTS);
+
+	if (spr->a1_unknown00010d)
+	{
+		XYZPointf rot = spr->GetRotation();
+		rot.m_y = Normalize0to360(rot.m_y + spr->b1_unknown20315);
+
+		if (character)
+		{
+			//undone
+		}
+		else
+		{
+			Do2DPosterRotateAndProject(spr, spr->b1_unknown00020,
+				spritesubjpos,
+				rot,
+				spr->a1_unknown00002,
+				e2DPosterRotateType_normal);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+		{
+			if (option)
+			{
+				//undone
+			}
+			else
+			{
+				XYZPointf pos = spr->b1_unknown00020[i] + spritepos;
+				GetSubjectivePosition(pos, spr->m_renderPoints1[i], f1, spr->a1_unknown00010 || option);
+				if (cursor_holding_us && !spr->GetAmIStillGrabDropAnimating())
+					spr->m_renderPoints1[i].m_z = -8.0;
+				if (spr->a1_unknown00004 != 0.0)
+					spr->m_renderPoints1[i].m_z = spr->a1_unknown00004;
+			}
+		}
+	}
+
+	//spr->UpdateSurfaces(spr->GetPosition());
+
+	if (spr->a1_unknown00001)
+	{
+		//sub_10001226((int)sprite->data.m_renderPoints1, renderdata, sprite->data.m_iNumModelPoints);
+	}
+	else
+	{
+		for (int i = 0; i < spr->m_iNumModelPoints; ++i)
+			renderdata[i] = i;
+	}
 
 
 	return true;
 }
 
+static int GetFrameTexCoords(ETextureFilmstrip filmstrip, int spriteframe,
+	float& u_min, float& v_min,
+	float& u_max, float& v_max)
+{
+	textureentry_t* texture = &g_TextureFilmstrips[filmstrip];
+
+	float v12 = 0;
+	float v11 = 0;
+	float v10 = texture->width2;
+	float v9 = texture->height2;
+	int textureframeindex = 0;
+	for (int i = 0; i != spriteframe; ++i)
+	{
+		v12 += texture->width2;
+		v10 += texture->width2;
+		if (v10 > texture->width1)
+		{
+			v12 = 0;
+			v10 = texture->width2;
+			v11 += texture->height2;
+			v9 += texture->height2;
+			if (v9 > texture->height1)
+			{
+				++textureframeindex;
+				v11 = 0;
+				v9 = texture->height2;
+			}
+		}
+	}
+	u_min = v12 / texture->width1;
+	v_min = 1.0 - v9 / texture->height1;
+	u_max = v10 / texture->width1;
+	v_max = 1.0 - v11 / texture->height1;
+
+	if (textureframeindex >= 20)
+	{
+		dprintf("illegal texture bitmap %d for frame %d of filmstrip %d", textureframeindex, spriteframe, filmstrip);
+		animengine_assert(0);
+		textureframeindex = 0;
+	}
+	animengine_assert(textureframeindex < texture->numentries);
+	return textureframeindex;
+}
 
 static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
 {
@@ -1118,6 +1290,156 @@ static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 		{
 			//if (spr->m_modelquadlines
 		}
+	}
+}
+
+static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
+{
+	if (g_numFramesRun <= 1)
+		return;
+
+	//undone
+
+	if (!spr->m_modelquadpoly)
+		return;
+
+	XYZPointf facepoints[4];
+
+	int i = 0;
+	int unknown005 = 0;
+
+	int lastinfoindex1 = 0;
+	int lastinfoindex2 = 0;
+	int lastinfoindex3 = 0;
+	int lastinfoindex4 = 0;
+
+	bool bool1 = false;
+
+	mdlquadpoly_t* poly;
+
+	while (true)
+	{
+		while (true)
+		{
+			if (spr->m_modelquadpoly[i].mdlinfoindex[0] == 666)
+				return;
+
+			poly = &spr->m_modelquadpoly[i];
+
+			lastinfoindex1 = poly->mdlinfoindex[0];
+			lastinfoindex2 = poly->mdlinfoindex[1];
+			lastinfoindex3 = poly->mdlinfoindex[2];
+			lastinfoindex4 = poly->mdlinfoindex[3];
+
+
+			if (poly->mdlinfoindex[0] == pointindex
+				|| poly->mdlinfoindex[1] == pointindex
+				|| poly->mdlinfoindex[2] == pointindex
+				|| poly->mdlinfoindex[3] == pointindex)
+			{
+				break;
+			}
+
+		LABEL_30:
+			if (bool1)
+			{
+				bool shoulddraw = false;
+				for (int j = 0; j < 4; j++)
+				{
+					XYZPointf point = spr->m_renderPoints1[spr->m_modelquadpoly[i].mdlinfoindex[j]];
+
+					XYZPointf* facepoint = &facepoints[j];
+					*facepoint = point;
+
+					if (unknown005 <= 1)
+						facepoint->m_z = f1;
+					if (facepoint->m_z <= 0.0)
+						shoulddraw = true;
+				}
+
+				EColor facecolor = poly->facecolor;
+				//if (facecolor == -1)
+					//facecolor = GetModelCircleColor(a1, lastinfoindex1);
+				if (facecolor != eColor_clear)
+				{
+					SetColorFromIndex(facecolor);
+					ETextureFilmstrip texture = poly->m_eFilmstrip;
+					if (texture <= eTextureFilmstrip_NOTATEXTURE)
+					{
+						glBegin(GL_QUADS);
+							glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
+							glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
+							glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
+							glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
+						glEnd();
+					}
+					else
+					{
+						textureentry_t* textureentry = &g_TextureFilmstrips[texture];
+						if (textureentry->isalpha)
+						{
+							glDisable(GL_BLEND);
+							glAlphaFunc(GL_NOTEQUAL, 1.0);
+							glEnable(GL_ALPHA_TEST);
+						}
+
+						float u_min, u_max;
+						float v_min, v_max;
+
+
+						int filmstrip_frame = GetFrameTexCoords(texture, spr->m_iSpriteFrame, u_min, v_min, u_max, v_max);
+						glEnable(GL_TEXTURE_2D);
+						glBindTexture(GL_TEXTURE_2D, textureentry->entries[filmstrip_frame].texid);
+							glBegin(GL_QUADS);
+								glTexCoord2f(u_min, v_min);
+								glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
+								glTexCoord2f(u_max, v_min);
+								glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
+								glTexCoord2f(u_max, v_max);
+								glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
+								glTexCoord2f(u_min, v_max);
+								glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
+							glEnd();
+						glDisable(GL_TEXTURE_2D);
+						if (textureentry->isalpha)
+						{
+							glDisable(GL_ALPHA_TEST);
+							glEnable(GL_BLEND);
+						}
+					}
+				}
+				//undone
+			}
+			i++;
+		}
+		if (spr->m_modelinfo[lastinfoindex1].unknown007 != 2
+			&& spr->m_modelinfo[lastinfoindex2].unknown007 != 2
+			&& spr->m_modelinfo[lastinfoindex3].unknown007 != 2
+			&& spr->m_modelinfo[lastinfoindex4].unknown007 != 2)
+		{
+			if (unknown005 == 2)
+			{
+				bool1 = pointindex == lastinfoindex1;
+			}
+			else
+			{
+				int v33 = 0;
+				for (int j = 0; j < spr->m_iNumModelPoints && pointindices[j] != pointindex; ++j)
+				{
+					if (pointindices[j] == lastinfoindex1
+						|| pointindices[j] == lastinfoindex2
+						|| pointindices[j] == lastinfoindex3
+						|| pointindices[j] == lastinfoindex4)
+					{
+						++v33;
+					}
+				}
+				if (!unknown005 && !v33 || unknown005 == 1 && v33 == 3)
+					bool1 = 1;
+			}
+			goto LABEL_30;
+		}
+		i++;
 	}
 }
 
@@ -1147,39 +1469,49 @@ void DrawSprite(Sprite* spr, bool option)
 
 	if (g_numFramesRun > 1 && spr->GetIsCharacterSprite())
 	{
-
+		//undone
 	}
+
+	float v82 = 0;
 
 	for (int i = 0; i < spr->m_iNumModelPoints; i++)
 	{
+		int indice = pointsindices[i];
 		if (head)
 		{
 
 		}
 		//Sprite* sprlist[5];
 		//int* unknown[5];
-		//int numsprites = spr->GetSpriteListAttachedToModelPoint(option, sprlist, unknown);
-		//for (int j = 0; j < numsprites; j++)
+		//int numspritesattached = spr->GetSpriteListAttachedToModelPoint(option, sprlist, unknown);
+		//for (int j = 0; j < numspritesattached; j++)
 		//{
 		//
 		//}
 
-		//undone
+		float unknown001 = spr->m_modelinfo[indice].unknown001;
 
 		if (spr->a1_unknown00010d)
 		{
+			float v69 = 0.0;
 			if (spr->GetIsAnimatingSprite())
 			{
 				//undone
 			}
-			//if (character && character->unknown005 == a2)
-			//{
+			if (character && indice == character->unknown005)
+			{
 				//undone
-			//}
+			}
 		}
 
-		//undone
+		spr->b1_unknown01430[indice] = unknown001;
 
+		unknown001 *= spr->GetScale();
+
+		bool v75 = false;
+
+		XYZPointf spriterot = spr->GetRotation();
+		spriterot.m_y += spr->b1_unknown20315;
 		for (int j = 0; j < spr->m_iNumOutlineConnectors; ++j)
 		{
 			//if (spr->m_outlineconnectors[j].unknown001 == a2)
@@ -1187,75 +1519,17 @@ void DrawSprite(Sprite* spr, bool option)
 				//undone
 			//}
 		}
-		//if (unknown007 == 1 && v88 > 0)
-		//	v75 = 1;
-		//if (unknown001 > 0.0 && (!unknown007 || v75 || g_bAllCircleOutline))
-		//{
-		//	zc = v82 + *(float*)&float1;
-		//	glTranslatef(
-		//		*((GLfloat*)&sprite->data.b1_unknown00725 + 3 * a2),
-		//		*((GLfloat*)&sprite->data.b1_unknown00726 + 3 * a2),
-		//		zc);
-		//	zd = v75;
-		//	v18 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
-		//		g_PlayerSprite,
-		//		v56);
-		//	x = v76.y - v18->y;
-		//	width = (float)FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown006);
-		//	v26 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown005);
-		//	v25 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown004);
-		//	v19 = FloatToInt(sprite->data.m_modelinfo[v87 / 7].unknown003);
-		//	DrawFilledCircle(
-		//		(int)sprite,
-		//		a2,
-		//		*((float*)&sprite->data.b1_unknown00725 + 3 * a2),
-		//		*((float*)&sprite->data.b1_unknown00726 + 3 * a2),
-		//		*(&sprite->data.b1_unknown00727 + 3 * a2),
-		//		unknown001,
-		//		color,
-		//		v19,
-		//		v25,
-		//		v26,
-		//		width,
-		//		x,
-		//		1.0,
-		//		zd);
-		//	ze = -(v82 + *(float*)&float1);
-		//	yb = -*((float*)&sprite->data.b1_unknown00726 + 3 * a2);
-		//	xb = -*((float*)&sprite->data.b1_unknown00725 + 3 * a2);
-		//	glTranslatef(xb, yb, ze);
-		//	*((float*)&sprite->data.b1_unknown00727 + 3 * a2) = v82 + *(float*)&float1;
-		//	*(float*)&v68 = v82 + *(float*)&float1;
-		//	if (v74)
-		//	{
-		//		if (*(float*)&sprite->data.b1_unknown20290 >= (double)*(float*)&v68)
-		//			b1_unknown20290 = v68;
-		//		else
-		//			b1_unknown20290 = sprite->data.b1_unknown20290;
-		//		sprite->data.b1_unknown20290 = b1_unknown20290;
-		//		if (*(float*)&sprite->data.b1_unknown20291 <= (double)*(float*)&v68)
-		//			b1_unknown20291 = v68;
-		//		else
-		//			b1_unknown20291 = sprite->data.b1_unknown20291;
-		//		sprite->data.b1_unknown20291 = b1_unknown20291;
-		//	}
-		//	else
-		//	{
-		//		sprite->data.b1_unknown20290 = v68;
-		//		sprite->data.b1_unknown20291 = v68;
-		//		v74 = 1;
-		//	}
-		//}
+		if (spr->m_modelinfo[indice].unknown007 == 1 /*&& numspritesattached > 0*/)
+			v75 = true;
+		if (unknown001 > 0.0 && (!spr->m_modelinfo[indice].unknown007 || v75 || g_bAllCircleOutline))
+		{
+			//undone
+		}
+
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
 		
-		//zf = v76.y - v20->y;
-		//yc = v82 + *(float*)&float1;
-		//DrawLinesFromModelPoint(sprite, a2, (int)renderdata, yc, zf);
-		//v21 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
-		//	g_PlayerSprite,
-		//	v54);
-		//zg = v76.y - v21->y;
-		//*(float*)&yd = v82 + *(float*)&float1;
-		//DrawPolysFromModelPoint(sprite, a2, (int)renderdata, yd, zg);
+		DrawLinesFromModelPoint(spr, indice, pointsindices, v82+f1, spriterot.m_y - playerrot.m_y);
+		DrawPolysFromModelPoint(spr, indice, pointsindices, v82+f1, spriterot.m_y - playerrot.m_y);
 		//v22 = (XYZPointf*)((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetRotation)(
 		//	g_PlayerSprite,
 		//	v53);

@@ -57,6 +57,15 @@ float Controller::GetVal()
 	return *m_valPtr;
 }
 
+void Controller::SetMaxVal(float val)
+{
+	m_valMax = val;
+}
+void Controller::SetMinVal(float val)
+{
+	m_valMin = val;
+}
+
 bool Controller::GetIsMoving()
 {
 	return m_bIsMoving;

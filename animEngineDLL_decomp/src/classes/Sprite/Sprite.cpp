@@ -11,7 +11,12 @@ static bool g_bElevatorButtonClicked = false;
 
 Sprite::Sprite()
 {
-
+    for (int i = 0; i < 5; ++i)
+    {
+        m_pSpritesBeingHeld[i] = nullptr;
+        m_iSpriteHeldInfo1[i] = -1;
+        m_iSpriteHeldInfo2[i] = -1;
+    }
 }
 
 void Sprite::InitSprite(ESpriteID spriteid,
@@ -23,7 +28,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
 	strcpy(m_name, name);
 	g_spriteMgr.AddSprite(this);
 
-	//if (!hasmodel)
+	if (!hasmodel)
 	{
 		SetDrawMe(false);
 		m_iNumModelPoints = 1;
@@ -35,7 +40,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
 	{
 		for (int i = 0; ; ++i)
 		{
-			if (*((float*)m_modelframe + 3 * i) == 666.0)
+			if (m_modelframe[i].m_x == 666.0)
 			{
 				m_iNumModelPoints = i;
 				goto LABEL_11;
@@ -59,7 +64,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
                 goto LABEL_41;
         }
         m_iNumQuadLines = j;
-        for (k = 0; m_modelquadpoly && m_modelquadpoly[k].mdlinfoindex_1 != 666; ++k)
+        for (k = 0; m_modelquadpoly && m_modelquadpoly[k].mdlinfoindex[0] != 666; ++k)
         {
             if (k >= 1175)
                 goto LABEL_41;
@@ -115,7 +120,7 @@ void Sprite::UpdateSprite()
 {
     if (g_numFramesRun > 1) b1_unknown20299.UpdateController();
 
-    if ((m_iSpriteFrame != b1_unknown20295 || LOBYTE(b1_unknown20298))
+    if ((m_iSpriteFrame != b1_unknown20295 || b1_unknown20298)
         && --b1_unknown20297 <= 0)
     {
         if (m_iSpriteFrame == b1_unknown20295)
@@ -135,10 +140,10 @@ void Sprite::UpdateSprite()
 
     if (GetClickedThisFrame())
     {
-        if (a1_unknown00010 != 0)
+        if (a1_unknown00010 != false)
         {
             b1_unknown20584 = 4;
-            b1_unknown20585 = g_PlayerSprite;
+            m_pInteractor = g_PlayerSprite;
             AddEventInfoToLog(eEventLogType_DoInteraction, eSpriteID_player, nullptr, false, m_eID, 0);
         }
         if (m_eID == eSpriteID_elevatorButton && !g_bElevatorButtonClicked)
@@ -146,7 +151,7 @@ void Sprite::UpdateSprite()
             g_bElevatorButtonClicked = true;
             PlayGlobalSound(eGlobalSound_elevatording);
             b1_unknown20584 = 4;
-            b1_unknown20585 = g_PlayerSprite;
+            m_pInteractor = g_PlayerSprite;
             AddEventInfoToLog(eEventLogType_DoInteraction, eSpriteID_player, nullptr, false, eSpriteID_elevatorButton, 0);
         }
     }

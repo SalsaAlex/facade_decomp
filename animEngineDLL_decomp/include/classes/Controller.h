@@ -16,6 +16,9 @@ public:
 	void SetVal(float value, bool keepMoving);
 	float GetVal();
 
+	void SetMaxVal(float val);
+	void SetMinVal(float val);
+
 	bool GetIsMoving();
 	void StopMoving();
 

@@ -97,6 +97,14 @@ public:
 		return temp;
 	}
 
+	XYZPoint_Template operator-() {
+		XYZPoint_Template<T> temp;
+		temp.m_x = -m_x;
+		temp.m_y = -m_y;
+		temp.m_z = -m_z;
+		return temp;
+	}
+
 	T m_x;
 	T m_y;
 	T m_z;
@@ -204,6 +212,23 @@ extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 #include "classes/Sprite/CharacterSprite.h"
 #include "classes/SpriteMgr.h"
 #include "classes/SoundMgr.h"
+
+#define MAX_PANELS 200
+
+struct panelmdlframes_t
+{
+	mdlframe_t frames[6]; //frames[5] is 666
+};
+struct panelmdlinfos_t
+{
+	mdlinfo_t infos[6]; //infos[5] is 666
+};
+struct panelmdlquadpolys_t
+{
+	mdlquadpoly_t polys[2];
+};
+
+
 
 extern CharacterSprite* g_GraceSprite;
 extern CharacterSprite* g_TripSprite;
@@ -362,6 +387,11 @@ void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);
 
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
+
+float ConvertWorldDegreesToRadians(float ang);
+XYZPointf PointAtAngleAndDist(XYZPointf dist, float f1, float f2);
+
+float FrameRateAdjust(float val, bool multiply = true);
 
 
 #endif // FACADECOMMON_H

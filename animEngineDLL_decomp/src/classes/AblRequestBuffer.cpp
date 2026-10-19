@@ -140,7 +140,7 @@ int AblRequestBuffer::PerformAllRequests()
         Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
         if (spr && spr->b1_unknown20584 != -1)
         {
-            ESpriteID objact = g_spriteMgr.GetSpriteIDBySpritePtr(spr->b1_unknown20585);
+            ESpriteID objact = g_spriteMgr.GetSpriteIDBySpritePtr(spr->m_pInteractor);
             //AddObjectActivationToObjectActivationBuffers(i, v11->data.b1_unknown20584, SpriteIDBySpritePtr);
         }
     }

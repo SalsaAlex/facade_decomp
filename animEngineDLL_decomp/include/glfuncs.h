@@ -40,4 +40,7 @@ void DrawArbitraryScreenText(const char* Str,
 	float floatfactor,
 	EColor maincolor, EColor outlinecolor);
 
+void RotateArrayOfPoints(XYZPointf* in_n_out, int numpoints, XYZPointf rotation, XYZPointf pos);
+void RotateModel(Sprite* spr, XYZPointf rotation, XYZPointf* pointsout);
+
 #endif // GLFUNCS_H

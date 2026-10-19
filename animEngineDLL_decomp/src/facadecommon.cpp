@@ -396,3 +396,26 @@ bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset)
 	else
 		return 20 + 35 > factor;
 }
+
+float ConvertWorldDegreesToRadians(float ang)
+{
+	return Normalize0to360(ang - 90.0) * (MATH_PI/180.f);
+}
+
+XYZPointf PointAtAngleAndDist(XYZPointf dist, float f1, float f2)
+{
+	float radangle = ConvertWorldDegreesToRadians(f1);
+	dist.m_x = cos(radangle) * f2 + dist.m_x;
+	dist.m_z = sin(radangle) * f2 + dist.m_z;
+
+	return dist;
+}
+
+
+float FrameRateAdjust(float val, bool multiply)
+{
+	if (multiply)
+		return val * 2;
+	else
+		return val / 2;
+}
