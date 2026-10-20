@@ -12,7 +12,7 @@ bool g_bAssertionThrown;
 bool g_bAtEndOfDrama;
 bool g_bAtEndOfLoad;
 
-bool g_bBlackBackground;
+bool g_bBlackBackground = true;
 bool g_bCinematographyOn;
 bool g_bDoSoundDropOff;
 bool g_bDoingFPSAdjustment;

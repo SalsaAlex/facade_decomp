@@ -134,6 +134,9 @@ font_charinfo_t g_fontInfo[] = {
 	{'Z',		 77,    358,	63, 85},
 };
 
+static float get_gl_linewidth(float val) {
+	return val * 0.125 + 0.5;
+}
 
 void RotateArrayOfPoints(XYZPointf* in_n_out, int numpoints, XYZPointf rotation, XYZPointf pos)
 {
@@ -1347,23 +1350,91 @@ static int GetFrameTexCoords(ETextureFilmstrip filmstrip, int spriteframe,
 	return textureframeindex;
 }
 
-static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
+static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float z, float f2)
 {
 	if (g_numFramesRun <= 1)
 		return;
 
-	//undone
-
 	if (!spr->m_modelquadlines)
 		return;
 
-	while (true)
-	{
-		while (true)
-		{
-			//if (spr->m_modelquadlines
-		}
-	}
+	int i = 0;
+	bool option1 = false;
+
+	XYZPointf points[4];
+	XYZPointf* renderpoints = spr->m_renderPoints1;
+
+	//while (true)
+	//{
+	//	while (true)
+	//	{
+	//		if (spr->m_modelquadlines[i].unknown001 == 666)
+	//			return;
+	//
+	//		if (spr->m_modelquadlines[i].unknown001 == pointindex 
+	//			|| spr->m_modelquadlines[i].unknown002 == pointindex)
+	//			break;
+	//
+	//		int index1 = pointindex;
+	//		int index2 = spr->m_modelquadlines[i].unknown003;
+	//		int index3 = -1;
+	//
+	//	LABEL_29:
+	//		if (i != 0)
+	//		{
+	//			animengine_assert(v61 >= 0);
+	//			if (index1 > index3)
+	//			{
+	//				VAL_SWAP(int, index3, index1);
+	//			}
+	//
+	//			float zval = option1 ? 0.05 : -0.05;
+	//			zval += z;
+	//
+	//			if (unknown004 > 1 &&
+	//				unknown004 == 2 || unknown004 == 3 &&
+	//				spr->m_modelquadlines[i].color2 != eColor_clear)
+	//			{
+	//				SetColorFromIndex(spr->m_modelquadlines[i].color2);
+	//				float width = spr->m_modelquadlines[i].linewidth;
+	//				if (width > 0)
+	//					width = get_gl_linewidth(width);
+	//
+	//				glLineWidth(width);
+	//				if (index2 < 0)
+	//				{
+	//					glBegin(GL_LINES);
+	//					glVertex3f(renderpoints[index1].m_x, renderpoints[index1].m_y, zval);
+	//					glVertex3f(renderpoints[index3].m_x, renderpoints[index3].m_y, zval);
+	//					glEnd();
+	//				}
+	//				else
+	//				{
+	//					points[0] = renderpoints[index1];
+	//					points[1] = renderpoints[index2];
+	//					points[2] = renderpoints[index3];
+	//
+	//					points[0].m_z = 
+	//						points[1].m_z =
+	//						points[2].m_z = zval;
+	//
+	//					glMap1f(GL_MAP1_VERTEX_3, 0.0, 10.0, 3, 3, &points[0].m_x);
+	//					glEnable(GL_MAP1_VERTEX_3);
+	//					glBegin(GL_LINE_STRIP);
+	//					for (float j = 0; j <= 10.0; ++j)
+	//					{
+	//						glEvalCoord1f(j);
+	//					}
+	//					glEnd();
+	//				}
+	//			}
+	//		}
+	//
+	//		i++;
+	//
+	//	}
+	//	i++;
+	//}
 }
 
 static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
@@ -1371,128 +1442,149 @@ static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 	if (g_numFramesRun <= 1)
 		return;
 
-	//undone
-
 	if (!spr->m_modelquadpoly)
 		return;
 
 	XYZPointf facepoints[4];
 
 	int i = 0;
-	int unknown005 = 0;
+	EQuadPolyDraw drawtype;
 
 	int lastinfoindex1 = 0;
 	int lastinfoindex2 = 0;
 	int lastinfoindex3 = 0;
 	int lastinfoindex4 = 0;
 
-	bool bool1 = false;
+	bool drawpoly = false;
 
 	mdlquadpoly_t* poly;
 
+	bool skipchecks = false;
+
 	while (true)
 	{
-		while (true)
+		do
 		{
 			if (spr->m_modelquadpoly[i].mdlinfoindex[0] == DATA_NULLVAL)
 				return;
 
 			poly = &spr->m_modelquadpoly[i];
 
-			lastinfoindex1 = poly->mdlinfoindex[0];
-			lastinfoindex2 = poly->mdlinfoindex[1];
-			lastinfoindex3 = poly->mdlinfoindex[2];
-			lastinfoindex4 = poly->mdlinfoindex[3];
-
-
-			if (poly->mdlinfoindex[0] == pointindex
-				|| poly->mdlinfoindex[1] == pointindex
-				|| poly->mdlinfoindex[2] == pointindex
-				|| poly->mdlinfoindex[3] == pointindex)
+			if(!skipchecks)
 			{
-				break;
+				drawpoly = false;
+
+				lastinfoindex1 = poly->mdlinfoindex[0];
+				lastinfoindex2 = poly->mdlinfoindex[1];
+				lastinfoindex3 = poly->mdlinfoindex[2];
+				lastinfoindex4 = poly->mdlinfoindex[3];
+
+
+				if (poly->mdlinfoindex[0] == pointindex
+					|| poly->mdlinfoindex[1] == pointindex
+					|| poly->mdlinfoindex[2] == pointindex
+					|| poly->mdlinfoindex[3] == pointindex)
+				{
+					break;
+				}
 			}
 
-		LABEL_30:
-			if (bool1)
+			skipchecks = false;
+
+			if (!drawpoly)
 			{
-				bool shoulddraw = false;
-				for (int j = 0; j < 4; j++)
-				{
-					XYZPointf point = spr->m_renderPoints1[spr->m_modelquadpoly[i].mdlinfoindex[j]];
-
-					XYZPointf* facepoint = &facepoints[j];
-					*facepoint = point;
-
-					if (unknown005 <= 1)
-						facepoint->m_z = f1;
-					if (facepoint->m_z <= 0.0)
-						shoulddraw = true;
-				}
-
-				EColor facecolor = poly->facecolor;
-				//if (facecolor == -1)
-					//facecolor = GetModelCircleColor(a1, lastinfoindex1);
-				if (facecolor != eColor_clear)
-				{
-					SetColorFromIndex(facecolor);
-					ETextureFilmstrip texture = poly->m_eFilmstrip;
-					if (texture <= eTextureFilmstrip_NOTATEXTURE)
-					{
-						glBegin(GL_QUADS);
-							glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
-							glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
-							glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
-							glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
-						glEnd();
-					}
-					else
-					{
-						textureentry_t* textureentry = &g_TextureFilmstrips[texture];
-						if (textureentry->isalpha)
-						{
-							glDisable(GL_BLEND);
-							glAlphaFunc(GL_NOTEQUAL, 1.0);
-							glEnable(GL_ALPHA_TEST);
-						}
-
-						float u_min, u_max;
-						float v_min, v_max;
-
-
-						int filmstrip_frame = GetFrameTexCoords(texture, spr->m_iSpriteFrame, u_min, v_min, u_max, v_max);
-						glEnable(GL_TEXTURE_2D);
-						glBindTexture(GL_TEXTURE_2D, textureentry->entries[filmstrip_frame].texid);
-							glBegin(GL_QUADS);
-								glTexCoord2f(u_min, v_min);
-								glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
-								glTexCoord2f(u_max, v_min);
-								glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
-								glTexCoord2f(u_max, v_max);
-								glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
-								glTexCoord2f(u_min, v_max);
-								glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
-							glEnd();
-						glDisable(GL_TEXTURE_2D);
-						if (textureentry->isalpha)
-						{
-							glDisable(GL_ALPHA_TEST);
-							glEnable(GL_BLEND);
-						}
-					}
-				}
-				//undone
+				i++;
+				continue;
 			}
+			bool shoulddraw = false;
+			for (int j = 0; j < 4; j++)
+			{
+				XYZPointf point = spr->m_renderPoints1[spr->m_modelquadpoly[i].mdlinfoindex[j]];
+
+				XYZPointf* facepoint = &facepoints[j];
+				*facepoint = point;
+
+				if (drawtype <= eQuadPolyDraw_flatdepth)	facepoint->m_z = f1;
+
+				if (facepoint->m_z <= 0.0)	shoulddraw = true;
+			}
+
+			if (!shoulddraw)
+			{
+				i++;
+				continue;
+			}
+
+			EColor facecolor = poly->facecolor;
+			//if (facecolor == -1)
+				//facecolor = GetModelCircleColor(a1, lastinfoindex1);
+			if (facecolor == eColor_clear)
+			{
+				i++;
+				continue;
+			}
+
+			SetColorFromIndex(facecolor);
+			ETextureFilmstrip texture = poly->m_eFilmstrip;
+			if (texture <= eTextureFilmstrip_NOTATEXTURE)
+			{
+				glBegin(GL_QUADS);
+					glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
+					glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
+					glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
+					glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
+				glEnd();
+			}
+			else
+			{
+				textureentry_t* textureentry = &g_TextureFilmstrips[texture];
+				if (textureentry->isalpha)
+				{
+					glDisable(GL_BLEND);
+					glAlphaFunc(GL_NOTEQUAL, 1.0);
+					glEnable(GL_ALPHA_TEST);
+				}
+
+				float u_min, u_max;
+				float v_min, v_max;
+
+
+				int filmstrip_frame = GetFrameTexCoords(texture, spr->m_iSpriteFrame, u_min, v_min, u_max, v_max);
+				glEnable(GL_TEXTURE_2D);
+				glBindTexture(GL_TEXTURE_2D, textureentry->entries[filmstrip_frame].texid);
+					glBegin(GL_QUADS);
+						glTexCoord2f(u_min, v_min);
+						glVertex3f(facepoints[0].m_x, facepoints[0].m_y, facepoints[0].m_z);
+						glTexCoord2f(u_max, v_min);
+						glVertex3f(facepoints[1].m_x, facepoints[1].m_y, facepoints[1].m_z);
+						glTexCoord2f(u_max, v_max);
+						glVertex3f(facepoints[2].m_x, facepoints[2].m_y, facepoints[2].m_z);
+						glTexCoord2f(u_min, v_max);
+						glVertex3f(facepoints[3].m_x, facepoints[3].m_y, facepoints[3].m_z);
+					glEnd();
+				glDisable(GL_TEXTURE_2D);
+				if (textureentry->isalpha)
+				{
+					glDisable(GL_ALPHA_TEST);
+					glEnable(GL_BLEND);
+				}
+			}
+			
+			//undone
+			
 			i++;
-		}
+		} while (true);
+
 		if (spr->m_modelinfo[lastinfoindex1].unknown007 != 2
 			&& spr->m_modelinfo[lastinfoindex2].unknown007 != 2
 			&& spr->m_modelinfo[lastinfoindex3].unknown007 != 2
 			&& spr->m_modelinfo[lastinfoindex4].unknown007 != 2)
 		{
-			if (unknown005 == 2)
+			skipchecks = true;
+			drawtype = spr->m_modelquadpoly[i].drawtype;
+			if (drawtype == eQuadPolyDraw_quad)
 			{
-				bool1 = pointindex == lastinfoindex1;
+				drawpoly = pointindex == lastinfoindex1;
 			}
 			else
 			{
@@ -1507,12 +1599,13 @@ static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 						++v33;
 					}
 				}
-				if (!unknown005 && !v33 || unknown005 == 1 && v33 == 3)
-					bool1 = 1;
+				if (drawtype == eQuadPolyDraw_never && !v33 
+					|| drawtype == eQuadPolyDraw_flatdepth && v33 == 3)
+					drawpoly = true;
 			}
-			goto LABEL_30;
 		}
-		i++;
+		else
+			i++;
 	}
 }
 
@@ -1550,6 +1643,8 @@ void DrawSprite(Sprite* spr, bool option)
 	for (int i = 0; i < spr->m_iNumModelPoints; i++)
 	{
 		int indice = pointsindices[i];
+		if (spr->a1_unknown00010d)
+			v82 += 0.2;
 		if (head)
 		{
 

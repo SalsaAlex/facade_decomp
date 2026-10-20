@@ -5,10 +5,17 @@
 
 #define MDL_MAXPOINTS 235
 
+enum EQuadPolyDraw
+{
+	eQuadPolyDraw_never = 0,
+	eQuadPolyDraw_flatdepth,
+	eQuadPolyDraw_quad,
+};
+
 struct mdlquadpoly_t
 {
 	int mdlinfoindex[4];
-    int unknown005;
+	EQuadPolyDraw drawtype;
     EColor facecolor;
     EColor linecolor1;
     EColor linecolor2;
@@ -45,12 +52,9 @@ struct mdloutlineconnector_t
 
 struct mdlline_t
 {
-    int unknown001;
-    int unknown002;
-    int unknown003;
-    int unknown004;
-    int unknown005;
-    int unknown006;
+    int unknown001[4];
+    EColor color1;
+    EColor color2;
     int linewidth;
     int unknown008;
 };
@@ -159,7 +163,7 @@ public:
 	bool a1_unknown00010c = false;
 	bool a1_unknown00010d = false;
 	bool a1_unknown00011a = false;
-	bool a1_unknown00011b = false;
+	bool m_bTransparent = false;
 	bool a1_unknown00011c = false;
 	int a1_unknown00012 = -1;
 	int m_iNumModelPoints = 0;

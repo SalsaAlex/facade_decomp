@@ -715,7 +715,7 @@ mdlquadpoly_t g_TripHeadModel_modelQuadPolys[] = {
 mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	{
 		{ 0,  1,  2,  3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_black, 	eColor_black,
 		20, 20, 20, 20,
@@ -723,7 +723,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{ 2,  7,  8,  9},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_none, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -731,7 +731,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{ 3, 13, 12,  7},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_black, 	eColor_black, 	eColor_black,
 		20, 20, 20, 20,
@@ -739,7 +739,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{ 6, 14, 15, 16},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
 		20, 20, 20, 20,
@@ -747,7 +747,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{16, 15, 17, 18},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
 		20, 20, 20, 20,
@@ -755,7 +755,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{18, 17, 19,  9},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -763,7 +763,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{14, 20, 21, 15},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -771,7 +771,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{15, 21, 22, 17},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -779,7 +779,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{17, 22, 23, 19},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -787,7 +787,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{ 4, 10, 24, 25},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -795,7 +795,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{19, 26, 27,  8},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -803,7 +803,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{ 8, 27, 12,  7},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
@@ -811,7 +811,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{36, 28, 29, 21},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
 		20, 20, 20, 20,
@@ -819,7 +819,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{21, 29, 30, 22},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -827,7 +827,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{22, 30, 31, 23},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -835,7 +835,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{37, 43, 32, 33},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -843,7 +843,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{23, 31, 34, 35},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -851,7 +851,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{38, 37, 36, 20},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
@@ -859,7 +859,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{39, 38, 14,  6},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -867,7 +867,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{40, 41,  6,  0},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_none, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -875,7 +875,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{41,  4,  5, 39},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -883,7 +883,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{11, 10,  4, 40},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_black, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -891,7 +891,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{38, 25, 24, 42},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -899,7 +899,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{37, 43, 44, 36},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_black, 	eColor_black, 	eColor_none, 	eColor_black,
 		20, 20, 20, 20,
@@ -907,7 +907,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{36, 44, 45, 28},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
 		20, 20, 20, 20,
@@ -915,7 +915,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{30, 46, 34, 31},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
@@ -923,7 +923,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{29, 47, 46, 30},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
@@ -931,7 +931,7 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{28, 48, 47, 29},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
@@ -939,26 +939,26 @@ mdlquadpoly_t g_Couch_modelQuadPolys[] = {
 	},
 	{
 		{43, 49, 44, 43},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, 	eColor_black, 	eColor_none, 	eColor_none,
 		20, 20, 20, 20,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_SideTable_modelQuadPolys[] = {
 	//undone
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_WorkTable_modelQuadPolys[] = {
 	//undone
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	{
 		{3, 4, 5, 6},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -966,7 +966,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{0, 1, 2, 3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -974,7 +974,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{14, 15, 16, 17},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -982,7 +982,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{18, 19, 32, 21},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -990,7 +990,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{22, 23, 24, 25},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -998,7 +998,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{6, 7, 8, 9},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1006,7 +1006,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{30, 31, 32, 33},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1014,7 +1014,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{34, 35, 36, 37},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1022,7 +1022,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{38, 39, 40, 41},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1030,7 +1030,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{42, 43, 44, 45},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1038,7 +1038,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{46, 47, 48, 31},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1046,7 +1046,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{50, 51, 52, 4},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_none, eColor_grey,
 		20, 20, 20, 20,
@@ -1054,7 +1054,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{5, 52, 51, 53},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, eColor_grey, eColor_grey, eColor_grey,
 		20, 20, 20, 20,
@@ -1062,7 +1062,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{50, 54, 55, 53},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_grey, eColor_none,
 		20, 20, 20, 20,
@@ -1070,7 +1070,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{56, 57, 58, 22},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_none, eColor_grey,
 		20, 20, 20, 20,
@@ -1078,7 +1078,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{50, 58, 57, 54},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_none, eColor_none, eColor_grey, eColor_none,
 		20, 20, 20, 20,
@@ -1086,7 +1086,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{23, 59, 56, 22},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_grey, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1094,7 +1094,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{2, 24, 25, 3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1102,7 +1102,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{7, 47, 46, 6},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1110,7 +1110,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{0, 22, 22, 0},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1118,7 +1118,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{1, 23, 23, 1},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1126,7 +1126,7 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{9, 49, 49, 9},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
@@ -1134,18 +1134,18 @@ mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
 	},
 	{
 		{8, 48, 48, 8},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_none,
 		eColor_grey, eColor_none, eColor_none, eColor_none,
 		20, 20, 20, 20,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{ {DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{ {DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	{
 		{0, 1, 2, 3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed036,
 		eColor_black, eColor_none, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1153,7 +1153,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{3, 2, 4, 5},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed037,
 		eColor_none, eColor_none, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1161,7 +1161,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{5, 4, 6, 8},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed038,
 		eColor_none, eColor_none, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1169,7 +1169,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{6, 9, 7, 8},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed037,
 		eColor_none, eColor_black, eColor_black, eColor_none,
 		12, 12, 12, 12,
@@ -1177,7 +1177,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{4, 10, 9, 6},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed039,
 		eColor_none, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1185,7 +1185,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{2, 11, 10, 4},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed039,
 		eColor_none, eColor_black, eColor_none, eColor_black,
 		12, 12, 12, 12,
@@ -1193,7 +1193,7 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{1, 2, 11, 12},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed039,
 		eColor_black, eColor_none, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1201,19 +1201,19 @@ mdlquadpoly_t g_Bar_modelQuadPolys[] = {
 	},
 	{
 		{1, 12, 13, 0},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed037,
 		eColor_none, eColor_none, eColor_none, eColor_none,
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 panelmdlquadpolys_t g_panelModelQuadPolys[MAX_PANELS];
 mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
 	{
 		{8, 9, 10, 11},
-		1,
+		eQuadPolyDraw_flatdepth,
 		eColor_black,
 		eColor_black, eColor_black, eColor_black, eColor_unnamed010,
 		12, 12, 12, -1,
@@ -1221,7 +1221,7 @@ mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
 	},
 	{
 		{10, 11, 12, 1},
-		0,
+		eQuadPolyDraw_never,
 		eColor_black,
 		eColor_black, eColor_black, eColor_unnamed010, eColor_unnamed010,
 		12, 12, 12, 12,
@@ -1229,18 +1229,18 @@ mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
 	},
 	{
 		{15, 14, 1, 0},
-		0,
+		eQuadPolyDraw_never,
 		eColor_black,
 		eColor_black, eColor_unnamed010, eColor_unnamed010, eColor_unnamed010,
 		12, -1, DATA_NULLVAL, DATA_NULLVAL,
 		(ETextureFilmstrip)DATA_NULLVAL
 	},
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, 0, 0, 0, (ETextureFilmstrip)0 },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, 0, 0, 0, (ETextureFilmstrip)0 },
 };
 mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 	{
 		{0, 1, 2, 3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed041,
 		eColor_black, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1248,7 +1248,7 @@ mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 	},
 	{
 		{0, 1, 5, 4},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed040,
 		eColor_none, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1256,7 +1256,7 @@ mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 	},
 	{
 		{3, 2, 6, 7},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed042,
 		eColor_none, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1264,18 +1264,18 @@ mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
 	},
 	{
 		{1, 5, 6, 2},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_unnamed043,
 		eColor_none, eColor_black, eColor_none, eColor_none,
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 	{
 		{0, 1, 2, 3},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_greyshade_20, 
 		eColor_black, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1283,7 +1283,7 @@ mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 	},
 	{
 		{0, 1, 5, 4},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_greyshade_15, 
 		eColor_none, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1291,7 +1291,7 @@ mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 	},
 	{
 		{3, 2, 6, 7},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_greyshade_25, 
 		eColor_none, eColor_black, eColor_black, eColor_black,
 		12, 12, 12, 12,
@@ -1299,13 +1299,13 @@ mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
 	},
 	{
 		{1, 5, 6, 2},
-		2,
+		eQuadPolyDraw_quad,
 		eColor_greyshade_30, 
 		eColor_none, eColor_black, eColor_none, eColor_none,
 		12, 12, 12, 12,
 		eTextureFilmstrip_NOTATEXTURE
 	},
-	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
 };
 /////////////////////////////////////////////////////
 
@@ -1453,6 +1453,11 @@ static bool IsPointWithinZone(XYZPointf point, int zoneindex) {
 	rect.m_zmin = rect.m_zmax = point.m_z;
 
 	return IsRectWithinZone(rect, zoneindex);
+}
+
+static int GetZoneIDForRoomZone(int roomzoneid) {
+	animengine_assert(roomzoneid == 0);
+	return g_roomZoneIDs[roomzoneid];
 }
 
 
@@ -1874,7 +1879,7 @@ static void UpdateCinematography()
 	g_bRequestAutoFraming = false;
 }
 
-static void UpdateAndRenderAllSprites(bool option)
+static void UpdateAndRenderAllSprites(bool transparent_only)
 {
 	static bool bDrawKitchenCabinets = false;
 
@@ -1909,16 +1914,16 @@ static void UpdateAndRenderAllSprites(bool option)
 
 		bool shouldupdate = sprite->GetUpdateMe() 
 			&& !holder 
-			&& !sprite->a1_unknown00005
-			/*&& option == BYTE1(SpritePtr->data.a1_unknown00011)*/;
+			&& transparent_only == sprite->m_bTransparent;
+
+		if (sprite->a1_unknown00005)
+			shouldupdate = false;
 
 		bool shoulddraw = shouldupdate && sprite->GetDrawMe();
 
 		if (sprite->a1_unknown00012 != -1)
 		{
-			//ZoneIDForRoomZone = GetZoneIDForRoomZone(SpritePtr->data.a1_unknown00012);
-			//v11 = ((int(__thiscall*)(Sprite*, _BYTE*))g_PlayerSprite->vftable->GetPosition)(g_PlayerSprite, v35);
-			//shoulddraw = IsPointWithinZone(*(float*)v11, *(_DWORD*)(v11 + 4), *(float*)(v11 + 8), ZoneIDForRoomZone);
+			shoulddraw = IsPointWithinZone(g_PlayerSprite->GetPosition(), GetZoneIDForRoomZone(sprite->a1_unknown00012));
 		}
 		if (sprite->GetIsHeadSprite()
 			/*&& !BYTE1(SpritePtr[1].vftable->GetModelPointPosition)*/)
@@ -1938,7 +1943,7 @@ static void UpdateAndRenderAllSprites(bool option)
 
 		bool shouldupdate = sprite->GetUpdateMe()
 			&& holder
-			&& option == sprite->a1_unknown00011b;
+			&& transparent_only == sprite->m_bTransparent;
 
 		if (sprite->a1_unknown00005)
 			shouldupdate = true;
@@ -2818,7 +2823,25 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 				{
 					if (g_bDoingFPSAdjustment)
 					{
-						//UNDONE
+						if (rounded_fps >= 25 || g_millisecondsToSleep == 10)
+						{
+							dprintf("\n## Locking in %d ms to sleep, %d fps\n", g_millisecondsToSleep, rounded_fps);
+							g_bLockedInMSToSleep = 1;
+							g_bDoingFPSAdjustment = 0;
+						}
+						else if (g_millisecondsToSleep <= 20 && g_renderEveryNthFrame == 1)
+						{
+							g_renderEveryNthFrame = 2;
+							g_millisecondsToSleep = 30;
+							dprintf("## Currently %d fps, rendering every other frame, resetting ms to sleep to %d", rounded_fps, 30);
+						}
+						else
+						{
+							g_millisecondsToSleep -= 5;
+							if (g_millisecondsToSleep < 10)
+								g_millisecondsToSleep = 10;
+							dprintf("## Currently %d fps, decreasing ms to sleep to %d", rounded_fps, g_millisecondsToSleep);
+						}
 					}
 					else if (g_bAblRequestingFPSAdjustment)
 					{
@@ -3391,7 +3414,7 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	panelmdlquadpoly->polys[0].mdlinfoindex[1] = 1;
 	panelmdlquadpoly->polys[0].mdlinfoindex[2] = 2;
 	panelmdlquadpoly->polys[0].mdlinfoindex[3] = 3;
-	panelmdlquadpoly->polys[0].unknown005 = 2;
+	panelmdlquadpoly->polys[0].drawtype = eQuadPolyDraw_quad;
 	panelmdlquadpoly->polys[0].facecolor = color1;
 	panelmdlquadpoly->polys[0].linecolor1 = color2;
 	panelmdlquadpoly->polys[0].linecolor2 = color2;
@@ -3407,7 +3430,7 @@ static Sprite* CreatePanel(ESpriteID sprid, const char* sprname, bool drawable, 
 	panelmdlquadpoly->polys[1].mdlinfoindex[1] = DATA_NULLVAL;
 	panelmdlquadpoly->polys[1].mdlinfoindex[2] = DATA_NULLVAL;
 	panelmdlquadpoly->polys[1].mdlinfoindex[3] = DATA_NULLVAL;
-	panelmdlquadpoly->polys[1].unknown005 = DATA_NULLVAL;
+	panelmdlquadpoly->polys[1].drawtype = (EQuadPolyDraw)DATA_NULLVAL;
 	panelmdlquadpoly->polys[1].facecolor =  (EColor)DATA_NULLVAL;
 	panelmdlquadpoly->polys[1].linecolor1 = (EColor)DATA_NULLVAL;
 	panelmdlquadpoly->polys[1].linecolor2 = (EColor)DATA_NULLVAL;
@@ -3624,11 +3647,11 @@ void CreateRoom()
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_rightwall5",						true,	eObjectType_Misc,		100,	160,	0,		90,		0,		true,	false,	eColor_black,			eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(200, 80, -450),				true,	false);
 	
 	spr = CreatePanel(eSpriteID_NOTASPRITE,		"LR_backwindow1",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-101, 77, -498),				true,	false);
-		spr->a1_unknown00011b = true;
-	CreatePanel(	eSpriteID_viewWindow,			"LR_backwindow2",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-30, 77, -498),				true,	false);
-		spr->a1_unknown00011b = true;
-	CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwindow3",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(41, 77, -498),				true,	false);
-		spr->a1_unknown00011b = true;
+		spr->m_bTransparent = true;
+	spr = CreatePanel(	eSpriteID_viewWindow,			"LR_backwindow2",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-30, 77, -498),				true,	false);
+		spr->m_bTransparent = true;
+	spr = CreatePanel(eSpriteID_NOTASPRITE,			"LR_backwindow3",						true,	eObjectType_Misc,		66,		150,	0,		0,		0,		true,	false,	eColor_unnamed030,		eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(41, 77, -498),				true,	false);
+		spr->m_bTransparent = true;
 		
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallL",						true,	eObjectType_Misc,		60,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(170, 80, 98),					true,	false);
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1",						true,	eObjectType_Misc,		66,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(17, 80, 98),					false,	false);

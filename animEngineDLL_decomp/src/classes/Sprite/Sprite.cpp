@@ -58,7 +58,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
         if (m_iNumModelPoints > MDL_MAXPOINTS)
             ShouldntBeHere("ERROR: Too many model points in sprite!");
         int j, k, m, n, ii, jj;
-        for (j = 0; m_modelquadlines && m_modelquadlines[j].unknown001 != DATA_NULLVAL; ++j)
+        for (j = 0; m_modelquadlines && m_modelquadlines[j].unknown001[0] != DATA_NULLVAL; ++j)
         {
             if (j >= 1175)
                 goto LABEL_41;
