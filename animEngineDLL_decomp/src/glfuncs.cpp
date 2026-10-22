@@ -1,4 +1,5 @@
 #include "facadecommon.h"
+#include "classes/Sprite/DoorSprite.h"
 #include "gl/GLU.h"
 
 #include "glfuncs.h"
@@ -1051,27 +1052,81 @@ void DrawScreenMessage()
 	}
 }
 
-static void GetSubjectivePosition(XYZPointf pos, XYZPointf& out, float& floatout, bool option)
-{
-	out = pos - g_PlayerSprite->GetPosition();
-
-	float v1 = atan2(out.m_z, out.m_x);
-	float v2 = sqrt(out.m_z*out.m_z + out.m_x*out.m_x);
-	float v3 = g_PlayerSprite->GetRotation().m_y * MATH_PI/180.f;
-
-	out.m_x = cos(v1 - v3) * v2;
-	out.m_z = sin(v1 - v3) * v2;
-
-	if (option)
+static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) {
+	if (option && !spr->m_bGettingGrabbed && !spr->m_bGettingDropped)
 	{
-		float v11 = -out.m_z;
-		if (v11 < 0.1)	v11 = 0.1;
-
-		floatout = 100.0 / v11;
-		out.m_x *= floatout * 1.25;
-		out.m_y *= floatout * 1.25;
+		pos.m_y += spr->a1_unknown00007;
 	}
+	else
+	{
+		animengine_assert(spr->m_GrabDropAnimFactor >= 0.0 && spr->m_GrabDropAnimFactor <= MATH_PI);
+
+		//salsatobias : it doesnt pass even if grabdropanimfactor is equal to mathpi :( damn floating points
+		// (or very likely im doing something wrong)
+		if (option && spr->m_bGettingGrabbed && spr->m_GrabDropAnimFactor >= MATH_PI)
+		{
+			spr->m_bGettingGrabbed = false;
+			pos.m_y += spr->a1_unknown00007;
+		}
+		else if (option && (!spr->m_bGettingDropped || spr->m_GrabDropAnimFactor > 0.0))
+		{
+			if (spr->m_bGettingGrabbed)
+			{
+				spr->m_GrabDropAnimFactor += MATH_PI / 15;
+				if (spr->m_GrabDropAnimFactor > MATH_PI)
+					spr->m_GrabDropAnimFactor = MATH_PI + 0.1; //salsatobias: 0.1 was not originally here, but i needed to. look at comment above
+			}
+			else if (spr->m_bGettingDropped)
+			{
+				spr->m_GrabDropAnimFactor -= MATH_PI / 15;
+				if (spr->m_GrabDropAnimFactor < 0)
+					spr->m_GrabDropAnimFactor = 0;
+			}
+			float v5 = 1.0 - (cos(spr->m_GrabDropAnimFactor) + 1.0) / 2.0;
+			animengine_assert(v5 >= 0.0 && v5 <= 1.0);
+
+			float v6 = sin(spr->m_GrabDropAnimFactor);
+			animengine_assert(v6 >= 0.0 && v6 <= 1.0);
+
+			pos.m_y += v5 * spr->a1_unknown00007;
+			XYZPointf target;
+			target.m_x = (pos.m_x - spr->m_targetPos.m_x) * v5 + spr->m_targetPos.m_x;
+			target.m_y = (pos.m_y - spr->m_targetPos.m_y) * v5 + spr->m_targetPos.m_y + v6 * 8.0;
+			target.m_z = (pos.m_z - spr->m_targetPos.m_z) * v5 + spr->m_targetPos.m_z;
+			
+			if (spr->a1_unknown00006 > 0.0)
+				spr->a1_unknown00003 = v5 * spr->a1_unknown00006 + 1.0;
+
+			if (spr->m_eID == eSpriteID_eightball || spr->m_eID == eSpriteID_phone)
+			{
+				if (v5 < 0.5 && spr->m_iSpriteFrame != 0)
+				{
+					spr->SetTextureFrameAnimation(0, 0, 1, false);
+					if (spr->m_eID == eSpriteID_phone)
+						spr->a1_unknown00007 = 0.0;
+				}
+				else if (v5 > 0.5 && spr->m_iSpriteFrame != 1)
+				{
+					spr->SetTextureFrameAnimation(1, 1, 1, false);
+					if (spr->m_eID == eSpriteID_phone)
+						spr->a1_unknown00007 = 5.0;
+				}
+				pos = target;
+			}
+		}
+		else
+		{
+			spr->m_bGettingDropped = 0;
+			g_CursorSprite->DropSprite(spr);
+			spr->SetPosition(spr->m_targetPos);
+			spr->b1_unknown20321->AddSpriteToSurface(spr->b1_unknown20322, spr);
+			pos = spr->m_targetPos;
+		}
+	}
+
+	return pos;
 }
+
 
 static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSprite* head,
 	bool option,
@@ -1122,7 +1177,15 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 	bool cursor_holding_us = spr->GetSpriteHoldingMe() == g_CursorSprite;
 	if (cursor_holding_us || spr->GetAmIStillGrabDropAnimating())
 	{
-		//undone
+		XYZPointf objectivepos = GetObjectivePosition(g_CursorSprite->GetPosition(), spr->GetScale());
+		
+		spritepos = GetCursorGrabPosition(objectivepos, spr, cursor_holding_us);
+
+		spr->SetPosition(spritepos);
+
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y += 180.0;
+		spr->SetRotation(playerrot);
 	}
 
 	float f1;
@@ -1152,7 +1215,25 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	spr->boolean1 = true;
 
-	//undone
+	XYZPointf sprvolume = spr->GetVolume();
+	float v1 = f1 * 1.2 / 2.0;
+	XYZPointf attachpos = spritesubjpos;
+	if (character)
+		attachpos.m_y = 70.0 * f1 + attachpos.m_y;
+	if (option)
+		attachpos = spr->GetAttachPosition();
+	if (spr->m_eObjectType == eObjectType_Door && ((DoorSprite*)spr)->IsDoorOpen())
+	{
+		XYZPointf point = spritepos;
+		point.m_x -= 30;
+		point.m_z -= 30;
+		GetSubjectivePosition(point, attachpos, f1, true);
+	}
+	float ymax = sprvolume.m_y * v1 + attachpos.m_y;
+	float xmax = sprvolume.m_x * v1 + attachpos.m_x;
+	float ymin = attachpos.m_y - sprvolume.m_y * v1;
+	float xmin = attachpos.m_x - sprvolume.m_x * v1;
+	spr->Set2DBoundingBox(xmin, ymin, xmax, ymax, attachpos.m_z);
 
 	if (head)
 	{
@@ -1290,7 +1371,7 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	}
 
-	//spr->UpdateSurfaces(spr->GetPosition());
+	spr->UpdateSurfaces(spr->GetPosition(), spr->b1_unknown00020, spr->m_renderPoints1);
 
 	if (spr->a1_unknown00001)
 	{

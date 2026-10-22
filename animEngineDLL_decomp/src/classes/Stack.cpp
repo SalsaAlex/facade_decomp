@@ -20,3 +20,8 @@ void Stack::Reset()
     unknown038 = 0;
     unknown036 = 0;
 }
+
+bool Stack::IsStackEmpty()
+{
+    return unknown036 <= unknown038;
+}

@@ -15,6 +15,8 @@ public:
 
 	void PlayerSipDrink();
 
+	bool IsSipping();
+
 private:
 	int unknown;
 

@@ -10,6 +10,8 @@ public:
 	void InitStack(int size);
 	void Reset();
 
+	bool IsStackEmpty();
+
 private:
 
 	int unknown001 = 0;

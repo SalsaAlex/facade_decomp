@@ -348,6 +348,106 @@ float GetXZAngleBetweenPoints(XYZPointf p1, XYZPointf p2)
 	return NormalizeNeg180to180(atan2(p2.m_z - p1.m_z, p2.m_x - p1.m_x) * (180.0/MATH_PI) + 90.0);
 }
 
+void GetSubjectivePosition(XYZPointf pos, XYZPointf& out, float& floatout, bool option){
+	out = pos - g_PlayerSprite->GetPosition();
+
+	float v1 = atan2(out.m_z, out.m_x);
+	float v2 = sqrt(out.m_z * out.m_z + out.m_x * out.m_x);
+	float v3 = g_PlayerSprite->GetRotation().m_y * MATH_PI / 180.f;
+
+	out.m_x = cos(v1 - v3) * v2;
+	out.m_z = sin(v1 - v3) * v2;
+
+	if (option)
+	{
+		float v11 = -out.m_z;
+		if (v11 < 0.1)	v11 = 0.1;
+
+		floatout = 100.0 / v11;
+		out.m_x *= floatout * 1.25;
+		out.m_y *= floatout * 1.25;
+	}
+}
+XYZPointf GetObjectivePosition(XYZPointf pos, float factor) {
+	pos.m_x /= (factor * 1.25);
+	pos.m_y /= (factor * 1.25);
+
+	float v1 = atan2(pos.m_z, pos.m_x);
+	float v2 = sqrt(pos.m_z * pos.m_z + pos.m_x * pos.m_x);
+	float v3 = g_PlayerSprite->GetRotation().m_y * (MATH_PI / 180);
+
+	pos.m_x = cos(v1 + v3) * v2;
+	pos.m_z = sin(v1 + v3) * v2;
+
+	return pos + g_PlayerSprite->GetPosition();
+}
+
+static float bbox_max(float a1, float a2, float a3, float a4)
+{
+	float v1; // [esp+50h] [ebp-Ch]
+	float v2; // [esp+54h] [ebp-8h]
+
+	if (a1 <= a2)
+		v2 = a2;
+	else
+		v2 = a1;
+
+	if (v2 <= a3)
+		v1 = a3;
+	else
+		v1 = v2;
+
+	if (v1 <= a4)
+		return a4;
+	else
+		return v1;
+}
+static float bbox_min(float a1, float a2, float a3, float a4)
+{
+	float v1; // [esp+50h] [ebp-Ch]
+	float v2; // [esp+54h] [ebp-8h]
+
+	if (a1 >= a2)
+		v2 = a2;
+	else
+		v2 = a1;
+
+	if (v2 >= a3)
+		v1 = a3;
+	else
+		v1 = v2;
+
+	if (v1 >= a4)
+		return a4;
+	else
+		return v1;
+}
+
+void GetXYBoundingBoxOf4Points(const XYZPointf* a2, XYZPointf* a3)
+{
+	float x, y, z;
+
+	z = bbox_max(a2[0].m_z, a2[1].m_z, a2[2].m_z, a2[3].m_z);
+	y = bbox_min(a2[0].m_y, a2[1].m_y, a2[2].m_y, a2[3].m_y);
+	x = bbox_min(a2[0].m_x, a2[1].m_x, a2[2].m_x, a2[3].m_x);
+	a3[0] = XYZPointf(x, y, z);
+
+	z = bbox_max(a2[0].m_z, a2[1].m_z, a2[2].m_z, a2[3].m_z);
+	y = bbox_min(a2[0].m_y, a2[1].m_y, a2[2].m_y, a2[3].m_y);
+	x = bbox_max(a2[0].m_x, a2[1].m_x, a2[2].m_x, a2[3].m_x);
+	a3[1] = XYZPointf(x, y, z);
+
+	z = bbox_max(a2[0].m_z, a2[1].m_z, a2[2].m_z, a2[3].m_z);
+	y = bbox_max(a2[0].m_y, a2[1].m_y, a2[2].m_y, a2[3].m_y);
+	x = bbox_max(a2[0].m_x, a2[1].m_x, a2[2].m_x, a2[3].m_x);
+	a3[2] = XYZPointf(x, y, z);
+
+	z = bbox_max(a2[0].m_z, a2[1].m_z, a2[2].m_z, a2[3].m_z);
+	y = bbox_max(a2[0].m_y, a2[1].m_y, a2[2].m_y, a2[3].m_y);
+	x = bbox_min(a2[0].m_x, a2[1].m_x, a2[2].m_x, a2[3].m_x);
+	a3[3] = XYZPointf(x, y, z);
+}
+
 static bool point_inrect_check(XZPointf p, XZPointf rectmin, XZPointf rectmax)
 {
 	if (rectmin.m_x > rectmax.m_x)

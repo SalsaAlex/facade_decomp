@@ -18,6 +18,22 @@
 
 #include "ABLRequestsPerform_impl.h"
 
+#define DISABLE_ABLTIMEOUT
+
+enum ECursorContext
+{
+	eCursorContext_idle = 0,
+	eCursorContext_holding,
+	eCursorContext_sip,
+	eCursorContext_knock,
+	eCursorContext_comfort,
+	eCursorContext_hug,
+	eCursorContext_kiss,
+	eCursorContext_throw
+};
+
+ECursorContext g_cursorContext;
+
 #define MAX_CURSORPOSHISTORY 30
 
 int g_startTime;
@@ -1363,6 +1379,7 @@ static void ProcessAblRequests(bool clear) {
 
 	if (g_bQuittingApp)
 		return;
+#ifndef DISABLE_ABLTIMEOUT
 	if (g_lastFrameGotAblRequest > 0 && !g_bAtEndOfDrama && g_numFramesRun > g_lastFrameGotAblRequest + 600)
 	{
 		g_bQuittingApp = true;
@@ -1371,6 +1388,7 @@ static void ProcessAblRequests(bool clear) {
 		SendMessage(g_hMainAppWindow, WM_CLOSE, 0, 0);
 		return;
 	}
+#endif
 
 	timeAtStart = GetTickCount();
 	if (!lastPrintGuard)
@@ -1545,6 +1563,72 @@ static XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 bool PlayGlobalSound(EGlobalSounds sound)
 {
 	return g_soundMgr.PlaySound(g_soundSourceID, sound, true);
+}
+
+bool IsPlayerOutsideApt() {
+	return g_PlayerSprite->GetPosition().m_x < -150
+		&& g_PlayerSprite->GetPosition().m_y > 120;
+}
+
+static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
+{
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf playerrot = g_PlayerSprite->GetRotation();
+	float v10 = f1 - playerrot.m_y;
+	if (v10 >= -180)
+	{
+		if (v10 > 180)
+			f1 -= 360;
+	}
+	else
+	{
+		f1 += 360;
+	}
+	if (option)
+	{
+#define SETCONTROLLERLIMITS(controller, val1, val2) \
+	if (val1 != val2) \
+	{ \
+		if (val1 > val2) \
+		{ \
+			controller.SetMinVal(val2); \
+			controller.SetMaxVal(10000); \
+		} \
+		else \
+		{ \
+			controller.SetMaxVal(val2); \
+			controller.SetMinVal(-10000); \
+		} \
+	}
+
+		SETCONTROLLERLIMITS(g_PlayerXController, playerpos.m_x, point.m_x);
+		SETCONTROLLERLIMITS(g_PlayerYController, playerpos.m_y, point.m_y);
+		SETCONTROLLERLIMITS(g_PlayerZController, playerpos.m_z, point.m_z);
+
+#undef SETCONTROLLERLIMITS
+
+	}
+	g_PlayerXController.SetVal(playerpos.m_x, false);
+	g_PlayerXController.SetTargetByRate(point.m_x, f2, eControllerType_unknown03, playerpos.m_x - g_prevPlayerPosition.m_x);
+	g_PlayerYController.SetVal(playerpos.m_y, false);
+	g_PlayerYController.SetTargetByRate(point.m_y, 1, eControllerType_unknown03, playerpos.m_y - g_prevPlayerPosition.m_y);
+	g_PlayerZController.SetVal(playerpos.m_z, false);
+	g_PlayerZController.SetTargetByRate(point.m_z, f2, eControllerType_unknown03, playerpos.m_z - g_prevPlayerPosition.m_z);
+
+	g_PlayerRotController.SetVal(playerrot.m_y, false);
+	g_PlayerRotController.SetTargetByRate(f1, f2, eControllerType_unknown03, playerrot.m_y - g_prevPlayerRotation.m_y);
+}
+
+static void DoHugComfortKissPlayerMotion(Sprite* spr, float f1) {
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf actorpos = spr->GetPosition();
+
+	float angle = GetXZAngleBetweenPoints(playerpos, actorpos);
+
+	XYZPointf pointatangle = PointAtAngleAndDist(actorpos, angle + 180, f1);
+
+	StartPlayerMoveControllers(XYZPointf(pointatangle.m_x, playerpos.m_y, playerpos.m_z), angle, 1, 0);
+	g_AutoMovePlayerStatus = 4;
 }
 
 void UpdateFrontDoorCollisionZone(bool dooropen)
@@ -1807,9 +1891,213 @@ static void UpdateTitleSequence()
 	}
 }
 
+static bool AreWeDoingObjectOfferingOrTaking(CharacterSprite* holder, Sprite* obj){
+	if (obj == g_GraceSprite || g_TripSprite->m_GestureFxnMgr1.unknown[2] != 164)
+		return false;
+
+	Sprite* spriteheldlist[5];
+	int spriteheldinfolist[5];
+	int listcount = holder->GetSpriteListAttachedToModelPoint(50, spriteheldlist, spriteheldinfolist);
+	
+	if (!obj && listcount == 0)
+		return true;
+
+	if (listcount > 0 && spriteheldlist[0] == obj)
+		return true;
+
+	return false;
+}
+static bool CheckCursorClickableOnSprite(Sprite* spr) {
+	XYZPointf* bbox = spr->Get2DBoundingBox();
+	XYZPointf cursorpos = g_CursorSprite->GetPosition();
+	float v1 = 100.0;
+	if (spr->m_eID == eSpriteID_frontDoor)
+		v1 = 150.0;
+	if (spr->m_eID == eSpriteID_bigAbstractPainting
+		|| spr->m_eID == eSpriteID_littleTreePainting
+		|| spr->m_eID == eSpriteID_italyPicture
+		|| spr->m_eID == eSpriteID_elevatorButton)
+	{
+		v1 = 200.0;
+	}
+	if (!spr->GetGrabable())
+		v1 /= 2.0;
+	return cursorpos.m_x >= bbox->m_x
+		&& cursorpos.m_x <= bbox[1].m_x
+		&& cursorpos.m_y >= bbox->m_y
+		&& cursorpos.m_y <= bbox[2].m_y
+		&& bbox[2].m_z <= -5.0
+		&& cursorpos.m_z - v1 <= bbox[2].m_z;
+}
+static bool IsHugComfortKissAllowed() {
+
+	DoorSprite* SpritePtrByID = (DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor);
+	bool check1 = !IsPlayerOutsideApt() || SpritePtrByID->IsDoorOpen();
+	Sprite** v10 = g_CursorSprite->GetHeldSpritesList();
+	bool check2 = v10[0] != nullptr
+		&& !v10[0]->GetAmIStillGrabDropAnimating()
+		&& v10[0]->m_eObjectType == eObjectType_Drink
+		|| g_CursorSprite->GetPosition().m_y >= -60.0;
+	bool check3 = g_AutoMovePlayerStatus == 2 || g_bTripCarry;
+	return check1 && !check2 && !check3;
+}
+static bool IsCursorOverAShoulder(Sprite* actor) {
+	animengine_assert(actor->GetIsCharacterSprite());
+
+	//undone
+
+	return false;
+}
+static bool IsCursorOverUpperBody(Sprite* actor) {
+	animengine_assert(actor->GetIsCharacterSprite());
+
+	//undone
+
+	return false;
+}
+static bool IsCursorOverFace(Sprite* actor, bool option) {
+	animengine_assert(actor->GetIsCharacterSprite());
+
+	//undone
+
+	return false;
+}
+static XZPointf ComputeSurfaceDropXZPoint(XZRectf rect, float f1, float f2, float f3)
+{
+	XZPointf xzpoint;
+
+	if (rect.m_xmin > (double)rect.m_xmax)
+	{
+		VAL_SWAP(float, rect.m_xmax, rect.m_xmin);
+	}
+	if (rect.m_zmin > (double)rect.m_zmax)
+	{
+		VAL_SWAP(float, rect.m_zmax, rect.m_zmin);
+	}
+	float v1 = rect.m_xmax - rect.m_xmin;
+	animengine_assert(v1 >= 0.0);
+	float v2 = rect.m_zmax - rect.m_zmin;
+	animengine_assert(v2 >= 0.0);
+	float factor = Normalize0to360(f3);
+	if (factor < 315 && factor > 45)
+	{
+		if (factor < 45 || factor > 135)
+		{
+			if (factor < 135 || factor > 225)
+			{
+				xzpoint.m_x = (1 - f2) * v1 + rect.m_xmin;
+				xzpoint.m_z = (1 - f1) * v2 + rect.m_zmin;
+			}
+			else
+			{
+				xzpoint.m_x = (1 - f1) * v1 + rect.m_xmin;
+				xzpoint.m_z = v2 * f2 + rect.m_zmin;
+			}
+		}
+		else
+		{
+			xzpoint.m_x = v1 * f2 + rect.m_xmin;
+			xzpoint.m_z = v2 * f1 + rect.m_zmin;
+		}
+	}
+	else
+	{
+		xzpoint.m_x = v1 * f1 + rect.m_xmin;
+		xzpoint.m_z = (1.0 - f2) * v2 + rect.m_zmin;
+	}
+	return xzpoint;
+}
+static void GetSurfaceClickedOnForSprite(Sprite* spr, Sprite*& sprout, int& surfindex, XYZPointf& pointout)
+{
+	XYZPointf cursorpos = g_CursorSprite->GetPosition();
+	spritesurface_t* surflist = nullptr;
+
+	float offset = 10;
+	float x = 0;
+	float y = 0;
+
+	sprout = nullptr;
+	surfindex = -1;
+
+	for (int i = 0; i < g_spriteMgr.GetNumSprites() && surfindex == -1; ++i)
+	{
+		Sprite* thisspr = g_spriteMgr.GetSpritePtr(i);
+		if (g_CursorSprite->GetAmIHoldingSprite(thisspr))
+			continue;
+
+		surflist = thisspr->GetSurfaceListPtr();
+		for (int j = 0; j < thisspr->GetNumSurfaces(); ++j)
+		{
+			if (cursorpos.m_x < surflist[j].points2[0].m_x
+				|| cursorpos.m_x > surflist[j].points2[1].m_x
+				|| cursorpos.m_y < surflist[j].points2[0].m_y
+				|| offset + surflist[j].points2[2].m_y < cursorpos.m_y
+				|| cursorpos.m_z - 100.0 > surflist[j].points2[0].m_z)
+			{
+				continue;
+			}
+			if (surfindex == -1 
+				|| surflist[j].points2[0].m_z > surflist[surfindex].points2[0].m_z)
+			{
+				sprout = thisspr;
+				surfindex = j;
+				x = (cursorpos.m_x - surflist[j].points2[0].m_x)
+					/ (surflist[j].points2[1].m_x - surflist[j].points2[0].m_x);
+				animengine_assert(x >= 0.0 && x <= 1.0);
+
+				y = (cursorpos.m_y - surflist[j].points2[0].m_y)
+					/ (surflist[j].points2[2].m_y - surflist[j].points2[0].m_y + offset);
+				animengine_assert(y >= 0.0 && y <= 1.0);
+			}
+			if (!spr)
+				return;
+		}
+	}
+	if (surfindex == -1)
+		return;
+
+	XYZPointf bboxpoints[4];
+	XYZPointf bboxpointsout[4];
+
+	for (int i = 0; i < 4; ++i)
+	{
+		bboxpoints[i].m_x = surflist[surfindex].points1[i].m_x;
+		bboxpoints[i].m_y = surflist[surfindex].points1[i].m_z;
+		bboxpoints[i].m_z = 0.0;
+	}
+	GetXYBoundingBoxOf4Points(bboxpoints, bboxpointsout);
+	animengine_assert(x >= 0 && x <= 1);
+	animengine_assert(y >= 0 && y <= 1);
+
+	XZRectf rect;
+	rect.m_xmin = bboxpointsout[0].m_x;
+	rect.m_zmin = bboxpointsout[0].m_y;
+
+	rect.m_xmax = bboxpointsout[2].m_x;
+	rect.m_zmax = bboxpointsout[2].m_y;
+
+
+	XZPointf xzpoint = ComputeSurfaceDropXZPoint(rect, x, y, g_PlayerSprite->GetRotation().m_y);
+	pointout.m_x = xzpoint.m_x;
+	pointout.m_z = xzpoint.m_z;
+	pointout.m_y = spr->GetVolume().m_y / 2.0 + surflist[surfindex].points1[0].m_y;
+}
+
 static void UpdateCursor()
 {
 	static int g_lastObjCursorNotice = -99999;
+
+	//undone
+
+	bool spriteinteractedwith = false;
+	bool canknock = false;
+
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+
+	float player_grace_dist = GetXZDistanceBetweenPoints(playerpos, g_GraceSprite->GetPosition());
+	float player_trip_dist = GetXZDistanceBetweenPoints(playerpos, g_TripSprite->GetPosition());
+
+	ECursorContext nextcursorcontext = g_cursorContext;
 
 	XCursor::theirCursor->Update();
 	g_playerGesture = ePlayerGesture_NOTAGESTURE;
@@ -1828,11 +2116,370 @@ static void UpdateCursor()
 
 	float cursorxpos = ((g_mousePosition[0] - g_windowWidth / 2) / 5.f);
 	float cursorypos = ((g_windowHeight / 2 - g_mousePosition[1]) / 5.f) - 28.0;
+	XYZPointf cursorpos = XYZPointf(cursorxpos, cursorypos, -30);
 
-	g_CursorSprite->SetPosition(XYZPointf(cursorxpos, cursorypos, -30));
+	g_CursorSprite->SetPosition(cursorpos);
 
+	for (int i = 29; i > 0; --i)
+		g_cursorPositionHistory[i] = g_cursorPositionHistory[i - 1];
 
-	//undone
+	g_cursorPositionHistory[0] = XYZPointf(cursorxpos, cursorypos, -30);
+
+	if (!g_bPlayerInputActive)
+	{
+		XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
+		return;
+	}
+
+	bool offeringortaking = false;
+	bool graceholdingobj = false;
+	bool tripholdingobj = false;
+
+	if (XCursor::theirCursor->IsCursorStackEmpty() && !g_AutoMovePlayerStatus)
+	{
+		if (g_cursorContext == eCursorContext_knock
+			|| g_cursorContext == eCursorContext_comfort
+			|| g_cursorContext == eCursorContext_hug
+			|| g_cursorContext == eCursorContext_kiss
+			|| g_cursorContext == eCursorContext_throw)
+		{
+			nextcursorcontext = g_CursorSprite->GetNumHeldSprites() != 0 ? eCursorContext_holding : eCursorContext_idle;
+		}
+
+		for (int i = 0; i < g_spriteMgr.GetNumSprites(); ++i)
+		{
+			Sprite* spr = g_spriteMgr.GetSpritePtr(i);
+			if (!spr->GetGrabable()
+				|| !spr->GetDrawMe()
+				|| !CheckCursorClickableOnSprite(spr)
+				|| !spr->GetSpriteHoldingMe())
+				continue;
+
+			Sprite* holder = spr->GetSpriteHoldingMe();
+			offeringortaking = holder->GetIsCharacterSprite()
+				&& AreWeDoingObjectOfferingOrTaking((CharacterSprite*)holder, spr);
+
+			if (holder == g_GraceSprite)	graceholdingobj = true;
+			if (holder == g_TripSprite)		tripholdingobj = true;
+		}
+	}
+
+	ESpriteID gesturespriteid = eSpriteID_NOTASPRITE;
+	Sprite* victiminteraction = nullptr;
+
+	if (!offeringortaking)
+	{
+		bool cursor_readyforaction = false;
+		for (int i = 0; i < 2 && !cursor_readyforaction; i++)
+		{
+			CharacterSprite* actor;
+			if (i != 0)
+			{
+				if (player_grace_dist >= player_trip_dist)
+					actor = g_GraceSprite;
+				else
+					actor = g_TripSprite;
+			}
+			else
+			{
+				if (player_grace_dist >= player_trip_dist)
+					actor = g_TripSprite;
+				else
+					actor = g_GraceSprite;
+			}
+			if (actor == g_GraceSprite)
+			{
+				if (graceholdingobj)
+					continue;
+				gesturespriteid = eSpriteID_FIRST_OBJECT;
+			}
+			else if (actor == g_TripSprite)
+			{
+				if (tripholdingobj)
+					continue;
+				gesturespriteid = eSpriteID_trip;
+			}
+
+			float selecteddist = actor == g_GraceSprite ? player_grace_dist : player_trip_dist;
+
+			if (!IsPointVisibleToPlayer(actor->GetPosition(), false)
+				|| selecteddist >= 75
+				|| actor->AreWeInAnEditor(false)
+				|| !IsHugComfortKissAllowed())
+				continue;
+
+			if (IsCursorOverAShoulder(actor))
+			{
+				nextcursorcontext = eCursorContext_comfort;
+				victiminteraction = actor;
+				cursor_readyforaction = true;
+			}
+			else if (IsCursorOverUpperBody(actor))
+			{
+				nextcursorcontext = eCursorContext_hug;
+				victiminteraction = actor;
+				cursor_readyforaction = true;
+			}
+			else if (IsCursorOverFace(actor, false))
+			{
+				nextcursorcontext = eCursorContext_kiss;
+				victiminteraction = actor;
+				cursor_readyforaction = true;
+			}
+		}
+
+		if (g_cursorContext != nextcursorcontext)
+		{
+			switch (nextcursorcontext)
+			{
+			case eCursorContext_comfort:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Comfort, 1);
+				g_cursorContext = nextcursorcontext;
+				break;
+			case eCursorContext_hug:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Hug, 1);
+				g_cursorContext = nextcursorcontext;
+				break;
+			case eCursorContext_kiss:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Kiss, 1);
+				g_cursorContext = nextcursorcontext;
+				break;
+			case eCursorContext_throw:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Throw, 1);
+				g_cursorContext = nextcursorcontext;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	if (!g_mouseLButtonClicked
+		|| !victiminteraction
+		|| offeringortaking
+		|| !XCursor::theirCursor->IsCursorStackEmpty() || g_AutoMovePlayerStatus)
+	{
+		LABEL_99:
+		int numheldsprites = g_CursorSprite->GetNumHeldSprites();
+		if (numheldsprites <= 0)
+		{
+			for (int i = 0; i < g_spriteMgr.GetNumSprites(); i++)
+			{
+				Sprite* spr = g_spriteMgr.GetSpritePtr(i);
+				if (spr->GetGrabable()
+					&& spr->GetDrawMe()
+					&& CheckCursorClickableOnSprite(spr))
+				{
+					Sprite* spriteholdingme = spr->GetSpriteHoldingMe();
+					bool spritenotbeingheld = spriteholdingme == 0;
+					bool spriteholdingmeisofferingortakingobject = 0;
+					if (spriteholdingme)
+					{
+						spriteholdingmeisofferingortakingobject = spriteholdingme->GetIsCharacterSprite()
+							&& AreWeDoingObjectOfferingOrTaking((CharacterSprite*)spriteholdingme, spr);
+					}
+					if (spritenotbeingheld || spriteholdingmeisofferingortakingobject)
+					{
+						if (!g_mouseLButtonClicked)
+						{
+							nextcursorcontext = eCursorContext_knock;
+						}
+						else
+						{
+							if (spritenotbeingheld)
+							{
+								g_CursorSprite->SetSpriteToHold(spr, 0, -DATA_NULLVAL);
+								spr->m_bGettingGrabbed = true;
+								spr->m_GrabDropAnimFactor = 0.0;
+								spr->m_targetPos = spr->GetPosition();
+								spr->RemoveFromAnySurfaceIMayBeOn();
+							}
+							else
+							{
+								animengine_assert(spriteholdingmeisofferingortakingobject);
+								spriteholdingme->DropSprite(spr);
+								g_CursorSprite->SetSpriteToHold(spr, false, -DATA_NULLVAL);
+								spr->SetPosition(g_CursorSprite->GetPosition());
+								spr->m_bGettingGrabbed = false;
+							}
+							spriteinteractedwith = true;
+							XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
+							XCursor::theirCursor->PushTransitionToNeutral(eCursorType_Holding);
+							g_cursorContext = nextcursorcontext = eCursorContext_holding;
+							if (!spriteholdingmeisofferingortakingobject)
+							{
+								spr->b1_unknown20584 = 0;
+								spr->m_pInteractor = g_PlayerSprite;
+							}
+							AddEventInfoToLog(eEventLogType_EnterInteraction,
+								eSpriteID_player,
+								nullptr, false,
+								g_spriteMgr.GetSpriteIDBySpritePtr(spr), 0);
+						}
+					}
+				}
+				else if (spr->GetClickable()
+					&& CheckCursorClickableOnSprite(spr))
+				{
+					if (g_mouseLButtonClicked)
+					{
+						spr->SetClickedThisFrame(true);
+						spriteinteractedwith = true;
+						dprintf("Clicked on %s\n", spr->m_name);
+					}
+					else
+					{
+						nextcursorcontext = eCursorContext_knock;
+						if (spr->m_eObjectType == eObjectType_Door)
+						{
+							if (((DoorSprite*)spr)->IsKnockOccurring())
+							{
+								nextcursorcontext = eCursorContext_idle;
+							}
+							else if (((DoorSprite*)spr)->IsKnockPossible())
+							{
+								canknock = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		else if (g_mouseLButtonClicked)
+		{
+			Sprite** heldsprlist = g_CursorSprite->GetHeldSpritesList();
+
+			Sprite* spr;
+			int surfindex;
+			XYZPointf point;
+			GetSurfaceClickedOnForSprite(nullptr, spr, surfindex, point);
+
+			if (g_cursorContext == 2 && heldsprlist[0] && heldsprlist[0]->m_eObjectType == eObjectType_Drink)
+			{
+				((DrinkSprite*)heldsprlist[0])->PlayerSipDrink();
+				nextcursorcontext = eCursorContext_holding;
+			}
+			else if (spr)
+			{
+				for (int i = 0; i < numheldsprites && !spriteinteractedwith; ++i)
+				{
+					Sprite* thisspr = heldsprlist[i];
+					if (!thisspr->GetAmIStillGrabDropAnimating())
+					{
+						GetSurfaceClickedOnForSprite(thisspr, spr, surfindex, point);
+						if (spr)
+						{
+							thisspr->m_bGettingGrabbed = true;
+							thisspr->m_bGettingDropped = true;
+							thisspr->m_GrabDropAnimFactor = MATH_PI;
+							thisspr->m_targetPos = point;
+							thisspr->b1_unknown20321 = spr;
+							thisspr->b1_unknown20322 = surfindex;
+							spriteinteractedwith = 1;
+							if (g_cursorContext == 2)
+							{
+								nextcursorcontext = eCursorContext_idle;
+							}
+							else
+							{
+								XCursor::theirCursor->PushTransitionToNeutral(eCursorType_Idle);
+								g_cursorContext = nextcursorcontext = eCursorContext_idle;
+							}
+							AddEventInfoToLog(eEventLogType_StopInteraction, eSpriteID_player,
+								nullptr, false,
+								g_spriteMgr.GetSpriteIDBySpritePtr(thisspr), 0);
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			float m_x = fabs(cursorpos.m_x);
+
+			if (m_x >= 20.0 || cursorpos.m_y >= -60.0)
+			{
+				if (g_cursorContext == 2)
+					nextcursorcontext = eCursorContext_holding;
+			}
+			else
+			{
+				Sprite** sprlist = g_CursorSprite->GetHeldSpritesList();
+				if (sprlist[0] != nullptr)
+				{
+					if (!sprlist[0]->GetAmIStillGrabDropAnimating()
+						&& sprlist[0]->m_eObjectType == eObjectType_Drink)
+					{
+						if (sprlist[0]->c1_unknown00001 > 0 && !((DrinkSprite*)sprlist[0])->IsSipping())
+						{
+							//v60 = 1; //unused
+							nextcursorcontext = eCursorContext_sip;
+						}
+					}
+				}
+			}
+		}
+		if (XCursor::theirCursor->IsCursorStackEmpty()
+			&& g_cursorContext != nextcursorcontext
+			&& !g_AutoMovePlayerStatus)
+		{
+			g_cursorContext = nextcursorcontext;
+			switch (nextcursorcontext)
+			{
+			case eCursorContext_idle:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Idle, true);
+				break;
+			case eCursorContext_holding:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Holding, true);
+				break;
+			case eCursorContext_sip:
+				XCursor::theirCursor->JumpCutToCursor(eCursorType_Sip, true);
+				break;
+			case eCursorContext_knock:
+				if (canknock)
+					XCursor::theirCursor->JumpCutToCursor(eCursorType_Knock, true);
+				else
+					XCursor::theirCursor->JumpCutToCursor(eCursorType_unknown1_animframe1, true);
+				break;
+			default:
+				ShouldntBeHere("unknown g_cursorContext");
+				break;
+			}
+		}
+		return;
+	}
+	switch (g_cursorContext)
+	{
+	case eCursorContext_comfort:
+		g_playerGesture = ePlayerGesture_comfort;
+		g_playerGestureSpriteID = gesturespriteid;
+		g_cursorContextSprite = victiminteraction;
+		DoHugComfortKissPlayerMotion(victiminteraction, 30);
+		AddEventInfoToLog(eEventLogType_Comfort, eSpriteID_player, nullptr, false, gesturespriteid, 0);
+		break;
+	case eCursorContext_hug:
+		g_playerGesture = ePlayerGesture_hug;
+		g_playerGestureSpriteID = gesturespriteid;
+		g_cursorContextSprite = victiminteraction;
+		DoHugComfortKissPlayerMotion(victiminteraction, 20);
+		AddEventInfoToLog(eEventLogType_Hug, eSpriteID_player, nullptr, false, gesturespriteid, 0);
+		break;
+	case eCursorContext_kiss:
+		g_playerGesture = ePlayerGesture_kiss;
+		g_playerGestureSpriteID = gesturespriteid;
+		g_cursorContextSprite = victiminteraction;
+		DoHugComfortKissPlayerMotion(victiminteraction, 15);
+		AddEventInfoToLog(eEventLogType_Kiss, eSpriteID_player, nullptr, false, gesturespriteid, 0);
+		break;
+	case eCursorContext_throw:
+		g_playerGesture = ePlayerGesture_throwDrink;
+		g_playerGestureSpriteID = gesturespriteid;
+		g_cursorContextSprite = victiminteraction;
+		AddEventInfoToLog(eEventLogType_ThrowDrink, eSpriteID_player, nullptr, false, gesturespriteid, 0);
+		break;
+	default:
+		goto LABEL_99; //what a nightmare
+	}
 }
 static void UpdateEnvironment()
 {
@@ -2123,9 +2770,11 @@ static void GetRotationKeyPresses()
 		}
 		else
 		{
+#ifndef DISABLE_ABLTIMEOUT
 			dprintf("quitAppCountdown quitting app!");
 			g_bQuittingApp = 1;
 			SendMessageA(g_hMainAppWindow, WM_CLOSE, 0, 0);
+#endif
 		}
 	}
 }
@@ -2183,65 +2832,6 @@ static void ClearNavigationFlags() {
 		g_bPlayerMoveUpwards = g_bPlayerMoveDownwards =
 		false;
 }
-static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
-{
-	XYZPointf playerpos = g_PlayerSprite->GetPosition();
-	XYZPointf playerrot = g_PlayerSprite->GetRotation();
-	float v10 = f1 - playerrot.m_y;
-	if (v10 >= -180)
-	{
-		if (v10 > 180)
-			f1 -= 360;
-	}
-	else
-	{
-		f1 += 360;
-	}
-	if (option)
-	{
-#define SETCONTROLLERLIMITS(controller, val1, val2) \
-	if (val1 != val2) \
-	{ \
-		if (val1 > val2) \
-		{ \
-			controller.SetMinVal(val2); \
-			controller.SetMaxVal(10000); \
-		} \
-		else \
-		{ \
-			controller.SetMaxVal(val2); \
-			controller.SetMinVal(-10000); \
-		} \
-	}
-
-		SETCONTROLLERLIMITS(g_PlayerXController, playerpos.m_x, point.m_x);
-		SETCONTROLLERLIMITS(g_PlayerYController, playerpos.m_y, point.m_y);
-		SETCONTROLLERLIMITS(g_PlayerZController, playerpos.m_z, point.m_z);
-
-#undef SETCONTROLLERLIMITS
-
-	}
-	g_PlayerXController.SetVal(playerpos.m_x, false);
-	g_PlayerXController.SetTargetByRate(point.m_x, f2, eControllerType_unknown03, playerpos.m_x - g_prevPlayerPosition.m_x);
-	g_PlayerYController.SetVal(playerpos.m_y, false);
-	g_PlayerYController.SetTargetByRate(point.m_y, 1, eControllerType_unknown03, playerpos.m_y - g_prevPlayerPosition.m_y);
-	g_PlayerZController.SetVal(playerpos.m_z, false);
-	g_PlayerZController.SetTargetByRate(point.m_z, f2, eControllerType_unknown03, playerpos.m_z - g_prevPlayerPosition.m_z);
-
-	g_PlayerRotController.SetVal(playerrot.m_y, false);
-	g_PlayerRotController.SetTargetByRate(f1, f2, eControllerType_unknown03, playerrot.m_y - g_prevPlayerRotation.m_y);
-}
-static void DoHugComfortKissPlayerMotion(Sprite* spr, float f1) {
-	XYZPointf playerpos = g_PlayerSprite->GetPosition();
-	XYZPointf actorpos = spr->GetPosition();
-
-	float angle = GetXZAngleBetweenPoints(playerpos, actorpos);
-
-	XYZPointf pointatangle = PointAtAngleAndDist(actorpos, angle + 180, f1);
-
-	StartPlayerMoveControllers(XYZPointf(pointatangle.m_x, playerpos.m_y, playerpos.m_z), angle, 1, 0);
-	g_AutoMovePlayerStatus = 4;
-}
 static void EndPlayerAutoMove(bool option) {
 	bool b1 = false;
 	switch (g_AutoMovePlayerStatus)
@@ -2296,11 +2886,6 @@ static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
 	}
 
 	return false;
-}
-
-bool IsPlayerOutsideApt() {
-	return g_PlayerSprite->GetPosition().m_x < -150
-		&& g_PlayerSprite->GetPosition().m_y > 120;
 }
 
 static bool CollisionTestWithSprite(Sprite* collider1, XYZPointf point, int expandsize, Sprite* collider2) {
@@ -3273,9 +3858,9 @@ START_SPRITECREATE(Couch,
 	g_Couch_modelQuadPolys, 
 	nullptr/*g_Couch_modelQuadLines*/)
 
-	sprite->AddSurface(14, 20, 23, 19, eSurfacePickupAngle_unknown002);
-	sprite->AddSurface(4, 10, 25, 5, eSurfacePickupAngle_unknown002);
-	sprite->AddSurface(8, 27, 12, 7, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(14, 20, 23, 19, eSurfacePickupAngle_90);
+	sprite->AddSurface(4, 10, 25, 5, eSurfacePickupAngle_90);
+	sprite->AddSurface(8, 27, 12, 7, eSurfacePickupAngle_90);
 
 END_SPRITECREATE()
 START_SPRITECREATE(Cabinet,
@@ -3284,13 +3869,13 @@ START_SPRITECREATE(Cabinet,
 	g_Cabinet_modelQuadPolys,
 	nullptr)
 
-	sprite->AddSurface(14, 15, 16, 17, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(18, 19, 20, 21, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(6, 7, 8, 9, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(30, 31, 32, 33, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(34, 35, 36, 37, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(38, 39, 40, 41, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(42, 43, 44, 45, eSurfacePickupAngle_unknown004);
+	sprite->AddSurface(14, 15, 16, 17, eSurfacePickupAngle_270);
+	sprite->AddSurface(18, 19, 20, 21, eSurfacePickupAngle_270);
+	sprite->AddSurface(6, 7, 8, 9, eSurfacePickupAngle_270);
+	sprite->AddSurface(30, 31, 32, 33, eSurfacePickupAngle_270);
+	sprite->AddSurface(34, 35, 36, 37, eSurfacePickupAngle_270);
+	sprite->AddSurface(38, 39, 40, 41, eSurfacePickupAngle_270);
+	sprite->AddSurface(42, 43, 44, 45, eSurfacePickupAngle_270);
 
 END_SPRITECREATE()
 START_SPRITECREATE(SideTable,
@@ -3299,7 +3884,7 @@ START_SPRITECREATE(SideTable,
 	g_SideTable_modelQuadPolys,
 	nullptr)
 
-	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_90);
 
 END_SPRITECREATE()
 START_SPRITECREATE(WorkTable,
@@ -3308,7 +3893,7 @@ START_SPRITECREATE(WorkTable,
 	g_WorkTable_modelQuadPolys,
 	nullptr)
 
-	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_90);
 
 END_SPRITECREATE()
 START_SPRITECREATE(Bar,
@@ -3317,9 +3902,9 @@ START_SPRITECREATE(Bar,
 	g_Bar_modelQuadPolys,
 	nullptr)
 
-	sprite->AddSurface(4, 10, 9, 6, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(2, 4, 10, 11, eSurfacePickupAngle_unknown004);
-	sprite->AddSurface(1, 2, 11, 12, eSurfacePickupAngle_unknown001);
+	sprite->AddSurface(4, 10, 9, 6, eSurfacePickupAngle_270);
+	sprite->AddSurface(2, 4, 10, 11, eSurfacePickupAngle_270);
+	sprite->AddSurface(1, 2, 11, 12, eSurfacePickupAngle_0);
 
 END_SPRITECREATE()
 START_SPRITECREATE(LuxTable,
@@ -3328,7 +3913,7 @@ START_SPRITECREATE(LuxTable,
 	g_SideTable_modelQuadPolys,
 	nullptr)
 
-	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_unknown002);
+	sprite->AddSurface(33, 36, 38, 34, eSurfacePickupAngle_180);
 
 END_SPRITECREATE()
 

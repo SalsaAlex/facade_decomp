@@ -397,6 +397,11 @@ float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 float GetXZAngleBetweenPoints(XYZPointf p1, XYZPointf p2);
 
+void GetSubjectivePosition(XYZPointf pos, XYZPointf& out, float& floatout, bool option);
+XYZPointf GetObjectivePosition(XYZPointf pos, float factor);
+
+void GetXYBoundingBoxOf4Points(const XYZPointf* a2, XYZPointf* a3);
+
 bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2);
 void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);

@@ -24,6 +24,8 @@ public:
 
 	void ResetStack(bool option);
 
+	bool IsCursorStackEmpty();
+
 
 	static XCursor* theirCursor;
 private:

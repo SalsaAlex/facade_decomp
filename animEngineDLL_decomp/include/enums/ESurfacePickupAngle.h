@@ -3,10 +3,10 @@
 
 enum ESurfacePickupAngle
 {
-	eSurfacePickupAngle_unknown001 = 0,
-	eSurfacePickupAngle_unknown002 = 1,
-	eSurfacePickupAngle_unknown003 = 2,
-	eSurfacePickupAngle_unknown004 = 3,
+	eSurfacePickupAngle_0 = 0,
+	eSurfacePickupAngle_90,
+	eSurfacePickupAngle_180,
+	eSurfacePickupAngle_270,
 };
 
 #endif // ENUM_SURFACEPICKUPANGLE_H

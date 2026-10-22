@@ -37,6 +37,11 @@ void XCursor::ResetStack(bool option)
 	}
 }
 
+bool XCursor::IsCursorStackEmpty()
+{
+	return cursorstack->IsStackEmpty();
+}
+
 void XCursor::ChangeCursorImage(ECursorType cursor)
 {
 	if (m_bLockedState || cursor == m_eCursorType)
@@ -109,4 +114,9 @@ void XCursor::SetCursorPosition(const XTPointi& point)
 {
 	ClipCursor(NULL);
 	SetCursorPos(point.x, point.y);
+}
+
+void XCursor::PushTransitionToNeutral(ECursorType cursor)
+{
+	//undone
 }

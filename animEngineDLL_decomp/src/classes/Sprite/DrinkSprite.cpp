@@ -114,3 +114,8 @@ void DrinkSprite::PlayerSipDrink()
         g_spriteMgr.GetSpriteIDBySpritePtr(this),
         0);
 }
+
+bool DrinkSprite::IsSipping()
+{
+    return unknown > 0;
+}
