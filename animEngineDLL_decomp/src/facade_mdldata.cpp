@@ -1,0 +1,1170 @@
+#include "facadecommon.h"
+#include "facade_mdldata.h"
+
+/////////////////////MODEL FRAME/////////////////////
+mdlframe_t g_GraceHeadModel_modelFrame[] = {
+	{}//empty ?
+};
+mdlframe_t g_TripHeadModel_modelFrame[] = {
+	{}//empty ?
+};
+mdlframe_t g_Couch_modelFrame[] = {
+		{0.0, 0.0, -90.0},
+		{0.0, 12.0, -90.0},
+		{0.0, 12.0, 105.0},
+		{0.0, 0.0, 105.0},
+		{-55.0, 34.0, -90.0},
+		{-40.0, 34.0, -90.0},
+		{0.0, 12.0, -90.0},
+		{0.0, 34.0, 105.0},
+		{0.0, 34.0, 90.0},
+		{0.0, 12.0, 90.0},
+		{-55.0, 34.0, -135.0},
+		{-55.0, 0.0, -135.0},
+		{45.0, 34.0, 105.0},
+		{45.0, 0.0, 105.0},
+		{0.0, 24.0, -90.0},
+		{0.0, 24.0, -30.0},
+		{0.0, 12.0, -30.0},
+		{0.0, 24.0, 30.0},
+		{0.0, 12.0, 30.0},
+		{0.0, 24.0, 90.0},
+		{30.0, 24.0, -90.0},
+		{30.0, 24.0, -30.0},
+		{30.0, 24.0, 30.0},
+		{30.0, 24.0, 90.0},
+		{-40.0, 34.0, -135.0},
+		{-40.0, 34.0, -90.0},
+		{45.0, 24.0,90.0},
+		{45.0, 34.0, 90.0},
+		{40.0, 55.0, -120.0},
+		{40.0, 55.0, -30.0},
+		{40.0, 55.0, 30.0},
+		{40.0, 55.0, 90.0},
+		{-40.0, 52.0, -140.0},
+		{-45.0, 21.0, -135.0},
+		{45.0, 52.0, 90.0},
+		{40.0, 21.0, 90.0},
+		{30.0, 24.0, -120.0},
+		{-40.0, 24.0, -120.0},
+		{-40.0, 24.0, -90.0},
+		{-40.0, 12.0, -90.0},
+		{-55.0, 0.0, -90.0},
+		{-55.0, 12.0, -90.0},
+		{-40.0, 24.0, -135.0},
+		{-40.0, 55.0, -135.0},
+		{30.0, 55.0, -135.0},
+		{40.0, 55.0, -135.0},
+		{45.0, 52.0, 30.0},
+		{45.0, 52.0, -30.0},
+		{45.0, 52.0, -90.0},
+		{-40.0, 52.0, -140.0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}
+};
+mdlframe_t g_SideTable_modelFrame[] = {
+		{-16.0, 0.0, -16.0},
+		{-16.0, 30.0, -16.0},
+		{-16.0, 30.0, -12.0},
+		{-16.0, 0.0, -12.0},
+		{-12.0, 30.0, -16.0},
+		{-12.0, 0.0, -16.0},
+		{-12.0, 30.0, -12.0},
+		{-12.0, 0.0, -12.0},
+		{-16.0, 0.0, 16.0},
+		{-16.0, 30.0, 16.0},
+		{-16.0, 30.0, 12.0},
+		{-16.0, 0.0, 12.0},
+		{-12.0, 30.0, 16.0},
+		{-12.0, 0.0, 16.0},
+		{-12.0, 30.0, 12.0},
+		{-12.0, 0.0, 12.0},
+		{12.0, 0.0, -16.0},
+		{12.0, 30.0, -16.0},
+		{12.0, 30.0, -12.0},
+		{12.0, 0.0, -12.0},
+		{16.0, 30.0, -16.0},
+		{16.0, 0.0, -16.0},
+		{16.0, 30.0, -12.0},
+		{16.0, 0.0, -12.0},
+		{12.0, 0.0, 16.0},
+		{12.0, 30.0, 16.0},
+		{12.0, 30.0, 12.0},
+		{12.0, 0.0, 12.0},
+		{16.0, 30.0, 16.0},
+		{16.0, 0.0, 16.0},
+		{16.0, 30.0, 12.0},
+		{16.0, 0.0, 12.0},
+		{-20.0, 29.0, -20.0},
+		{-20.0, 32.0, -20.0},
+		{-20.0, 32.0,20.0},
+		{-20.0, 29.0, 20.0},
+		{20.0, 32.0, -20.0},
+		{20.0, 29.0, -20.0},
+		{20.0, 32.0, 20.0},
+		{20.0, 29.0, 20.0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
+};
+mdlframe_t g_WorkTable_modelFrame[] = {
+		{-16.0, 0.0, -51.0},
+		{-16.0, 52.0, -51.0},
+		{-16.0, 52.0, -47.0},
+		{-16.0, 0.0, -47.0},
+		{-12.0, 52.0, -51.0},
+		{-12.0, 0.0, -51.0},
+		{-12.0, 52.0, -47.0},
+		{-12.0, 0.0, -47.0},
+		{-16.0, 0.0, 51.0},
+		{-16.0, 52.0, 51.0},
+		{-16.0, 52.0, 47.0},
+		{-16.0, 0.0, 47.0},
+		{-12.0, 52.0, 51.0},
+		{-12.0, 0.0, 51.0},
+		{-12.0, 52.0, 47.0},
+		{-12.0, 0.0, 47.0},
+		{12.0, 0.0, -51.0},
+		{12.0, 52.0, -51.0},
+		{12.0, 52.0, -47.0},
+		{12.0, 0.0, -47.0},
+		{16.0, 52.0, -51.0},
+		{16.0, 0.0, -51.0},
+		{16.0, 52.0, -47.0},
+		{16.0, 0.0, -47.0},
+		{12.0, 0.0, 51.0},
+		{12.0, 52.0, 51.0},
+		{12.0, 52.0, 47.0},
+		{12.0, 0.0, 47.0},
+		{16.0, 52.0, 51.0},
+		{16.0, 0.0, 51.0},
+		{16.0, 52.0, 47.0},
+		{16.0, 0.0, 47.0},
+		{-20.0, 54.0, -55.0},
+		{-20.0, 57.0, -55.0},
+		{-20.0, 57.0,55.0},
+		{-20.0, 54.0, 55.0},
+		{20.0, 57.0, -55.0},
+		{20.0, 54.0, -55.0},
+		{20.0, 57.0, 55.0},
+		{20.0, 54.0, 55.0},
+		{-20.0, 57.0, 0.0},
+		{20.0, 57.0, 0.0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
+};
+mdlframe_t g_Cabinet_modelFrame[] = {
+		{0.0, 0.0, 90.0},
+		{-20.0, 0.0, 90.0},
+		{-20.0, 0.0, 30.0},
+		{0.0, 0.0, 30.0},
+		{0.0, 20.0, 30.0},
+		{0.0, 20.0, -30.0},
+		{0.0, 0.0, -30.0},
+		{-20.0, 0.0, -30.0},
+		{-20.0, 0.0, -120.0},
+		{0.0, 0.0, -120.0},
+		{0.0, 25.0, 90.0},
+		{-20.0, 25.0, 90.0},
+		{-20.0, 25.0, 30.0},
+		{0.0, 25.0, 30.0},
+		{0.0, 35.0, 90.0},
+		{-20.0, 35.0, 90.0},
+		{-20.0, 35.0, 30.0},
+		{0.0, 35.0, 30.0},
+		{0.0, 67.0, 90.0},
+		{-20.0, 67.0, 90.0},
+		{-20.0, 67.0, 30.0},
+		{0.0, 67.0, 30.0},
+		{0.0, 100.0, 90.0},
+		{-20.0, 100.0, 90.0},
+		{-20.0, 100.0, 30.0},
+		{0.0, 100.0, 30.0},
+		{0.0, 20.0, -30.0},
+		{-20.0, 20.0, -30.0},
+		{-20.0, 20.0, -120.0},
+		{0.0, 20.0, -120.0},
+		{0.0, 35.0, -30.0},
+		{-20.0, 35.0, -30.0},
+		{-20.0, 35.0, -120.0},
+		{0.0, 35.0, -120.0},
+		{0.0, 67.0, -30.0},
+		{-20.0, 67.0, -30.0},
+		{-20.0, 67.0, -120.0},
+		{0.0, 67.0, -120.0},
+		{0.0, 88.0, -30.0},
+		{-20.0, 88.0, -30.0},
+		{-20.0, 88.0, -120.0},
+		{0.0, 88.0, -120.0},
+		{0.0, 116.0, -30.0},
+		{-20.0, 116.0, -30.0},
+		{-20.0, 116.0, -120.0},
+		{0.0, 116.0, -120.0},
+		{0.0, 134.0, -30.0},
+		{-20.0, 134.0, -30.0},
+		{-20.0, 134.0, -120.0},
+		{0.0, 134.0, -120.0},
+		{0.0, 100.0, 30.0},
+		{0.0, 100.0, 0.0},
+		{0.0, 20.0, 0.0},
+		{0.0, 100.0, -30.0},
+		{0.0, 134.0, 30.0},
+		{0.0, 134.0, -30.0},
+		{0.0, 134.0, 90.0},
+		{0.0, 134.0, 60.0},
+		{0.0, 100.0, 60.0},
+		{-20.0, 134.0, 90.0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
+};
+mdlframe_t g_Bar_modelFrame[] = {
+		{-40.0, 0.0, 20.0},
+		{-40.0, 67.0, 20.0},
+		{-5.0, 67.0, 20.0},
+		{-5.0, 0.0, 20.0},
+		{20.0, 67.0, 0.0},
+		{20.0, 0.0, 0.0},
+		{20.0, 67.0, -70.0},
+		{0.0, 0.0, -70.0},
+		{20.0, 0.0, -70.0},
+		{0.0, 67.0, -70.0},
+		{0.0, 67.0, -10.0},
+		{-5.0, 67.0, 0.0},
+		{-40.0, 67.0, 0.0},
+		{-40.0, 0.0, 0.0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0.0, 0.0}
+};
+mdlframe_t g_unknown1_modelFrame[] = {
+		{40, 0, -40},
+		{40, 80, -40},
+		{40, 80, 40},
+		{40, 0, 40} ,
+		{-40, 0, -40},
+		{-40, 80, -40},
+		{-40, 80, 40},
+		{-40, 0, 40},
+		{38, 60, -40},
+		{-38, 60, -40},
+		{-38, 50, 40},
+		{38, 50, 40},
+		{38, 120, 60},
+		{-38, 120, 60},
+		{38, 114, 66},
+		{-38, 114, 66},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0, 0},
+};
+mdlframe_t g_unknown2_modelFrame[] = {
+		{0, 0, 5},
+		{0, 0, 4},
+		{0, 0, 0},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}
+};
+mdlframe_t g_unknown3_modelFrame[] = {
+		{-15, 0, -15},
+		{-15, 60, -15},
+		{-15, 60, 15},
+		{-15, 0, 15},
+		{15, 0, -15},
+		{15, 60, -15},
+		{15, 60, 15},
+		{15, 0, 15},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0, 0}
+};
+mdlframe_t g_unknown4_modelFrame[] = {
+		{-10, 0, -10},
+		{-10, 40, -10},
+		{-10, 40, 10},
+		{-10, 0, 10},
+		{10, 0, -10},
+		{10, 40, -10},
+		{10, 40, 10},
+		{10, 0, 10},
+		{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+		{DATA_NULLVAL, 0, 0}
+};
+/////////////////////////////////////////////////////
+
+/////////////////////MODEL INFO/////////////////////
+mdlinfo_t g_GraceHeadModel_modelInfo[] = {
+	{}, //undone
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+};
+mdlinfo_t g_TripHeadModel_modelInfo[] = {
+	{}, //undone
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+};
+mdlinfo_t g_Couch_modelInfo[] = {
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+};
+mdlinfo_t g_SideTable_modelInfo[] = {
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed016, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_greyshade_06, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed016, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed016, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+mdlinfo_t g_WorkTable_modelInfo[] = {
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed034, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_black, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+mdlinfo_t g_Cabinet_modelInfo[] = {
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed016, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed016, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+mdlinfo_t g_Bar_modelInfo[] = {
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed001, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed001, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed002, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed003, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+mdlinfo_t g_unknown1_modelInfo[] = {
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{6.0, eColor_white, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed009, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed009, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed008, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+};
+mdlinfo_t g_unknown2_modelInfo[] = {
+	{0.5, eColor_unnamed008, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{0.5, eColor_white, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{0.5, eColor_unnamed011, 0.0, 20.0, 0.0, 4.0, 0.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL},
+};
+mdlinfo_t g_unknown3_modelInfo[] = {
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+mdlinfo_t g_unknown4_modelInfo[] = {
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{2.0, eColor_unnamed000, -1.0, -1.0, 0.0, 4.0, 1.0},
+	{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, 0.0},
+};
+/////////////////////////////////////////////////////
+
+/////////////////////MODEL QUADPOLY/////////////////////
+mdlquadpoly_t g_GraceHeadModel_modelQuadPolys[] = {
+	{}, //undone
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_TripHeadModel_modelQuadPolys[] = {
+	{}, //undone
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_Couch_modelQuadPolys[] = {
+	{
+		{ 0,  1,  2,  3},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_black, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{ 2,  7,  8,  9},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_none, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{ 3, 13, 12,  7},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_black, 	eColor_black, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{ 6, 14, 15, 16},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{16, 15, 17, 18},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{18, 17, 19,  9},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{14, 20, 21, 15},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{15, 21, 22, 17},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{17, 22, 23, 19},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{ 4, 10, 24, 25},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{19, 26, 27,  8},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{ 8, 27, 12,  7},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{36, 28, 29, 21},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{21, 29, 30, 22},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{22, 30, 31, 23},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{37, 43, 32, 33},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{23, 31, 34, 35},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{38, 37, 36, 20},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{39, 38, 14,  6},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{40, 41,  6,  0},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_none, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{41,  4,  5, 39},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{11, 10,  4, 40},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_black, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{38, 25, 24, 42},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{37, 43, 44, 36},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_black, 	eColor_black, 	eColor_none, 	eColor_black,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{36, 44, 45, 28},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_black, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{30, 46, 34, 31},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{29, 47, 46, 30},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{28, 48, 47, 29},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_none, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{43, 49, 44, 43},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, 	eColor_black, 	eColor_none, 	eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_SideTable_modelQuadPolys[] = {
+	//undone
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_WorkTable_modelQuadPolys[] = {
+	//undone
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_Cabinet_modelQuadPolys[] = {
+	{
+		{3, 4, 5, 6},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{0, 1, 2, 3},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{14, 15, 16, 17},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{18, 19, 32, 21},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{22, 23, 24, 25},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{6, 7, 8, 9},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{30, 31, 32, 33},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{34, 35, 36, 37},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{38, 39, 40, 41},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{42, 43, 44, 45},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{46, 47, 48, 31},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{50, 51, 52, 4},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor2
+	},
+	{
+		{5, 52, 51, 53},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, eColor_grey, eColor_grey, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor2
+	},
+	{
+		{50, 54, 55, 53},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_grey, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{56, 57, 58, 22},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_grey,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor1
+	},
+	{
+		{50, 58, 57, 54},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_none, eColor_none, eColor_grey, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_WhiteCabinetDoor1
+	},
+	{
+		{23, 59, 56, 22},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_grey, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{2, 24, 25, 3},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{7, 47, 46, 6},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{0, 22, 22, 0},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{1, 23, 23, 1},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{9, 49, 49, 9},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{8, 48, 48, 8},
+		eQuadPolyDraw_quad,
+		eColor_none,
+		eColor_grey, eColor_none, eColor_none, eColor_none,
+		20, 20, 20, 20,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{ {DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_Bar_modelQuadPolys[] = {
+	{
+		{0, 1, 2, 3},
+		eQuadPolyDraw_quad,
+		eColor_unnamed036,
+		eColor_black, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{3, 2, 4, 5},
+		eQuadPolyDraw_quad,
+		eColor_unnamed037,
+		eColor_none, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{5, 4, 6, 8},
+		eQuadPolyDraw_quad,
+		eColor_unnamed038,
+		eColor_none, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{6, 9, 7, 8},
+		eQuadPolyDraw_quad,
+		eColor_unnamed037,
+		eColor_none, eColor_black, eColor_black, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{4, 10, 9, 6},
+		eQuadPolyDraw_quad,
+		eColor_unnamed039,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{2, 11, 10, 4},
+		eQuadPolyDraw_quad,
+		eColor_unnamed039,
+		eColor_none, eColor_black, eColor_none, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{1, 2, 11, 12},
+		eQuadPolyDraw_quad,
+		eColor_unnamed039,
+		eColor_black, eColor_none, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{1, 12, 13, 0},
+		eQuadPolyDraw_quad,
+		eColor_unnamed037,
+		eColor_none, eColor_none, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_unknown1_modelQuadPolys[] = {
+	{
+		{8, 9, 10, 11},
+		eQuadPolyDraw_flatdepth,
+		eColor_black,
+		eColor_black, eColor_black, eColor_black, eColor_unnamed010,
+		12, 12, 12, -1,
+		eTextureFilmstrip_LiquorScotch
+	},
+	{
+		{10, 11, 12, 1},
+		eQuadPolyDraw_never,
+		eColor_black,
+		eColor_black, eColor_black, eColor_unnamed010, eColor_unnamed010,
+		12, 12, 12, 12,
+		eTextureFilmstrip_Water
+	},
+	{
+		{15, 14, 1, 0},
+		eQuadPolyDraw_never,
+		eColor_black,
+		eColor_black, eColor_unnamed010, eColor_unnamed010, eColor_unnamed010,
+		12, -1, DATA_NULLVAL, DATA_NULLVAL,
+		(ETextureFilmstrip)DATA_NULLVAL
+	},
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, 0, 0, 0, (ETextureFilmstrip)0 },
+};
+mdlquadpoly_t g_unknown3_modelQuadPolys[] = {
+	{
+		{0, 1, 2, 3},
+		eQuadPolyDraw_quad,
+		eColor_unnamed041,
+		eColor_black, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{0, 1, 5, 4},
+		eQuadPolyDraw_quad,
+		eColor_unnamed040,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{3, 2, 6, 7},
+		eQuadPolyDraw_quad,
+		eColor_unnamed042,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{1, 5, 6, 2},
+		eQuadPolyDraw_quad,
+		eColor_unnamed043,
+		eColor_none, eColor_black, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+mdlquadpoly_t g_unknown4_modelQuadPolys[] = {
+	{
+		{0, 1, 2, 3},
+		eQuadPolyDraw_quad,
+		eColor_greyshade_20,
+		eColor_black, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{0, 1, 5, 4},
+		eQuadPolyDraw_quad,
+		eColor_greyshade_15,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{3, 2, 6, 7},
+		eQuadPolyDraw_quad,
+		eColor_greyshade_25,
+		eColor_none, eColor_black, eColor_black, eColor_black,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{
+		{1, 5, 6, 2},
+		eQuadPolyDraw_quad,
+		eColor_greyshade_30,
+		eColor_none, eColor_black, eColor_none, eColor_none,
+		12, 12, 12, 12,
+		eTextureFilmstrip_NOTATEXTURE
+	},
+	{{DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL}, (EQuadPolyDraw)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, (EColor)DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, DATA_NULLVAL, (ETextureFilmstrip)DATA_NULLVAL },
+};
+/////////////////////////////////////////////////////

@@ -65,9 +65,12 @@
     <ClInclude Include="include\enums\ESetAnimEngineInfo.h" />
     <ClInclude Include="include\enums\ESpriteID.h" />
     <ClInclude Include="include\enums\ETextureFilmstrip.h" />
+    <ClInclude Include="include\facade_mdldata.h" />
     <ClInclude Include="include\glfuncs.h" />
+    <ClInclude Include="include\initialization.h" />
     <ClInclude Include="include\keyboarddevice.h" />
     <ClInclude Include="include\sounddevice.h" />
+    <ClInclude Include="include\zone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ABLRequestsPerform_impl.cpp" />
@@ -76,6 +79,7 @@
     <ClCompile Include="src\classes\Controller.cpp" />
     <ClCompile Include="src\classes\MP3Manager.cpp" />
     <ClCompile Include="src\classes\SoundMgr.cpp" />
+    <ClCompile Include="src\classes\SoundSource.cpp" />
     <ClCompile Include="src\classes\SpriteMgr.cpp" />
     <ClCompile Include="src\classes\Sprite\AnimatingSprite.cpp" />
     <ClCompile Include="src\classes\Sprite\AnsweringMachineSprite.cpp" />
@@ -90,11 +94,13 @@
     <ClCompile Include="src\entrypoint.cpp" />
     <ClCompile Include="src\eventLogging.cpp" />
     <ClCompile Include="src\facadecommon.cpp" />
+    <ClCompile Include="src\facade_mdldata.cpp" />
     <ClCompile Include="src\glfuncs.cpp" />
+    <ClCompile Include="src\initialization.cpp" />
     <ClCompile Include="src\keyboarddevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sounddevice.cpp" />
-    <ClCompile Include="src\SoundSource.cpp" />
+    <ClCompile Include="src\zone.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

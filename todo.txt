@@ -1,0 +1,8 @@
+poly line rendering
+fix skybox, it still looks weird
+player collision
+missing assets & possibly models with incorrect info, or renderer is still processing models incorrectly
+eightball dont work
+most objects dont have smooth pickup & dropping anims
+start working on character sprites
+fix text chatbox

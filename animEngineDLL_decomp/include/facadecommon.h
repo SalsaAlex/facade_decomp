@@ -244,6 +244,24 @@ struct panelmdlquadpolys_t
 };
 
 
+extern float g_playerTransAmt;
+extern Controller g_PlayerXController;
+extern Controller g_PlayerYController;
+extern Controller g_PlayerZController;
+extern float g_playerRotAmt;
+extern Controller g_PlayerRotController;
+extern int g_AutoMovePlayerStatus;
+
+extern XYZPointf g_autoMovePlayerPt;
+extern float g_autoMovePlayerRot; //yaw
+
+extern Controller g_autoTurnController;
+extern float g_autoTurnAmount;
+
+extern int g_numPanels;
+extern panelmdlframes_t g_panelModelFrames[MAX_PANELS];
+extern panelmdlinfos_t g_panelModelInfo[MAX_PANELS];
+extern panelmdlquadpolys_t g_panelModelQuadPolys[MAX_PANELS];
 
 extern CharacterSprite* g_GraceSprite;
 extern CharacterSprite* g_TripSprite;
@@ -251,7 +269,10 @@ extern Sprite* g_PlayerSprite;
 extern Sprite* g_CursorSprite;
 
 extern SpriteMgr g_spriteMgr;
+
 extern SoundMgr g_soundMgr;
+extern SoundSource g_soundSource;
+extern int g_soundSourceID;
 
 extern EBaseScreenMessage g_baseScreenMessage;
 
@@ -286,7 +307,11 @@ extern int g_AutoMovePlayerStatus;
 extern int g_ticksIntroStarted;
 extern int g_introEventCtr;
 
+extern int g_textDisplayState;
+
 extern int g_framesWhenLastSentPlayerTypedCue;
+extern int g_frameWhenLastCinematographyMove;
+extern int g_framePlayerLastMoved;
 extern int g_blastFlagSignalToAbl;
 
 extern int g_introChoices[8];
@@ -296,6 +321,11 @@ extern float g_initialIntroDelay;
 extern float g_startTitleFadeIn;
 
 extern int g_quitAppCountdown;
+
+#define TRICIRCLE_ITERATIONS 21
+
+extern float g_triangleFanSineCache[TRICIRCLE_ITERATIONS];
+extern float g_triangleFanCosineCache[TRICIRCLE_ITERATIONS + 10];
 
 extern bool g_bAblRequestingFPSAdjustment;
 
@@ -387,7 +417,10 @@ bool PlayGlobalSound(EGlobalSounds sound);
 
 void StopAllMP3s();
 
+bool CollisionTest(int zoneindex, XZRectf rect, Sprite* spr1, Sprite* spr2);
+bool CollisionTestWithSprite(Sprite* collider1, XYZPointf point, int expandsize, Sprite* collider2);
 bool CollisionTestWithWorld(Sprite* spr, XYZPointf pos, int unknown, bool option);
+XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr);
 
 void ClipFloatToRange(float& value, float min, float max);
 
@@ -407,11 +440,14 @@ void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);
 
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
+void PlayerEnteredText();
 
 float ConvertWorldDegreesToRadians(float ang);
 XYZPointf PointAtAngleAndDist(XYZPointf dist, float f1, float f2);
 
 float FrameRateAdjust(float val, bool multiply = true);
+
+void LoadTextureFilmstrip(ETextureFilmstrip filmstrip);
 
 
 #endif // FACADECOMMON_H

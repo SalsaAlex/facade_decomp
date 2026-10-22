@@ -201,6 +201,15 @@
     <ClInclude Include="include\enums\EUScript.h">
       <Filter>Header Files\enums</Filter>
     </ClInclude>
+    <ClInclude Include="include\zone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\facade_mdldata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\initialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\classes\AblRequestBuffer.cpp">
@@ -232,9 +241,6 @@
     </ClCompile>
     <ClCompile Include="src\classes\Sprite\Sprite.cpp">
       <Filter>Source Files\classes\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SoundSource.cpp">
-      <Filter>Source Files\classes</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Sprite\AnimatingSprite.cpp">
       <Filter>Source Files\classes\Sprite</Filter>
@@ -276,6 +282,18 @@
       <Filter>Source Files\classes\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Stack.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\facade_mdldata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\SoundSource.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
   </ItemGroup>

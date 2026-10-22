@@ -1431,6 +1431,11 @@ static int GetFrameTexCoords(ETextureFilmstrip filmstrip, int spriteframe,
 	return textureframeindex;
 }
 
+static EColor GetModelCircleColor(Sprite* a1, int a2)
+{
+	return (EColor)FloatToInt(a1->m_modelinfo[a2].color);
+}
+
 static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float z, float f2)
 {
 	if (g_numFramesRun <= 1)
@@ -1518,6 +1523,7 @@ static void DrawLinesFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 	//}
 }
 
+
 static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindices, float f1, float f2)
 {
 	if (g_numFramesRun <= 1)
@@ -1597,8 +1603,8 @@ static void DrawPolysFromModelPoint(Sprite* spr, int pointindex, int* pointindic
 			}
 
 			EColor facecolor = poly->facecolor;
-			//if (facecolor == -1)
-				//facecolor = GetModelCircleColor(a1, lastinfoindex1);
+			if (facecolor == -1)
+				facecolor = GetModelCircleColor(spr, lastinfoindex1);
 			if (facecolor == eColor_clear)
 			{
 				i++;
@@ -1912,7 +1918,6 @@ static bool UpdateScreenText(Sprite* spr)
 	return true;
 }
 
-extern int g_textDisplayState;
 void DrawPlayerScreenText()
 {
 	if (g_bAtEndOfDrama)
