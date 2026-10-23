@@ -4,6 +4,16 @@
 #include "facadecommon.h"
 #include "Stack.h"
 
+struct unknownxcursorstruct_t
+{
+	int unknown[2];
+};
+
+enum CursorSequence
+{
+
+};
+
 class XCursor
 {
 public:
@@ -14,6 +24,8 @@ public:
 
 	void JumpCutToCursor(ECursorType cursor, bool clear);
 	void Override(ECursorType cursor);
+
+	void Push(CursorSequence seq);
 
 	void Restore();
 	void Update();
@@ -38,7 +50,7 @@ private:
 
 	//data
 	bool m_bLockedState;
-	int unknown2[10];
+	unknownxcursorstruct_t unknown2[5];
 	ECursorType m_eCursorType;
 	Stack* cursorstack;
 	int unknown4[3];

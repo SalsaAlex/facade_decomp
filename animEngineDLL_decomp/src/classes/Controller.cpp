@@ -28,6 +28,10 @@ void Controller::SetTargetByRate(float target, float rate, EControllerType contr
 {
 	//undone
 }
+float Controller::GetTarget()
+{
+	return m_valTarget;
+}
 float Controller::GetRateByFrames(float f1, int numframes)
 {
 	animengine_assert(m_valPtr != nullptr);

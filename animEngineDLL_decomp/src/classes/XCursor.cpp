@@ -18,7 +18,7 @@ void XCursor::JumpCutToCursor(ECursorType cursor, bool clear)
 	if (clear)
 		this->m_eCursorType = (ECursorType)-1;
 	this->unknown4[0] = cursor;
-	this->unknown2[9] = cursor;
+	unknown2[4].unknown[1] = cursor;
 	ChangeCursorImage(cursor);
 }
 
@@ -58,7 +58,7 @@ void XCursor::ChangeCursorImage(ECursorType cursor)
 		case eCursorType_IDC_SIZENS:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENS); break;
 		case eCursorType_IDC_SIZENWSE:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENWSE); break;
 		case eCursorType_IDC_SIZENESW:	cursorhandle1 = LoadCursor(NULL, IDC_SIZENESW); break;
-		default:						cursorhandle2 = LoadImage(g_hAppInstance, (LPCSTR)IDC_HANDCURSOR_IDLE, IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR); break;
+		default:						cursorhandle2 = LoadImage(g_hAppInstance, (LPCSTR)(IDC_HANDCURSOR_IDLE + cursor), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR); break;
 		//default: cursorhandle2 = LoadCursor(NULL, IDC_SIZENESW); break;
 	}
 
@@ -83,6 +83,18 @@ void XCursor::Override(ECursorType cursor)
 	m_bLockedState = false;
 	ChangeCursorImage(cursor);
 	m_bLockedState = true;
+}
+
+void XCursor::Push(CursorSequence seq)
+{
+	//cursorstack->Compress();
+	//for (int i = 1; i < unknown2[0].unknown[seq]; ++i)
+	//{
+	//	if (cursorstack->GetStackPtr() < 4096)
+	//		cursorstack->Push(theCursorFrame[30 * seq + 1 + i]);
+	//	else
+	//		dprintf("###WARNING:  Exceeding cursor push stack size");
+	//}
 }
 
 void XCursor::SetRate(int rate)
@@ -118,5 +130,72 @@ void XCursor::SetCursorPosition(const XTPointi& point)
 
 void XCursor::PushTransitionToNeutral(ECursorType cursor)
 {
-	//undone
+	//if (unknown4[0] == -1)
+	//salsatobias: temporary :(
+	if(1)
+	{
+		JumpCutToCursor(cursor, false);
+		return;
+	}
+
+	if (cursor == unknown4[0])
+		return;
+
+	int i = 0;
+	for (; i < 3; ++i)
+	{
+		if (unknown2[i + 1].unknown[1] == unknown4[0] && unknown2[i + 2].unknown[0] == cursor)
+		{
+			Push((CursorSequence)i);
+			unknown4[0] = cursor;
+			unknown4[1] = 0;
+			unknown5 = m_iRate;
+			return;
+		}
+	}
+	for (i = 0; i < 3; ++i)
+	{
+		if (unknown2[i + 1].unknown[1] != unknown4[0])
+			continue;
+		for (int j = 0; j < 3; ++j)
+		{
+			if (unknown2[i + 2].unknown[0] == unknown2[j + 1].unknown[1]
+				&& unknown2[j + 2].unknown[0] == cursor)
+			{
+				Push((CursorSequence)i);
+				Push((CursorSequence)j);
+				unknown4[0] = cursor;
+				unknown4[1] = 0;
+				unknown5 = m_iRate;
+				return;
+			}
+		}
+	}
+	for (i = 0; i < 3; ++i)
+	{
+		if (unknown2[i + 1].unknown[1] != unknown4[0])
+			continue;
+		for (int j = 0; j < 3; ++j)
+		{
+			if (unknown2[i + 2].unknown[0] == unknown2[j + 1].unknown[1]
+				&& unknown2[j + 2].unknown[0] == cursor)
+			{
+				for (int k = 0; k < 3; ++k)
+				{
+					if (unknown2[j + 2].unknown[0] == unknown2[k + 1].unknown[1]
+						&& unknown2[k + 2].unknown[0] == cursor)
+					{
+						Push((CursorSequence)i);
+						Push((CursorSequence)j);
+						Push((CursorSequence)k);
+						unknown4[0] = cursor;
+						unknown4[1] = 0;
+						unknown5 = m_iRate;
+						return;
+					}
+				}
+			}
+		}
+
+	}
 }

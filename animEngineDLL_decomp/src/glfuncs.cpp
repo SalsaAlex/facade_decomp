@@ -892,6 +892,9 @@ static void PlayerChoosesName() {
 	static int choice = 0;
 	static int blinkCountdown = 40;
 	static int delayTillNextScroll = 0;
+
+	g_bPlayerInputActive = false;
+
 	if (g_curTextCharInput == '\r')
 	{
 		g_playerNameID = choice;
@@ -930,7 +933,7 @@ static void PlayerChoosesName() {
 	DrawArbitraryScreenText("About", 17.5, -90, 200, 7, 0, cursorinhintsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
 
 	if (g_curTextCharInput >= 'a' && g_curTextCharInput <= 'z')
-		g_curTextCharInput -= ' ';
+		g_curTextCharInput -= ' '; //convert to lowercase
 	if (g_curTextCharInput >= 'A' && g_curTextCharInput <= 'Z')
 	{
 		choice = 0;
@@ -1074,7 +1077,7 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 			{
 				spr->m_GrabDropAnimFactor += MATH_PI / 15;
 				if (spr->m_GrabDropAnimFactor > MATH_PI)
-					spr->m_GrabDropAnimFactor = MATH_PI + 0.1; //salsatobias: 0.1 was not originally here, but i needed to. look at comment above
+					spr->m_GrabDropAnimFactor = MATH_PI + 0.1; //salsatobias: 0.1 was not originally here, but i kinda needed to put it here. look at comment above
 			}
 			else if (spr->m_bGettingDropped)
 			{
@@ -1111,12 +1114,12 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 					if (spr->m_eID == eSpriteID_phone)
 						spr->a1_unknown00007 = 5.0;
 				}
-				pos = target;
 			}
+			pos = target;
 		}
 		else
 		{
-			spr->m_bGettingDropped = 0;
+			spr->m_bGettingDropped = false;
 			g_CursorSprite->DropSprite(spr);
 			spr->SetPosition(spr->m_targetPos);
 			spr->b1_unknown20321->AddSpriteToSurface(spr->b1_unknown20322, spr);
@@ -1906,10 +1909,7 @@ static bool UpdateScreenText(Sprite* spr)
 			return false;
 		}
 		spr->b1_unknown20515 = spr->b1_unknown20516;
-		for (int i = spr->b1_unknown20516; 
-			i < screentxtlen 
-			&& !spr->m_ScreenText[spr->b1_unknown20516]; 
-			++i)
+		for (int i = spr->b1_unknown20516; i < screentxtlen && !spr->m_ScreenText[spr->b1_unknown20516]; ++i)
 			++spr->b1_unknown20516;
 		strcpy(spr->m_playerTextOnScreen, spr->m_ScreenText);
 		spr->m_playerTextOnScreen[spr->b1_unknown20516] = 0;

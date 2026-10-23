@@ -316,7 +316,7 @@ extern int g_blastFlagSignalToAbl;
 
 extern int g_introChoices[8];
 extern float g_introTimings[8 + 1];
-extern float g_introBaseTimings[8 * 6];
+extern float g_introBaseTimings[8][6];
 extern float g_initialIntroDelay;
 extern float g_startTitleFadeIn;
 
@@ -440,6 +440,7 @@ void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);
 
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
+bool IsPlayerOutsideApt();
 void PlayerEnteredText();
 
 float ConvertWorldDegreesToRadians(float ang);

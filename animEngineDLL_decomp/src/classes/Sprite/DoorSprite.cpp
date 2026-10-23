@@ -14,21 +14,54 @@ void DoorSprite::InitDoorSprite()
 	unknown003 = false;
 }
 
+extern void UpdateFrontDoorCollisionZone(bool dooropen);
+
 void DoorSprite::UpdateSprite()
 {
 	Sprite::UpdateSprite();
 
-	//undone
+	if (b1_unknown20299.GetTarget() == 30.0
+		&& b1_unknown20299.GetVal() < 30.0
+		&& b1_unknown20299.GetVal() > 10.0)
+	{
+		UpdateFrontDoorCollisionZone(false);
+		if (!this->unknown003)
+		{
+			this->unknown003 = true;
+			PlayGlobalSound((EGlobalSounds)(rand2(0, 1) + eGlobalSound_closedoor1));
+		}
+	}
+
+	if (GetClickedThisFrame())
+	{
+		b1_unknown20584 = 4;
+		m_pInteractor = g_PlayerSprite;
+		if (IsKnockPossible())
+		{
+			PlayGlobalSound((EGlobalSounds)rand2(eGlobalSound_doorknock1, eGlobalSound_doorknock3));
+			this->unknown001 = g_numFramesRun;
+			AddEventInfoToLog(eEventLogType_DoInteraction, eSpriteID_player, nullptr, false, g_spriteMgr.GetSpriteIDBySpritePtr(this), 0);
+		}
+		else if (!IsKnockOccurring())
+		{
+			if (IsDoorOpen())
+			{
+				if (!IsPlayerOutsideApt())
+					CloseDoor(g_PlayerSprite, 1);
+			}
+			else
+			{
+				OpenDoor(g_PlayerSprite, 1);
+			}
+		}
+	}
 }
-
-
-
 
 void DoorSprite::OpenDoor(Sprite* actor, float speed)
 {
 	b1_unknown20299.SetTargetByRate(-65, speed, eControllerType_unknown02, -DATA_NULLVAL);
 	PlayGlobalSound((EGlobalSounds)((int)eGlobalSound_opendoor1 + rand2(0, 1)));
-	//UpdateFrontDoorCollisionZone(true);
+	UpdateFrontDoorCollisionZone(true);
 	unknown002 = true;
 	AddEventInfoToLog(eEventLogType_EnterInteraction,
 		g_spriteMgr.GetSpriteIDBySpritePtr(actor),

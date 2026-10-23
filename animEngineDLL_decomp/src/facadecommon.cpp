@@ -442,19 +442,11 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 
 		if (spr->GetCollidableType() == eCollidableType_unknown)
 		{
-			float rectsizex;
-			if (rect.m_xmin - rect.m_xmax < 0.0)
-				rectsizex = -(rect.m_xmin - rect.m_xmax);
-			else
-				rectsizex = rect.m_xmin - rect.m_xmax;
+			float rectsizex = fabs(rect.m_xmin - rect.m_xmax);
 
 			if (rectsizex > 0.001)
 			{
-				float rectsizez;
-				if (rect.m_zmin - rect.m_zmax < 0.0)
-					rectsizez = -(rect.m_zmin - rect.m_zmax);
-				else
-					rectsizez = rect.m_zmin - rect.m_zmax;
+				float rectsizez = fabs(rect.m_zmin - rect.m_zmax);
 
 				if (rectsizez > 0.001)
 				{
@@ -462,14 +454,14 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 				}
 				else
 				{
-					rect.m_zmin = rect.m_zmin - 10.0;
-					rect.m_zmax = rect.m_zmax + 10.0;
+					rect.m_zmin -= 10;
+					rect.m_zmax += 10;
 				}
 			}
 			else
 			{
-				rect.m_xmin = rect.m_xmin - 10.0;
-				rect.m_xmax = rect.m_xmax + 10.0;
+				rect.m_xmin -= 10;
+				rect.m_xmax += 10;
 			}
 		}
 	}
@@ -649,14 +641,16 @@ bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset)
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf playerrot = g_PlayerSprite->GetRotation();
 
-	float factor = NormalizeNeg180to180(GetXZAngleBetweenPoints(playerpos, point) - playerrot.m_y);
-	if (factor < 0.0)
-		factor = -factor;
+	float factor = fabs( NormalizeNeg180to180(GetXZAngleBetweenPoints(playerpos, point) - playerrot.m_y) );
 
 	if (addoffset)
 		return 35 > factor;
 	else
 		return 20 + 35 > factor;
+}
+bool IsPlayerOutsideApt() {
+	return g_PlayerSprite->GetPosition().m_x < -150
+		&& g_PlayerSprite->GetPosition().m_y > 120;
 }
 void PlayerEnteredText()
 {

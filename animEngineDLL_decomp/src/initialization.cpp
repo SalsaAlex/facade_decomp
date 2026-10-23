@@ -445,18 +445,13 @@ static void CreateRoom()
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR1_real",					true,	eObjectType_Misc,		50,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(2, 80, 108),					true,	false);
 	CreatePanel(eSpriteID_NOTASPRITE,			"LR_frontwallR2",						true,	eObjectType_Misc,		80,		160,	0,		0,		0,		true,	false,	eColor_greyshade_10,	eTextureFilmstrip_NOTATEXTURE,			eColor_none,	XYZPointf(-46, 80, 98),					true,	false);
 	
-	int zoneid = CreateNewZone(0, 0);
+	int zoneid = CreateNewZone(nullptr, false);
 	XZRectf rect;
 	rect.m_xmin = -400;
-	rect.m_zmin = -600;
+	rect.m_zmin = 0;
 
 	rect.m_xmax = 195;
 	rect.m_zmax = 0;
-
-	//ida pro LOOVES to do this fucking shit below, so the above might be wrong.
-	// please check this later:
-	//*(_QWORD *)&v165.m_xmin = 0xC3C80000LL;
-	//*(_QWORD *)&v165.m_xmax = 0xC416000043430000uLL;
 
 	AddRectToZone(zoneid, rect);
 	g_roomZoneIDs[0] = zoneid;

@@ -43,14 +43,14 @@ static void StartTitleSequence()
 
 	for (int i = 0; i < 8; ++i)
 	{
-		g_introTimings[i + 1] = g_introBaseTimings[6 * i + g_introChoices[i]] + 1.0;
-		if (!i)
-			g_introTimings[1] = g_initialIntroDelay + g_introTimings[1];
+		g_introTimings[i + 1] = g_introBaseTimings[i][g_introChoices[i]] + 1.0;
+		if (i == 0)
+			g_introTimings[1] += g_initialIntroDelay;
 		if (i == 3)
 			g_introTimings[4] = g_introTimings[4] + 1.0;
 	}
 	for (int i = 1; i < 8; ++i)
-		g_introTimings[i + 1] = g_introTimings[i + 1] + g_introTimings[i];
+		g_introTimings[i + 1] += g_introTimings[i];
 	g_startTitleFadeIn = g_introTimings[8] + 2.0;
 	g_ticksIntroStarted = GetTickCount();
 	g_introEventCtr = 0;

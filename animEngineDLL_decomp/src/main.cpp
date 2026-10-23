@@ -136,7 +136,16 @@ float g_autoTurnAmount;
 
 int g_introChoices[8];
 float g_introTimings[8 + 1];
-float g_introBaseTimings[8 * 6];
+float g_introBaseTimings[8][6] = {
+	{5.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+	{1.8, 1.7, 2.1, 2.1, 2.4, 0.0},
+	{4.4, 6.8, 6.8, 5.8, 5.6, 0.0},
+	{4.8, 6.8, 5.8, 5.3, 0.0, 0.0},
+	{6.8, 8.8, 7.7, 6.9, 0.0, 0.0},
+	{2.0, 2.4, 4.7, 2.1, 5.1, 3.9},
+	{2.0, 2.0, 2.0, 2.0, 2.0, 2.0},
+	{2.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+};
 float g_initialIntroDelay = 2.0;
 float g_startTitleFadeIn;
 
@@ -458,7 +467,23 @@ static void UpdateTitleSequence()
 			g_bTitleMusicStarted = true;
 		}
 	}
-	if (g_introEventCtr)
+	if (g_introEventCtr == 0)
+	{
+		g_introEventCtr = 1;
+		g_bPlayerInputActive = false;
+
+		StartFade(-1.0);
+		InitTransRotScale(nullptr, false);
+
+		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39));
+
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y = 24;
+		g_PlayerSprite->SetRotation(playerrot);
+
+		g_ticksIntroStarted = GetTickCount();
+	}
+	else
 	{
 		float timeelapsed = GetSecsSinceTicks(g_ticksIntroStarted);
 		int tickspassed = GetTickCount() - g_ticksIntroStarted;
@@ -476,7 +501,7 @@ static void UpdateTitleSequence()
 			dprintf("Doing intro event %d at secs %.3f, ticks %d\n", g_introEventCtr++, timeelapsed, tickspassed);
 			PlayGlobalSound(eGlobalSound_tr_intro_start);
 		}
-		BEGIN_INTROEVENT(2, g_initialIntroDelay)
+		BEGIN_INTROEVENT(2, g_introTimings[1])
 			PlayGlobalSound((EGlobalSounds)(g_introChoices[1] + eGlobalSound_tr_intro_a1));
 		END_INTROEVENT()
 		BEGIN_INTROEVENT(3, g_introTimings[2])
@@ -514,7 +539,15 @@ static void UpdateTitleSequence()
 
 		if (g_introEventCtr > 9)
 		{
-			//undone
+			XYZPointf playerpos = g_PlayerSprite->GetPosition();
+			XYZPointf playerrot = g_PlayerSprite->GetRotation();
+
+			float yawrad = ConvertWorldDegreesToRadians(playerrot.m_y);
+
+			playerpos.m_x += cos(yawrad) * -0.2;
+			playerpos.m_z += sin(yawrad) * -0.2;
+
+			g_PlayerSprite->SetPosition(playerpos);
 
 			DrawArbitraryScreenText("Façade",	 1, -60, 200, 20, -10, eColor_white, eColor_black);
 			DrawArbitraryScreenText("by",		23, -72,  50,  8, -10, eColor_white, eColor_black);
@@ -525,22 +558,6 @@ static void UpdateTitleSequence()
 			DrawArbitraryScreenText("Stern",	37, -88,  50, 10, -10, eColor_white, eColor_black);
 		}
 
-	}
-	else
-	{
-		g_introEventCtr = 1;
-		g_bPlayerInputActive = false;
-
-		StartFade(-1.0);
-		InitTransRotScale(nullptr, false);
-
-		g_PlayerSprite->SetPosition(XYZPointf(-63, 97, -39));
-
-		XYZPointf playerrot = g_PlayerSprite->GetRotation();
-		playerrot.m_y = 24;
-		g_PlayerSprite->SetRotation(playerrot);
-
-		g_ticksIntroStarted = GetTickCount();
 	}
 }
 
@@ -571,7 +588,7 @@ static bool CheckCursorClickableOnSprite(Sprite* spr) {
 		|| spr->m_eID == eSpriteID_italyPicture
 		|| spr->m_eID == eSpriteID_elevatorButton)
 	{
-		v1 = 200.0;
+		v1 = 200;
 	}
 	if (!spr->GetGrabable())
 		v1 /= 2.0;
@@ -582,18 +599,14 @@ static bool CheckCursorClickableOnSprite(Sprite* spr) {
 		&& bbox[2].m_z <= -5.0
 		&& cursorpos.m_z - v1 <= bbox[2].m_z;
 }
-static bool IsPlayerOutsideApt() {
-	return g_PlayerSprite->GetPosition().m_x < -150
-		&& g_PlayerSprite->GetPosition().m_y > 120;
-}
 static bool IsHugComfortKissAllowed() {
 
 	DoorSprite* SpritePtrByID = (DoorSprite*)g_spriteMgr.GetSpritePtrByID(eSpriteID_frontDoor);
 	bool check1 = !IsPlayerOutsideApt() || SpritePtrByID->IsDoorOpen();
-	Sprite** v10 = g_CursorSprite->GetHeldSpritesList();
-	bool check2 = v10[0] != nullptr
-		&& !v10[0]->GetAmIStillGrabDropAnimating()
-		&& v10[0]->m_eObjectType == eObjectType_Drink
+	Sprite** heldsprlist = g_CursorSprite->GetHeldSpritesList();
+	bool check2 = heldsprlist[0] != nullptr
+		&& !heldsprlist[0]->GetAmIStillGrabDropAnimating()
+		&& heldsprlist[0]->m_eObjectType == eObjectType_Drink
 		|| g_CursorSprite->GetPosition().m_y >= -60.0;
 	bool check3 = g_AutoMovePlayerStatus == 2 || g_bTripCarry;
 	return check1 && !check2 && !check3;
@@ -780,7 +793,7 @@ static void UpdateCursor()
 	for (int i = 29; i > 0; --i)
 		g_cursorPositionHistory[i] = g_cursorPositionHistory[i - 1];
 
-	g_cursorPositionHistory[0] = XYZPointf(cursorxpos, cursorypos, -30);
+	g_cursorPositionHistory[0] = cursorpos;
 
 	if (!g_bPlayerInputActive)
 	{
@@ -1482,8 +1495,8 @@ static void GetNewPlayerPosition(float yaw, XYZPointf& out) {
 	out.m_z += sin(factor) * g_playerTransAmt;
 }
 static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
-	if (!CollisionTestWithWorld(g_PlayerSprite, nextpos, 10, true))
-		return false;
+	if (CollisionTestWithWorld(g_PlayerSprite, nextpos, 10, true))
+		return true;
 
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf pointtest = XYZPointf(
@@ -1494,10 +1507,10 @@ static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
 	if (!CollisionTestWithWorld(g_PlayerSprite, pointtest, 10, true))
 	{
 		g_PlayerSprite->SetPosition(nextpos);
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 static void UpdatePlayerNavigation() {
@@ -1709,8 +1722,8 @@ static void UpdatePlayerNavigation() {
 		if (!bAlreadyCollided)
 			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playerpos, 0, true);
 
-		//if (bAlreadyCollided)
-		//temporary :(
+		//if (bAlreadyCollided),
+		//salsatobias: temporary :(
 		if(1)
 		{
 			g_PlayerSprite->SetPosition(playernextpos);
@@ -1754,8 +1767,8 @@ static void UpdatePlayerNavigation() {
 
 				if (!IsPlayerOutsideApt())
 				{
-					bool inarea = playerpos.m_x > -213.0 && playerpos.m_z < 109.0 && playerpos.m_x < -166.0 && playerpos.m_z > 13.0
-						|| playerpos.m_x > -161.0 && playerpos.m_z < 148.0 && playerpos.m_x < -83.0 && playerpos.m_z > 74.0;
+					bool inarea =  playerpos.m_x > -213 && playerpos.m_z < 109 && playerpos.m_x < -166 && playerpos.m_z > 13
+								|| playerpos.m_x > -161 && playerpos.m_z < 148 && playerpos.m_x < -83 && playerpos.m_z > 74;
 					
 					if (inarea && g_moveTowardsCenterOfRoomCountdown <= 0)
 						g_moveTowardsCenterOfRoomCountdown = 20;

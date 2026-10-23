@@ -184,8 +184,7 @@ HRESULT ReadBufferedKeyboardData()
 		DWORD virtualkey = didod[i].dwOfs;
 
 		GetKeyboardState(keyboardstate);
-		ToAsciiEx(
-			MapVirtualKeyEx(virtualkey, MAPVK_VSC_TO_VK, g_keyboardlayout), 
+		ToAsciiEx(MapVirtualKeyEx(virtualkey, MAPVK_VSC_TO_VK, g_keyboardlayout), 
 			virtualkey, keyboardstate, Char, NULL, g_keyboardlayout);
 
 		char CorrectedChar = Char[0] == '\b' ? '<' : Char[0];

@@ -10,6 +10,7 @@ public:
 
 	void SetTargetByFrames(float target, int numframes, EControllerType controltype);
 	void SetTargetByRate(float target, float rate, EControllerType controltype, float f1);
+	float GetTarget();
 	float GetRateByFrames(float f1, int numframes);
 
 
