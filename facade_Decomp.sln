@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineStarter_decomp", "animEngineStarter_decomp\animEngineStarter_decomp.vcxproj", "{F49710AE-98F2-4225-99EF-97F279FE2770}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineStarter", "animEngineStarter\animEngineStarter.vcxproj", "{F49710AE-98F2-4225-99EF-97F279FE2770}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineDLL_Decomp", "animEngineDLL_decomp\animEngineDLL_Decomp.vcxproj", "{3691C5CE-DFD5-494B-B6FA-B3EF460F4314}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineDLL", "animEngineDLL\animEngineDLL.vcxproj", "{3691C5CE-DFD5-494B-B6FA-B3EF460F4314}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nativeaniminterface_decomp", "nativeaniminterface_decomp\nativeaniminterface_decomp.vcxproj", "{B9DE1A6D-3255-4598-9E28-9C5CB7BD5BCE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nativeaniminterface", "nativeaniminterface\nativeaniminterface.vcxproj", "{B9DE1A6D-3255-4598-9E28-9C5CB7BD5BCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
