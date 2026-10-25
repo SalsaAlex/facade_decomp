@@ -473,7 +473,7 @@ float GetSecsSinceTicks(int ticks)
 
 float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 {
-	float xdist = p1.m_x - p2.m_y;
+	float xdist = p1.m_x - p2.m_x;
 	float ydist = p1.m_y - p2.m_y;
 	float sqrdist = xdist * xdist + ydist * ydist;
 	animengine_assert(sqrdist >= 0);
@@ -482,7 +482,7 @@ float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
 {
-	float xdist = p1.m_x - p2.m_y;
+	float xdist = p1.m_x - p2.m_x;
 	float zdist = p1.m_z - p2.m_z;
 	float sqrdist = xdist * xdist + zdist * zdist;
 	animengine_assert(sqrdist >= 0);
