@@ -236,7 +236,8 @@ public:
 	int unknown066;
 	float unknown067[1808];
 	ECinematographyFraming m_eCineFraming;
-	int unknown068[17];
+	int unknown068[16];
+	bool charsprite_bool1;
 
 private:
 protected:

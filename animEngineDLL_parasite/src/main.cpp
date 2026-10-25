@@ -1120,16 +1120,12 @@ static void UpdateAndRenderAllSprites(bool transparent_only)
 		g_spriteMgr->GetSpritePtrByName("KI_longwallcabtop4")->SetDrawMe(bDrawKitchenCabinets);
 	}
 
-	//LOBYTE(g_GraceSprite->data.inherit.inherit.b1_unknown20292) = false;
-	//LOBYTE(g_TripSprite->data.inherit.inherit.b1_unknown20292) = false;
+	g_GraceSprite->b1_unknown20292a = false;
+	g_TripSprite->b1_unknown20292a = false;
 
 	for (int i = 0; i < g_spriteMgr->GetNumSprites(); i++)
 	{
 		Sprite* sprite = g_spriteMgr->GetSpritePtr(i);
-
-		// salsatobias : temporary :(
-		if (sprite->GetIsCharacterSprite())
-			continue;
 
 		Sprite* holder = sprite->GetSpriteHoldingMe();
 
@@ -1148,11 +1144,13 @@ static void UpdateAndRenderAllSprites(bool transparent_only)
 		{
 			shoulddraw = IsPointWithinZone(g_PlayerSprite->GetPosition(), GetZoneIDForRoomZone(sprite->a1_unknown00012));
 		}
-		if (sprite->GetIsHeadSprite()
-			/*&& !BYTE1(SpritePtr[1].vftable->GetModelPointPosition)*/)
+		if (sprite->GetIsHeadSprite())
 		{
-			shouldupdate = 0;
-			shoulddraw = 0;
+			if(!((HeadSprite*)sprite)->owner->boolean1)
+			{
+				shouldupdate = 0;
+				shoulddraw = 0;
+			}
 		}
 
 
@@ -2068,8 +2066,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x1004FC10, UpdateCursor);
 	HookFunc((void*)0x10061C70, UpdateEnvironment);
 	//HookFunc((void*)0x1004D640, UpdateCinematography);
-	//HookFunc((void*)0x1008C000, UpdateAndRenderAllSprites);
-	//HookFunc((void*)0x1008BE70, UpdateAndRenderWorld);
+	HookFunc((void*)0x1008C000, UpdateAndRenderAllSprites);
+	HookFunc((void*)0x1008BE70, UpdateAndRenderWorld);
 	HookFunc((void*)0x10087B40, UpdateMP3Fades);
 	HookFunc((void*)0x100977B0, LoadingMessage);
 	//HookFunc((void*)0x10058E10, EditCharacterScript);

@@ -18829,9 +18829,9 @@ public:
 	int b1_unknown20287;
 	int b1_unknown20288;
 	int b1_unknown20289;
-	int b1_unknown20290;
-	int b1_unknown20291;
-	int b1_unknown20292;
+	float b1_unknown20290;
+	float b1_unknown20291;
+	bool b1_unknown20292a;
 	int m_iSpriteFrame = 0;
 	int b1_unknown20294;
 	int b1_unknown20295 = 0;
