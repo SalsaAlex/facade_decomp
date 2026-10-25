@@ -1485,8 +1485,8 @@ static void UpdatePlayerNavigation() {
 	{
 		playermovforward_limit = FrameRateAdjust(6.0, 1);
 		playermovbackward_limit = FrameRateAdjust(-3.0, 1);
-		playerrotleft_limit = FrameRateAdjust(2.4000001, 1);
-		playerrotright_limit = FrameRateAdjust(-2.4000001, 1);
+		playerrotleft_limit = FrameRateAdjust(2.4, 1);
+		playerrotright_limit = FrameRateAdjust(-2.4, 1);
 	}
 
 	bool bVeryNearCharacter = false;
@@ -1584,7 +1584,7 @@ static void UpdatePlayerNavigation() {
 		|| g_playerTransAmt < playermovbackward_limit;
 	if (g_playerTransAmt != 0 && (!moving || movement_within_limits))
 	{
-		if (g_playerTransAmt > 0.0099999998 || g_playerTransAmt < -0.0099999998)
+		if (g_playerTransAmt > 0.01 || g_playerTransAmt < -0.01)
 		{
 			if (movement_within_limits)
 				_set_g_playerTransAmt(g_playerTransAmt * 0.92);
