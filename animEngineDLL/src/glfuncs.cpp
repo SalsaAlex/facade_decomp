@@ -1130,6 +1130,40 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 	return pos;
 }
 
+static void ZSortPoints(XYZPointf* renderpoints, int* pointsindices, int nummodelpoints) {
+	int closestpointid = 0;
+	float chosen_z = renderpoints[0].m_z;
+	for (int i = 0; i < nummodelpoints; ++i)
+	{
+		if (renderpoints[i].m_z < chosen_z)
+		{
+			chosen_z = renderpoints[i].m_z;
+			closestpointid = i;
+		}
+	}
+	pointsindices[0] = closestpointid;
+	for (int j = 1; j < nummodelpoints; ++j)
+	{
+		int pointid1 = -1;
+		for (int k = 0; k < nummodelpoints; ++k)
+		{
+			if (renderpoints[k].m_z >= chosen_z && (pointid1 == -1 || renderpoints[k].m_z <= renderpoints[pointid1].m_z))
+			{
+				bool equalpoints = false;
+				for (int m = 0; m < j; ++m)
+				{
+					if (pointsindices[m] == k)
+						equalpoints = 1;
+				}
+				if (!equalpoints)
+					pointid1 = k;
+			}
+		}
+		animengine_assert(pointid1 != -1);
+		pointsindices[j] = pointid1;
+		chosen_z = renderpoints[pointid1].m_z;
+	}
+}
 
 static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSprite* head,
 	bool option,
@@ -1153,9 +1187,28 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		spr->b1_unknown20315 = NormalizeNeg180to180(factor) * 0.5;
 	}
 
-	if (character /*&& !LOBYTE(character->unknown039[10423])*/)
+	if (character && !character->charsprite_bool1)
 	{
-		//undone
+		float distfromchar = GetXZDistanceBetweenPoints(g_PlayerSprite->GetPosition(), spritepos);
+		float maxdist = 80.0;
+		if (distfromchar < 80.0)
+		{
+			float mindist = 35;
+			animengine_assert(maxdist > mindist);
+			float distfactor;
+
+			if (distfromchar <= mindist)
+				distfactor = mindist - mindist;
+			else
+				distfactor = distfromchar - mindist;
+
+			float commondist = maxdist - mindist;
+			float factor = sin((commondist - distfactor) / commondist * MATH_PI / 5.0);
+			if (character->charsprite_bool1)
+				spritepos.m_y -= factor * 5;
+			else
+				spritepos.m_y -= factor * 8;
+		}
 	}
 
 	if (head)
@@ -1197,7 +1250,23 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	if (head)
 	{
-		//undone
+		spritesubjpos = head->GetAttachPosition();
+		if (head->owner->m_renderPoints1[head->owner->unknown007].m_z < spritesubjpos.m_z)
+			spritesubjpos.m_z = head->owner->m_renderPoints1[head->owner->unknown007].m_z;
+
+		if (head->owner->m_renderPoints1[head->owner->unknown008].m_z < spritesubjpos.m_z)
+			spritesubjpos.m_z = head->owner->m_renderPoints1[head->owner->unknown008].m_z - 0.2;
+
+		f1 *= head->unknown[8];
+
+		head->unknown[9] = head->GetAttachPosition().m_z;
+		if (head->owner->m_renderPoints1[head->owner->unknown007].m_z > head->unknown[9])
+			head->unknown[9] = head->owner->m_renderPoints1[head->owner->unknown007].m_z;
+
+		if (head->owner->m_renderPoints1[head->owner->unknown008].m_z > head->unknown[9])
+			head->unknown[9] = head->owner->m_renderPoints1[head->owner->unknown008].m_z + 0.2;
+
+		head->unknown[12] = spritesubjpos.m_z;
 	}
 
 	if (spr->a1_unknown00010d)
@@ -1240,7 +1309,7 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	if (head)
 	{
-		//undone
+		RotateModel(spr, head->owner->m_pHeadSprite->unknownxyz1, spr->b1_unknown00020);
 	}
 	else if (spr->a1_unknown00010d)
 	{
@@ -1378,7 +1447,7 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	if (spr->a1_unknown00001)
 	{
-		//sub_10001226((int)sprite->data.m_renderPoints1, renderdata, sprite->data.m_iNumModelPoints);
+		ZSortPoints(spr->m_renderPoints1, renderdata, spr->m_iNumModelPoints);
 	}
 	else
 	{

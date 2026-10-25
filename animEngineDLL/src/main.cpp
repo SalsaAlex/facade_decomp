@@ -1216,8 +1216,8 @@ static void UpdateAndRenderAllSprites(bool transparent_only)
 		g_spriteMgr.GetSpritePtrByName("KI_longwallcabtop4")->SetDrawMe(bDrawKitchenCabinets);
 	}
 
-	//LOBYTE(g_GraceSprite->data.inherit.inherit.b1_unknown20292) = false;
-	//LOBYTE(g_TripSprite->data.inherit.inherit.b1_unknown20292) = false;
+	g_GraceSprite->b1_unknown20292a = false;
+	g_TripSprite->b1_unknown20292a = false;
 
 	for (int i = 0; i < g_spriteMgr.GetNumSprites(); i++)
 	{
@@ -1244,11 +1244,13 @@ static void UpdateAndRenderAllSprites(bool transparent_only)
 		{
 			shoulddraw = IsPointWithinZone(g_PlayerSprite->GetPosition(), GetZoneIDForRoomZone(sprite->a1_unknown00012));
 		}
-		if (sprite->GetIsHeadSprite()
-			/*&& !BYTE1(SpritePtr[1].vftable->GetModelPointPosition)*/)
+		if (sprite->GetIsHeadSprite())
 		{
-			shouldupdate = 0;
-			shoulddraw = 0;
+			if (!((HeadSprite*)sprite)->owner->boolean1)
+			{
+				shouldupdate = 0;
+				shoulddraw = 0;
+			}
 		}
 
 

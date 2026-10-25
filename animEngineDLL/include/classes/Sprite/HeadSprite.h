@@ -1,20 +1,21 @@
 #ifndef HEADSPRITE_H
 #define HEADSPRITE_H
 
+class CharacterSprite;
+
 class HeadSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:00206780
 {
 public:
 
-	int unknown001;
-	float unknown002;
-	float unknown003;
-	float unknown004;
+	CharacterSprite* owner;
+	XYZPointf headrot;
 	float unknown005;
 	float unknown006;
 	float unknown007;
-	int unknown008;
+	float unknown008;
 	float unknown009;
-	float unknown[5374];
+	XYZPointf unknownxyz1;
+	float unknown[5371];
 
 private:
 protected:
