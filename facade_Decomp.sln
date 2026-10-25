@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineStarter", "animEngineStarter\animEngineStarter.vcxproj", "{F49710AE-98F2-4225-99EF-97F279FE2770}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineDLL", "animEngineDLL\animEngineDLL.vcxproj", "{3691C5CE-DFD5-494B-B6FA-B3EF460F4314}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "animEngineDLL_parasite", "animEngineDLL_parasite\animEngineDLL_parasite.vcxproj", "{3691C5CE-DFD5-494B-B6FA-B3EF460F4314}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nativeaniminterface", "nativeaniminterface\nativeaniminterface.vcxproj", "{B9DE1A6D-3255-4598-9E28-9C5CB7BD5BCE}"
 EndProject
