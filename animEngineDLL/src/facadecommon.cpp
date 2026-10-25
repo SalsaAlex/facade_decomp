@@ -400,7 +400,7 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 	XZRectf rect;
 
 	XYZPointf spritepos = spr->GetPosition();
-	if (spr->GetCollidableType() == eCollidableType_AABB)
+	if (spr->GetCollidableType() == eCollidableType_SimpleBox)
 	{
 		rect.m_xmin = spritepos.m_x - 10;
 		rect.m_zmin = spritepos.m_z - 10;
@@ -440,28 +440,20 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 			}
 		}
 
-		if (spr->GetCollidableType() == eCollidableType_unknown)
+		if (spr->GetCollidableType() == eCollidableType_Panel)
 		{
 			float rectsizex = fabs(rect.m_xmin - rect.m_xmax);
+			float rectsizez = fabs(rect.m_zmin - rect.m_zmax);
 
-			if (rectsizex > 0.001)
-			{
-				float rectsizez = fabs(rect.m_zmin - rect.m_zmax);
-
-				if (rectsizez > 0.001)
-				{
-					//v17 = 0; //unused variable..
-				}
-				else
-				{
-					rect.m_zmin -= 10;
-					rect.m_zmax += 10;
-				}
-			}
-			else
+			if (rectsizex <= 0.001)
 			{
 				rect.m_xmin -= 10;
 				rect.m_xmax += 10;
+			}
+			else if (rectsizez <= 0.001)
+			{
+				rect.m_zmin -= 10;
+				rect.m_zmax += 10;
 			}
 		}
 	}

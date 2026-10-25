@@ -48,7 +48,7 @@
 #include "enums/EUScript.h"
 #include "enums/EWalkType.h"
 
-#include "../../animEngineStarter_decomp/resource.h"
+#include "../../animEngineStarter/resource.h"
 
 
 #define WM_EDITGRACESCRIPT WM_USER

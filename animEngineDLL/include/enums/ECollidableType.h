@@ -4,9 +4,9 @@
 enum ECollidableType
 {
 	eCollidableType_NonSolid = 0,
-	eCollidableType_AABB, //(?)
-	eCollidableType_Complex,//(?)
-	eCollidableType_unknown
+	eCollidableType_SimpleBox, //grace and trip
+	eCollidableType_ComplexModel, // couch, bar, side table, etc
+	eCollidableType_Panel //entities created with CreatePanel() have this if collide is true
 };
 
 #endif // ENUM_COLLIDABLETYPE_H

@@ -548,43 +548,43 @@ void SetColorFromIndex(EColor color)
 {
     switch (color)
     {
-    case eColor_unnamed000:     glColor4f(0.96, 0.87, 0.81, g_opacity);     break;
-    case eColor_unnamed001:     glColor4f(0.628, 0.734, 0.921, g_opacity);  break;
-    case eColor_unnamed002:     glColor4f(0.52, 0.515, 0.52, g_opacity);    break;
-    case eColor_unnamed003:     glColor4f(0.2, 0.2, 0.3, g_opacity);        break;
-    case eColor_unnamed004:     glColor4f(0.42, 0.415, 0.42, g_opacity);    break;
-    case eColor_unnamed005:     glColor4f(0.428, 0.534, 0.721, g_opacity);  break;
+    case eColor_R96_G87_B81:    glColor4f(0.96, 0.87, 0.81, g_opacity);     break;
+    case eColor_R628_G734_B921: glColor4f(0.628, 0.734, 0.921, g_opacity);  break;
+    case eColor_R52_G515_B52:   glColor4f(0.52, 0.515, 0.52, g_opacity);    break;
+    case eColor_R2_G2_B3:		glColor4f(0.2, 0.2, 0.3, g_opacity);        break;
+    case eColor_R42_G415_B42:   glColor4f(0.42, 0.415, 0.42, g_opacity);    break;
+    case eColor_R428_G534_B721: glColor4f(0.428, 0.534, 0.721, g_opacity);  break;
     case eColor_white:          glColor4f(1.0, 1.0, 1.0, g_opacity);        break;
-    case eColor_unnamed006:     glColor4f(0.25, 0.15, 0.1, g_opacity);      break;
-    case eColor_unnamed007:     glColor4f(1.0, 0.75, 0.7, g_opacity);       break;
-    case eColor_unnamed008:     glColor4f(1.0, 0.8, 0.0, g_opacity);        break;
-    case eColor_unnamed009:     glColor4f(1.0, 0.6, 0.0, g_opacity);        break;
-    case eColor_unnamed010:     glColor4f(1.0, 1.0, 0.95, g_opacity);       break;
-    case eColor_unnamed011:     glColor4f(0.83, 0.83, 0.83, g_opacity);     break;
-    case eColor_unnamed012:     glColor4f(0.75, 1.0, 0.75, g_opacity);      break;
-    case eColor_unnamed013:     glColor4f(0.9, 1.0, 1.0, g_opacity);        break;
-    case eColor_unnamed014:     glColor4f(1.0, 1.0, 0.9, g_opacity);        break;
-    case eColor_unnamed015:		glColor4f(0.9, 0.9, 0.9, g_opacity);        break;
-    case eColor_unnamed016:     glColor4f(1.0, 1.0, 0.2, g_opacity);        break;
+    case eColor_R25_G15_B01:    glColor4f(0.25, 0.15, 0.1, g_opacity);      break;
+    case eColor_R1_G75_B7:		glColor4f(1.0, 0.75, 0.7, g_opacity);       break;
+    case eColor_R1_G8_B0:		glColor4f(1.0, 0.8, 0.0, g_opacity);        break;
+    case eColor_R1_G6_B0:		glColor4f(1.0, 0.6, 0.0, g_opacity);        break;
+    case eColor_R1_G1_B95:		glColor4f(1.0, 1.0, 0.95, g_opacity);       break;
+    case eColor_R83_G83_B83:    glColor4f(0.83, 0.83, 0.83, g_opacity);     break;
+    case eColor_R75_G1_B75:     glColor4f(0.75, 1.0, 0.75, g_opacity);      break;
+    case eColor_R9_G1_B1:		glColor4f(0.9, 1.0, 1.0, g_opacity);        break;
+    case eColor_R1_G1_B9:		glColor4f(1.0, 1.0, 0.9, g_opacity);        break;
+    case eColor_greyshade_09:	glColor4f(0.9, 0.9, 0.9, g_opacity);        break;
+    case eColor_R1_G1_B2:		glColor4f(1.0, 1.0, 0.2, g_opacity);        break;
     case eColor_greyshade_06:   glColor4f(0.6, 0.6, 0.6, g_opacity);        break;
     case eColor_grey:           glColor4f(0.5, 0.5, 0.5, g_opacity);        break;
-    case eColor_unnamed018:     glColor4f(0.6, 0.7, 1.0, g_opacity);        break;
-    case eColor_unnamed019:     glColor4f(0.62, 0.53, 0.57, g_opacity);     break;
-    case eColor_unnamed020:     glColor4f(0.42, 0.33, 0.37, g_opacity);     break;
-    case eColor_unnamed021:     glColor4f(0.273, 0.222, 0.191, g_opacity);  break;
-    case eColor_unnamed022:     glColor4f(0.83, 0.77, 0.7, g_opacity);      break;
-    case eColor_unnamed023:     glColor4f(0.4, 0.45, 0.4, g_opacity);       break;
-    case eColor_unnamed024:     glColor4f(0.35, 0.4, 0.35, g_opacity);      break;
-    case eColor_unnamed025:     glColor4f(0.6, 0.5, 0.3, g_opacity);        break;
-    case eColor_unnamed026:     glColor4f(0.5, 0.4, 0.25, g_opacity);       break;
-    case eColor_unnamed027:     glColor4f(0.95, 0.8, 0.75, g_opacity);      break;
-    case eColor_unnamed028:     glColor4f(0.5, 0.9, 0.55, g_opacity);       break;
-    case eColor_unnamed029:     glColor4f(0.77, 0.73, 0.7, g_opacity);      break;
-    case eColor_unnamed030:     glColor4f(0.2, 0.2, 0.4, 0.2);              break;
-    case eColor_unnamed031:     glColor4f(1.0, 1.0, 0.8, g_opacity);        break;
-    case eColor_unnamed032:     glColor4f(0.95, 0.85, 0.78, g_opacity);     break;
-    case eColor_unnamed033:     glColor4f(0.2, 0.2, 0.2, 0.3);              break;
-    case eColor_unnamed034:		glColor4f(0.9, 0.9, 0.95, 0.3);             break;
+    case eColor_R6_G7_B1:		glColor4f(0.6, 0.7, 1.0, g_opacity);        break;
+    case eColor_R62_G53_B57:    glColor4f(0.62, 0.53, 0.57, g_opacity);     break;
+    case eColor_R42_G33_B37:    glColor4f(0.42, 0.33, 0.37, g_opacity);     break;
+    case eColor_R273_G222_B191: glColor4f(0.273, 0.222, 0.191, g_opacity);  break;
+    case eColor_R83_G77_B7:     glColor4f(0.83, 0.77, 0.7, g_opacity);      break;
+    case eColor_R4_G45_B4:		glColor4f(0.4, 0.45, 0.4, g_opacity);       break;
+    case eColor_R35_G4_B35:     glColor4f(0.35, 0.4, 0.35, g_opacity);      break;
+    case eColor_R6_G5_B3:		glColor4f(0.6, 0.5, 0.3, g_opacity);        break;
+    case eColor_R5_G4_B25:		glColor4f(0.5, 0.4, 0.25, g_opacity);       break;
+    case eColor_R95_G8_B75:     glColor4f(0.95, 0.8, 0.75, g_opacity);      break;
+    case eColor_R5_G9_B55:		glColor4f(0.5, 0.9, 0.55, g_opacity);       break;
+    case eColor_R77_G73_B7:     glColor4f(0.77, 0.73, 0.7, g_opacity);      break;
+    case eColor_R2_G2_B4_A2:    glColor4f(0.2, 0.2, 0.4, 0.2);              break;
+    case eColor_R1_G1_B8:		glColor4f(1.0, 1.0, 0.8, g_opacity);        break;
+    case eColor_R95_G85_B78:    glColor4f(0.95, 0.85, 0.78, g_opacity);     break;
+    case eColor_R2_G2_B2_A3:    glColor4f(0.2, 0.2, 0.2, 0.3);              break;
+    case eColor_R9_G9_B95_A3:	glColor4f(0.9, 0.9, 0.95, 0.3);             break;
     case eColor_clear:
         ShouldntBeHere("called SetColorFromIndex() with eColor_clear");
         break;
@@ -592,15 +592,15 @@ void SetColorFromIndex(EColor color)
     case eColor_blue:           glColor4f(0.0, 0.0, 1.0, g_opacity);        break;
     case eColor_green:          glColor4f(0.0, 1.0, 0.0, g_opacity);        break;
     case eColor_pink:           glColor4f(1.0, 0.0, 1.0, g_opacity);        break;
-    case eColor_unnamed035:     glColor4f(0.6, 0.8, 1.0, g_opacity);        break;
-    case eColor_unnamed036:     glColor4f(0.33, 0.16, 0.02, g_opacity);     break;
-    case eColor_unnamed037:     glColor4f(0.43, 0.26, 0.12, g_opacity);     break;
-    case eColor_unnamed038:     glColor4f(0.53, 0.36, 0.22, g_opacity);     break;
-    case eColor_unnamed039:     glColor4f(0.63, 0.46, 0.32, g_opacity);     break;
-    case eColor_unnamed040:     glColor4f(0.23, 0.16, 0.02, g_opacity);     break;
-    case eColor_unnamed041:     glColor4f(0.33, 0.26, 0.12, g_opacity);     break;
-    case eColor_unnamed042:     glColor4f(0.43, 0.36, 0.22, g_opacity);     break;
-    case eColor_unnamed043:     glColor4f(0.48, 0.41, 0.27, g_opacity);     break;
+    case eColor_R06_G08_B10:    glColor4f(0.6, 0.8, 1.0, g_opacity);        break;
+    case eColor_R33_G16_B02:    glColor4f(0.33, 0.16, 0.02, g_opacity);     break;
+    case eColor_R43_G26_B12:    glColor4f(0.43, 0.26, 0.12, g_opacity);     break;
+    case eColor_R53_G36_B22:    glColor4f(0.53, 0.36, 0.22, g_opacity);     break;
+    case eColor_R63_G46_B32:    glColor4f(0.63, 0.46, 0.32, g_opacity);     break;
+    case eColor_R23_G16_B02:    glColor4f(0.23, 0.16, 0.02, g_opacity);     break;
+    case eColor_R33_G26_B12:	glColor4f(0.33, 0.26, 0.12, g_opacity);     break;
+    case eColor_R43_G36_B22:    glColor4f(0.43, 0.36, 0.22, g_opacity);     break;
+    case eColor_R48_G41_B27:    glColor4f(0.48, 0.41, 0.27, g_opacity);     break;
     case eColor_greyshade_05:   glColor4f(0.05, 0.05, 0.05, g_opacity);     break;
     case eColor_greyshade_10:   glColor4f(0.10, 0.10, 0.10, g_opacity);     break;
     case eColor_greyshade_15:   glColor4f(0.15, 0.15, 0.15, g_opacity);     break;
@@ -731,7 +731,7 @@ static void HintsScreenMessage() {
 		200,
 		5,
 		0,
-		cursoronlink ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+		cursoronlink ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 	verticaltextcursor -= 12;
 
 	bool cursoronbacktomenu = ISCURSORINBOUNDS(-20, 26, verticaltextcursor-8, verticaltextcursor);
@@ -742,7 +742,7 @@ static void HintsScreenMessage() {
 		200, 
 		7, 
 		0, 
-		cursoronbacktomenu ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+		cursoronbacktomenu ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 }
 static void CreditsScreenMessage() {
 
@@ -830,12 +830,12 @@ static void ReplayScreenMessage() {
 	bool cursoronexit = ISCURSORINBOUNDS(-10, 16, -38, -30);
 	if (cursoronexit && g_mouseLButtonClicked)
 		g_baseScreenMessage = eBaseScreenMessage_TipJar;
-	DrawArbitraryScreenText("Exit", 19, -30, 200, 7, 0, cursoronexit ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText("Exit", 19, -30, 200, 7, 0, cursoronexit ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 
 	bool cursoronbacktomenu = ISCURSORINBOUNDS(-20, 26, -53, -45);
 	if (cursoronbacktomenu && g_mouseLButtonClicked)
 		g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;
-	DrawArbitraryScreenText("Back to Menu", 8.0, -45, 200, 7, 0, cursoronbacktomenu ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText("Back to Menu", 8.0, -45, 200, 7, 0, cursoronbacktomenu ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 }
 static void TipJarScreenMessage() {
 	g_bPlayerInputActive = false;
@@ -911,12 +911,12 @@ static void PlayerChoosesName() {
 	bool cursorininstructionsbutton = ISCURSORINBOUNDS(-12, 18, -68, -60);
 	if (cursorininstructionsbutton && g_mouseLButtonClicked) 
 		g_baseScreenMessage = eBaseScreenMessage_Instructions;
-	DrawArbitraryScreenText("Instructions", 10.5, -60, 200, 7, 0, cursorininstructionsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText("Instructions", 10.5, -60, 200, 7, 0, cursorininstructionsbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 	
 	bool cursorinhintsbutton = ISCURSORINBOUNDS(-12, 18, -78, -70);
 	if (cursorinhintsbutton && g_mouseLButtonClicked) 
 		g_baseScreenMessage = eBaseScreenMessage_Hints;
-	DrawArbitraryScreenText("Hints", 18.5, -70, 200, 7, 0, cursorinhintsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText("Hints", 18.5, -70, 200, 7, 0, cursorinhintsbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 
 	bool cursorinsubtitlesbutton = ISCURSORINBOUNDS(-12, 18, -88, -80);
 	if (cursorinsubtitlesbutton && g_mouseLButtonClicked)
@@ -924,13 +924,13 @@ static void PlayerChoosesName() {
 
 	const char* subtitlesbutton = g_bDisplayDialogText ? "Subtitles: On" : "Subtitles: Off";
 	float subtitlesbuttonx = g_bDisplayDialogText ? 9 : 8;
-	DrawArbitraryScreenText(subtitlesbutton, subtitlesbuttonx, -80, 200, 7, 0, cursorinsubtitlesbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText(subtitlesbutton, subtitlesbuttonx, -80, 200, 7, 0, cursorinsubtitlesbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 
 
 	bool cursorinaboutbutton = ISCURSORINBOUNDS(-12, 18, -98, -90);
 	if (cursorinaboutbutton && g_mouseLButtonClicked)
 		g_baseScreenMessage = eBaseScreenMessage_Credits;
-	DrawArbitraryScreenText("About", 17.5, -90, 200, 7, 0, cursorinhintsbutton ? eColor_unnamed014 : eColor_unnamed035, eColor_black);
+	DrawArbitraryScreenText("About", 17.5, -90, 200, 7, 0, cursorinhintsbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 
 	if (g_curTextCharInput >= 'a' && g_curTextCharInput <= 'z')
 		g_curTextCharInput -= ' '; //convert to lowercase
@@ -995,7 +995,7 @@ static void PlayerChoosesName() {
 			strcat(textbuffer, " (male)");
 		}
 		float textx = 20.0 - strlen(textbuffer) * 1.4;
-		DrawArbitraryScreenText(textbuffer, textx, -32, 200, 10, 0, v37 ? eColor_unnamed035 : eColor_grey, eColor_black);
+		DrawArbitraryScreenText(textbuffer, textx, -32, 200, 10, 0, v37 ? eColor_R06_G08_B10 : eColor_grey, eColor_black);
 	}
 
 	if (--blinkCountdown <= 0)
@@ -2044,7 +2044,7 @@ void DrawPlayerScreenText()
 		XYZPointf p1(v31 - 0.6875 + 1.25, v32 - 4.6875 + 6.75, v33);
 		XYZPointf p2(v31 + 0.6875 + 1.25, v32 + 4.6875 + 6.75, v33);
 
-		SetColorFromIndex(eColor_unnamed031);
+		SetColorFromIndex(eColor_R1_G1_B8);
 		glBegin(GL_QUADS);
 			glVertex3f(p1.m_x, p1.m_y, p1.m_z - 1);
 			glVertex3f(p2.m_x, p1.m_y, p1.m_z - 1);

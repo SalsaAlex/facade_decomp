@@ -1158,7 +1158,7 @@ static void UpdateEnvironment()
 		Sprite* spr = g_zones[i].unknown001;
 		if (!spr) continue;
 
-		if (spr->GetCollidableType() == eCollidableType_AABB)
+		if (spr->GetCollidableType() == eCollidableType_SimpleBox)
 			ModifyZoneRect(i, 0, ComputeSingleCollisionRectForSprite(spr));
 	}
 
