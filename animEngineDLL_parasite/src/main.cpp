@@ -1410,7 +1410,7 @@ static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
 	XYZPointf pointtest = XYZPointf(
 		(playerpos.m_x + nextpos.m_x) / 2,
 		playerpos.m_y,
-		(playerpos.m_z + nextpos.m_x) / 2
+		(playerpos.m_z + nextpos.m_z) / 2
 	);
 	if (!CollisionTestWithWorld(g_PlayerSprite, pointtest, 10, true))
 	{
@@ -1630,9 +1630,7 @@ static void UpdatePlayerNavigation() {
 		if (!bAlreadyCollided)
 			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playerpos, 0, true);
 
-		//if (bAlreadyCollided),
-		//salsatobias: temporary :(
-		if(1)
+		if (bAlreadyCollided)
 		{
 			g_PlayerSprite->SetPosition(playernextpos);
 			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playernextpos, 10, true);
@@ -2052,28 +2050,28 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	//HookFunc((void*)0x100B32C0, ProcessAblRequests);
 	HookFunc((void*)0x10086930, StartPlayerMoveControllers);
 	HookFunc((void*)0x10086DC0, DoHugComfortKissPlayerMotion);
-	//HookFunc((void*)0x10061E00, UpdateFrontDoorCollisionZone);
+	HookFunc((void*)0x10061E00, UpdateFrontDoorCollisionZone);
 	HookFunc((void*)0x100AEC30, selectglpixelformat);
-	//HookFunc((void*)0x10062000, DivvyUpDiagonalWallsIntoSubzone);
+	HookFunc((void*)0x10062000, DivvyUpDiagonalWallsIntoSubzone);
 	HookFunc((void*)0x100B31A0, LaunchAblIfNeeded);
 	HookFunc((void*)0x10086CF0, IsPlayerMoving);
 	HookFunc((void*)0x100B0900, GetSecondsSinceFrame);
 	//HookFunc((void*)0x1009E800, UpdateTitleSequence);
 	HookFunc((void*)0x1004CBC0, AreWeDoingObjectOfferingOrTaking);
 	HookFunc((void*)0x100514C0, CheckCursorClickableOnSprite);
-	//HookFunc((void*)0x10052570, IsHugComfortKissAllowed);
-	//HookFunc((void*)0x10052830, IsCursorOverAShoulder);
-	//HookFunc((void*)0x10052A00, IsCursorOverUpperBody);
-	//HookFunc((void*)0x10052D70, IsCursorOverFace);
+	HookFunc((void*)0x10052570, IsHugComfortKissAllowed);
+	HookFunc((void*)0x10052830, IsCursorOverAShoulder);
+	HookFunc((void*)0x10052A00, IsCursorOverUpperBody);
+	HookFunc((void*)0x10052D70, IsCursorOverFace);
 	HookFunc((void*)0x10052330, ComputeSurfaceDropXZPoint);
 	HookFunc((void*)0x10051C70, GetSurfaceClickedOnForSprite);
-	//HookFunc((void*)0x1004FC10, UpdateCursor);
-	//HookFunc((void*)0x10061C70, UpdateEnvironment);
+	HookFunc((void*)0x1004FC10, UpdateCursor);
+	HookFunc((void*)0x10061C70, UpdateEnvironment);
 	//HookFunc((void*)0x1004D640, UpdateCinematography);
 	//HookFunc((void*)0x1008C000, UpdateAndRenderAllSprites);
 	//HookFunc((void*)0x1008BE70, UpdateAndRenderWorld);
-	//HookFunc((void*)0x10087B40, UpdateMP3Fades);
-	//HookFunc((void*)0x100977B0, LoadingMessage);
+	HookFunc((void*)0x10087B40, UpdateMP3Fades);
+	HookFunc((void*)0x100977B0, LoadingMessage);
 	//HookFunc((void*)0x10058E10, EditCharacterScript);
 	//HookFunc((void*)0x10053D80, EditCharacterFace);
 	HookFunc((void*)0x100AE010, GetRotationKeyPresses);
@@ -2082,7 +2080,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x10087400, HackToFixStuckPlayerAtFoyerWallEdge);
 	HookFunc((void*)0x10086680, GetNewPlayerPosition);
 	HookFunc((void*)0x100864F0, PlayerNavCollisionTest);
-	//HookFunc((void*)0x10084540, UpdatePlayerNavigation);
+	HookFunc((void*)0x10084540, UpdatePlayerNavigation);
 	HookFunc((void*)0x100AE900, CreateWinGLPalette);
 
 	//facadecommon.h

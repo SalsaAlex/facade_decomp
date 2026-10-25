@@ -226,14 +226,14 @@ bool IsPunctuationCharacter(char c) {
 
 float NormalizeNeg180to180(float ang)
 {
-	while (ang > 180)	ang -= 180;
-	while (ang < -180)	ang += 180;
+	while (ang > 180)	ang -= 360;
+	while (ang < -180)	ang += 360;
 	return ang;
 }
 float Normalize0to360(float ang)
 {
-	while (ang > 360)	ang -= 360;
-	while (ang < - 360)	ang += 360;
+	while (ang >= 360)	ang -= 360;
+	while (ang < 0)		ang += 360;
 	return ang;
 }
 
@@ -391,6 +391,7 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr) {
 
 void ClipFloatToRange(float& value, float min, float max)
 {
+	animengine_assert(min <= max);
 	value = fminf(fmaxf(value, min), max);
 }
 
