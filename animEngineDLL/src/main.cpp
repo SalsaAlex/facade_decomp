@@ -1502,7 +1502,7 @@ static bool PlayerNavCollisionTest(Sprite* player, XYZPointf nextpos) {
 	XYZPointf pointtest = XYZPointf(
 		(playerpos.m_x + nextpos.m_x) / 2,
 		playerpos.m_y,
-		(playerpos.m_z + nextpos.m_x) / 2
+		(playerpos.m_z + nextpos.m_z) / 2
 	);
 	if (!CollisionTestWithWorld(g_PlayerSprite, pointtest, 10, true))
 	{
@@ -1722,9 +1722,7 @@ static void UpdatePlayerNavigation() {
 		if (!bAlreadyCollided)
 			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playerpos, 0, true);
 
-		//if (bAlreadyCollided),
-		//salsatobias: temporary :(
-		if(1)
+		if (bAlreadyCollided)
 		{
 			g_PlayerSprite->SetPosition(playernextpos);
 			bAlreadyCollided = CollisionTestWithWorld(g_PlayerSprite, playernextpos, 10, true);
