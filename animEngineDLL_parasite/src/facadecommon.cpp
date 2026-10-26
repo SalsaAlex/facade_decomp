@@ -253,6 +253,10 @@ bool PlayGlobalSound(EGlobalSounds sound)
 {
 	return g_soundMgr->PlaySound(g_soundSourceID, sound, true);
 }
+void StopAllGlobalSounds()
+{
+	g_soundMgr->StopAllSounds(g_soundSourceID);
+}
 
 bool CollisionTest(int zoneindex, XZRectf rect, Sprite* spr1, Sprite* spr2)
 {
@@ -918,4 +922,144 @@ void LoadTextureFilmstrip(ETextureFilmstrip filmstrip)
 	pEntry->height2 = height2;
 	pEntry->valid = true;
 
+}
+
+int GetArmSyncSetForScript(CharacterSprite* actor, int unknown)
+{
+	int result;
+	if (actor == g_GraceSprite)
+	{
+		switch (unknown)
+		{
+		case 79:
+		case 80:
+		case 81:
+			result = 0;
+			break;
+		case 82:
+		case 83:
+		case 84:
+		case 88:
+		case 89:
+		case 90:
+			result = 1;
+			break;
+		case 141:
+		case 142:
+		case 143:
+		case 144:
+		case 145:
+		case 146:
+		case 147:
+		case 148:
+		case 149:
+		case 150:
+		case 151:
+		case 152:
+		case 153:
+		case 154:
+		case 155:
+		case 156:
+		case 157:
+		case 158:
+		case 159:
+		case 160:
+		case 161:
+			result = 2;
+			break;
+		default:
+			result = -1;
+			break;
+		}
+	}
+	else
+	{
+		switch (unknown)
+		{
+		case 65:
+		case 66:
+		case 67:
+		case 102:
+		case 103:
+		case 104:
+			result = 1;
+			break;
+		case 80:
+		case 81:
+		case 82:
+			result = 0;
+			break;
+		case 118:
+		case 119:
+		case 120:
+		case 121:
+		case 122:
+		case 123:
+		case 124:
+		case 125:
+		case 126:
+		case 127:
+		case 128:
+		case 129:
+		case 130:
+		case 131:
+		case 132:
+		case 135:
+		case 136:
+		case 139:
+		case 140:
+		case 143:
+		case 144:
+		case 146:
+		case 147:
+		case 148:
+		case 149:
+		case 150:
+		case 151:
+		case 152:
+		case 153:
+		case 154:
+		case 155:
+		case 156:
+		case 157:
+			result = 3;
+			break;
+		case 223:
+		case 224:
+		case 225:
+		case 226:
+		case 227:
+		case 228:
+		case 229:
+		case 230:
+		case 231:
+		case 232:
+		case 233:
+		case 234:
+		case 235:
+		case 236:
+		case 237:
+		case 238:
+		case 239:
+		case 240:
+		case 241:
+		case 242:
+		case 243:
+		case 244:
+		case 245:
+		case 246:
+		case 247:
+		case 248:
+		case 249:
+		case 250:
+		case 251:
+		case 252:
+			result = 2;
+			break;
+		default:
+			result = -1;
+			break;
+		}
+	}
+	return result;
 }

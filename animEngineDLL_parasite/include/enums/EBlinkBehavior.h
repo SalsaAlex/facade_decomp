@@ -4,6 +4,9 @@
 enum EBlinkBehavior
 {
     eBlinkBehavior_unknown = 0,
+    eBlinkBehavior_blinkTwice,
+    eBlinkBehavior_blinkFlutter,
+    eBlinkBehavior_blinkFaster
 };
 
 #endif // ENUM_BLINKBEHAVIOR_H

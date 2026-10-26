@@ -78,6 +78,7 @@
     <ClCompile Include="src\AnimAPI_interface.cpp" />
     <ClCompile Include="src\classes\AblRequestBuffer.cpp" />
     <ClCompile Include="src\classes\Controller.cpp" />
+    <ClCompile Include="src\classes\GestureFxnMgr.cpp" />
     <ClCompile Include="src\classes\MP3Manager.cpp" />
     <ClCompile Include="src\classes\SoundMgr.cpp" />
     <ClCompile Include="src\classes\SoundSource.cpp" />

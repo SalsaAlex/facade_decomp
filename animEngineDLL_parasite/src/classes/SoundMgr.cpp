@@ -89,10 +89,9 @@ void SoundMgr::SetSoundPan(int sourceid, int pan, EGlobalSounds gsoundindex)
         if (sounds[i].soundsource_id == sourceid && sounds[i].globalsndindex == gsoundindex)
         {
             pan *= 20;
-            DSound_Set_Volume(sounds[i].soundindex, pan);
+            DSound_Set_Pan(sounds[i].soundindex, pan);
         }
     }
-    //undone
 }
 void SoundMgr::SetSoundVolume(int sourceid, int volume, EGlobalSounds gsoundindex)
 {
@@ -140,5 +139,4 @@ void SoundMgr::PlaySoundPart2(int sourceid)
     entry->sound_timestart = GetTickCount();
     SetSoundVolume(entry->soundsource_id, unknown01);
     SetSoundPan(entry->soundsource_id, unknown02);
-
 }

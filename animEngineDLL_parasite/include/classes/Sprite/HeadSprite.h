@@ -14,7 +14,7 @@ public:
 	float unknown007;
 	float unknown008;
 	float unknown009;
-	XYZPointf unknownxyz1;
+	XYZPointf unknownrot1;
 	float unknown[5371];
 
 private:

@@ -341,9 +341,9 @@ static void LaunchAblIfNeeded()
 }
 
 static bool IsPlayerMoving() {
-	if (*g_prevPlayerPosition == g_PlayerSprite->GetPosition())
+	if (*g_prevPlayerPosition != g_PlayerSprite->GetPosition())
 		return true;
-	if (*g_prevPlayerRotation == g_PlayerSprite->GetRotation())
+	if (*g_prevPlayerRotation != g_PlayerSprite->GetRotation())
 		return true;
 
 	return false;
@@ -360,7 +360,7 @@ static void UpdateTitleSequence()
 
 	if (g_curTextCharInput && g_introEventCtr < 9)
 	{
-		//StopAllGlobalSounds();
+		StopAllGlobalSounds();
 		_set_g_introEventCtr(9);
 		_set_g_ticksIntroStarted((int)((float)GetTickCount() - (g_startTitleFadeIn - 3.f) * 1000.f));
 		if (!g_bTitleMusicStarted)

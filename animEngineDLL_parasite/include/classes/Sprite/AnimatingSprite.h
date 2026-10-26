@@ -27,7 +27,7 @@ private:
 	XYZPointf m_originalPos;
 	XYZPointf m_originalRot;
 	SoundSource m_soundSrc;
-	int animsprite_unknown002 = -1;
+	int m_soundSourceID = -1;
 protected:
 
 };
