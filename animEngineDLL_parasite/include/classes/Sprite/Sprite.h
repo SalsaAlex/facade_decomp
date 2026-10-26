@@ -83,6 +83,7 @@ public:
 
 	Sprite();
 
+	virtual ~Sprite() = default;
 	virtual void InitSprite(ESpriteID spriteid, const char* name, bool hasmodel, bool drawable, int nummodelpoints = -1);
 	virtual void UpdateSprite();
 	virtual bool GetIsAnimatingSprite()								{ return false; };

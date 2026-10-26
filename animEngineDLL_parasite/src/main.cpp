@@ -2054,7 +2054,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x100B31A0, LaunchAblIfNeeded);
 	HookFunc((void*)0x10086CF0, IsPlayerMoving);
 	HookFunc((void*)0x100B0900, GetSecondsSinceFrame);
-	//HookFunc((void*)0x1009E800, UpdateTitleSequence);
+	HookFunc((void*)0x1009E800, UpdateTitleSequence);
 	HookFunc((void*)0x1004CBC0, AreWeDoingObjectOfferingOrTaking);
 	HookFunc((void*)0x100514C0, CheckCursorClickableOnSprite);
 	HookFunc((void*)0x10052570, IsHugComfortKissAllowed);
@@ -2066,8 +2066,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x1004FC10, UpdateCursor);
 	HookFunc((void*)0x10061C70, UpdateEnvironment);
 	//HookFunc((void*)0x1004D640, UpdateCinematography);
-	HookFunc((void*)0x1008C000, UpdateAndRenderAllSprites);
-	HookFunc((void*)0x1008BE70, UpdateAndRenderWorld);
+	//HookFunc((void*)0x1008C000, UpdateAndRenderAllSprites);
+	//HookFunc((void*)0x1008BE70, UpdateAndRenderWorld);
 	HookFunc((void*)0x10087B40, UpdateMP3Fades);
 	HookFunc((void*)0x100977B0, LoadingMessage);
 	//HookFunc((void*)0x10058E10, EditCharacterScript);
@@ -2094,6 +2094,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x100AED30, rand2);
 	HookFunc((void*)0x10009C70, rand100);
 	HookFunc((void*)0x100A3B50, PlayGlobalSound);
+	HookFunc((void*)0x100A3BF0, StopAllGlobalSounds);
 	HookFunc((void*)0x10087A50, StopAllMP3s);
 	HookFunc((void*)0x100625B0, CollisionTest);
 	HookFunc((void*)0x10062480, CollisionTestWithSprite);
@@ -2116,6 +2117,27 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x100B06E0, PointAtAngleAndDist);
 	HookFunc((void*)0x100AFD30, FrameRateAdjust);
 	HookFunc((void*)0x100A77D0, LoadTextureFilmstrip);
+	HookFunc((void*)0x1004CC80, GetArmSyncSetForScript);
+
+	//glfuncs.h
+	HookFunc((void*)0x1008BD80, SetupRC);
+	HookFunc((void*)0x1008DB60, CutToBlack);
+	HookFunc((void*)0x1008DAE0, StartFade); //amnt is 0.0-1.0
+	HookFunc((void*)0x1009DFD0, BuildBitmapFont);
+	HookFunc((void*)0x1009E130, KillPolygonalFont);
+	HookFunc((void*)0x100A9670, LoadTexture);
+	HookFunc((void*)0x100AE610, ChangeSize);
+	HookFunc((void*)0x100910F0, SetColorFromIndex);
+	//HookFunc((void*)0x1008C6A0, DrawSprite);
+	HookFunc((void*)0x1008DBA0, UpdateFade);
+	HookFunc((void*)0x1009C870, DrawPlayerScreenText);
+	HookFunc((void*)0x1009D210, DrawNPCsScreenText);
+	HookFunc((void*)0x10097670, DrawScreenMessage);
+	HookFunc((void*)0x100632B0, DrawExtraEnvironmentStuff);
+	HookFunc((void*)0x1008DDA0, DrawRedCurtain);
+	HookFunc((void*)0x1009E370, DrawArbitraryScreenText);
+	HookFunc((void*)0x100B01E0, RotateArrayOfPoints);
+	HookFunc((void*)0x10090250, RotateModel);
 
 	return 1;
 }
