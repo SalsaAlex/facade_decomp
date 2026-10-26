@@ -157,7 +157,6 @@ void Sprite::UpdateSprite()
     }
 }
 
-extern void LoadTextureFilmstrip(ETextureFilmstrip filmstrip);
 void Sprite::SetDrawMe(bool option)
 {
     m_bDrawMe = option;
