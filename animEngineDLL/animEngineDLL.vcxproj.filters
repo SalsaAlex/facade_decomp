@@ -296,5 +296,8 @@
     <ClCompile Include="src\classes\SoundSource.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
+    <ClCompile Include="src\classes\GestureFxnMgr.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

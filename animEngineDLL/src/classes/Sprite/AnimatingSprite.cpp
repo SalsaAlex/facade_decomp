@@ -29,7 +29,7 @@ void AnimatingSprite::InitAnimatingSprite(ESpriteID id, const char* name, int nu
 	m_animMgr.unknown[80933] = a6;
 	sprintf(pathbuffer, "sounds\\%s\\%ssnd.txt", name, name);
 	m_soundSrc.InitSoundSource(pathbuffer);
-	animsprite_unknown002 = g_soundMgr.AddSoundSource(&m_soundSrc);
+	m_soundSourceID = g_soundMgr.AddSoundSource(&m_soundSrc);
 }
 
 void AnimatingSprite::SetOrigRotation(XYZPointf rot)

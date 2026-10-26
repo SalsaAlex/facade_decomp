@@ -1309,7 +1309,7 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 
 	if (head)
 	{
-		RotateModel(spr, head->owner->m_pHeadSprite->unknownxyz1, spr->b1_unknown00020);
+		RotateModel(spr, head->owner->m_pHeadSprite->unknownrot1, spr->b1_unknown00020);
 	}
 	else if (spr->a1_unknown00010d)
 	{

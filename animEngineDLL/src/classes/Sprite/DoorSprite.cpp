@@ -20,9 +20,9 @@ void DoorSprite::UpdateSprite()
 {
 	Sprite::UpdateSprite();
 
-	if (b1_unknown20299.GetTarget() == 30.0
-		&& b1_unknown20299.GetVal() < 30.0
-		&& b1_unknown20299.GetVal() > 10.0)
+	if (b1_unknown20299.GetTarget() == 30
+		&& b1_unknown20299.GetVal() < 30
+		&& b1_unknown20299.GetVal() > 10)
 	{
 		UpdateFrontDoorCollisionZone(false);
 		if (!this->unknown003)
