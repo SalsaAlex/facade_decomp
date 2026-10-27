@@ -1257,16 +1257,16 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 		if (head->owner->m_renderPoints1[head->owner->unknown008].m_z < spritesubjpos.m_z)
 			spritesubjpos.m_z = head->owner->m_renderPoints1[head->owner->unknown008].m_z - 0.2;
 
-		f1 *= head->unknown[8];
+		f1 *= head->unknown010[8];
 
-		head->unknown[9] = head->GetAttachPosition().m_z;
-		if (head->owner->m_renderPoints1[head->owner->unknown007].m_z > head->unknown[9])
-			head->unknown[9] = head->owner->m_renderPoints1[head->owner->unknown007].m_z;
+		head->unknown010[9] = head->GetAttachPosition().m_z;
+		if (head->owner->m_renderPoints1[head->owner->unknown007].m_z > head->unknown010[9])
+			head->unknown010[9] = head->owner->m_renderPoints1[head->owner->unknown007].m_z;
 
-		if (head->owner->m_renderPoints1[head->owner->unknown008].m_z > head->unknown[9])
-			head->unknown[9] = head->owner->m_renderPoints1[head->owner->unknown008].m_z + 0.2;
+		if (head->owner->m_renderPoints1[head->owner->unknown008].m_z > head->unknown010[9])
+			head->unknown010[9] = head->owner->m_renderPoints1[head->owner->unknown008].m_z + 0.2;
 
-		head->unknown[12] = spritesubjpos.m_z;
+		head->unknown010[12] = spritesubjpos.m_z;
 	}
 
 	if (spr->a1_unknown00010d)
