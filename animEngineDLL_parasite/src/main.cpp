@@ -984,7 +984,7 @@ static void UpdateCursor()
 					if (!sprlist[0]->GetAmIStillGrabDropAnimating()
 						&& sprlist[0]->m_eObjectType == eObjectType_Drink)
 					{
-						if (sprlist[0]->c1_unknown00001 > 0 && !((DrinkSprite*)sprlist[0])->IsSipping())
+						if (sprlist[0]->m_iDrinkLevel > 0 && !((DrinkSprite*)sprlist[0])->IsSipping())
 						{
 							//v60 = 1; //unused
 							nextcursorcontext = eCursorContext_sip;

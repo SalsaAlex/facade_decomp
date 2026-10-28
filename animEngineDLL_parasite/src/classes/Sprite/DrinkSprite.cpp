@@ -22,7 +22,7 @@ DrinkSprite::DrinkSprite()
 }
 void DrinkSprite::InitDrinkSprite()
 {
-	unknown = 0;
+	m_iPlayerSipAmnt = 0;
 }
 
 
@@ -39,24 +39,24 @@ void DrinkSprite::SetDrinkType(EDrink type)
     case eDrink_whiteWine:
         SetDrinkFilmstrip(eTextureFilmstrip_WineWhite);
         ChangeScarecrowPanelSize(m_iPanelIndex, 14, 14);
-        a1_unknown00007 = 14 - 12;
+        m_fYGrabOffset = 14 - 12;
         break;
     case eDrink_merlot:
     case eDrink_firstFancyDrink:
     case eDrink_cabernet:
         SetDrinkFilmstrip(eTextureFilmstrip_WineRed);
         ChangeScarecrowPanelSize(m_iPanelIndex, 14, 14);
-        a1_unknown00007 = 14 - 12;
+        m_fYGrabOffset = 14 - 12;
         break;
     case eDrink_lightBeer:
         SetDrinkFilmstrip(eTextureFilmstrip_Beerlight);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_darkBeer:
         SetDrinkFilmstrip(eTextureFilmstrip_BeerDark);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_orangeJuice:
     case eDrink_appleJuice:
@@ -64,50 +64,59 @@ void DrinkSprite::SetDrinkType(EDrink type)
     case eDrink_cranberryJuice:
         SetDrinkFilmstrip(eTextureFilmstrip_Juice);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_sparklingWater:
     case eDrink_clearSoda:
     case eDrink_plainWater:
         SetDrinkFilmstrip(eTextureFilmstrip_Water);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_colaSoda:
         SetDrinkFilmstrip(eTextureFilmstrip_Cola);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_margarita:
     case eDrink_scotch:
     case eDrink_brownLiquor:
         SetDrinkFilmstrip(eTextureFilmstrip_LiquorScotch);
         ChangeScarecrowPanelSize(m_iPanelIndex, 10, 10);
-        a1_unknown00007 = 2;
+        m_fYGrabOffset = 2;
         break;
     case eDrink_martiniCosmo:
         SetDrinkFilmstrip(eTextureFilmstrip_MartiniCosmo);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
     case eDrink_clearLiquor:
         SetDrinkFilmstrip(eTextureFilmstrip_LiquorClear);
         ChangeScarecrowPanelSize(m_iPanelIndex, 10, 10);
-        a1_unknown00007 = 2;
+        m_fYGrabOffset = 2;
         break;
     default:
         SetDrinkFilmstrip(eTextureFilmstrip_MartiniClassic);
         ChangeScarecrowPanelSize(m_iPanelIndex, 12, 12);
-        a1_unknown00007 = 12 - 12;
+        m_fYGrabOffset = 12 - 12;
         break;
 	}
 }
 
 void DrinkSprite::PlayerSipDrink()
 {
-    unknown = 30;
+    m_iPlayerSipAmnt = 30;
     AddEventInfoToLog(eEventLogType_DoInteraction,
         eSpriteID_player,
+        nullptr, false,
+        g_spriteMgr->GetSpriteIDBySpritePtr(this),
+        0);
+}
+void DrinkSprite::ChrSipDrink(Sprite* spr)
+{
+    --m_iDrinkLevel;
+    AddEventInfoToLog(eEventLogType_DoInteraction,
+        g_spriteMgr->GetSpriteIDBySpritePtr(spr),
         nullptr, false,
         g_spriteMgr->GetSpriteIDBySpritePtr(this),
         0);
@@ -115,5 +124,5 @@ void DrinkSprite::PlayerSipDrink()
 
 bool DrinkSprite::IsSipping()
 {
-    return unknown > 0;
+    return m_iPlayerSipAmnt > 0;
 }

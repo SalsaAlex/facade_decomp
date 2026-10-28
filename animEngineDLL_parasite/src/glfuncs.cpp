@@ -1056,7 +1056,7 @@ void DrawScreenMessage()
 static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) {
 	if (option && !spr->m_bGettingGrabbed && !spr->m_bGettingDropped)
 	{
-		pos.m_y += spr->a1_unknown00007;
+		pos.m_y += spr->m_fYGrabOffset;
 	}
 	else
 	{
@@ -1067,7 +1067,7 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 		if (option && spr->m_bGettingGrabbed && spr->m_GrabDropAnimFactor >= MATH_PI)
 		{
 			spr->m_bGettingGrabbed = false;
-			pos.m_y += spr->a1_unknown00007;
+			pos.m_y += spr->m_fYGrabOffset;
 		}
 		else if (option && (!spr->m_bGettingDropped || spr->m_GrabDropAnimFactor > 0.0))
 		{
@@ -1089,7 +1089,7 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 			float v6 = sin(spr->m_GrabDropAnimFactor);
 			animengine_assert(v6 >= 0.0 && v6 <= 1.0);
 
-			pos.m_y += v5 * spr->a1_unknown00007;
+			pos.m_y += v5 * spr->m_fYGrabOffset;
 			XYZPointf target;
 			target.m_x = (pos.m_x - spr->m_targetPos.m_x) * v5 + spr->m_targetPos.m_x;
 			target.m_y = (pos.m_y - spr->m_targetPos.m_y) * v5 + spr->m_targetPos.m_y + v6 * 8.0;
@@ -1104,13 +1104,13 @@ static XYZPointf GetCursorGrabPosition(XYZPointf pos, Sprite* spr, bool option) 
 				{
 					spr->SetTextureFrameAnimation(0, 0, 1, false);
 					if (spr->m_eID == eSpriteID_phone)
-						spr->a1_unknown00007 = 0.0;
+						spr->m_fYGrabOffset = 0.0;
 				}
 				else if (v5 > 0.5 && spr->m_iSpriteFrame != 1)
 				{
 					spr->SetTextureFrameAnimation(1, 1, 1, false);
 					if (spr->m_eID == eSpriteID_phone)
-						spr->a1_unknown00007 = 5.0;
+						spr->m_fYGrabOffset = 5.0;
 				}
 			}
 			pos = target;
@@ -1829,7 +1829,7 @@ void DrawSprite(Sprite* spr, bool option)
 			}
 		}
 
-		spr->b1_unknown01430[indice] = unknown001;
+		spr->pointRadius[indice] = unknown001;
 
 		unknown001 *= spr->GetScale();
 
@@ -1961,27 +1961,27 @@ static bool UpdateScreenText(Sprite* spr)
 	if (screentxtlen <= 0)
 		return false;
 
-	int diff = spr->b1_unknown20516 - spr->b1_unknown20515;
+	int diff = spr->m_screenTextInfo_2 - spr->m_screenTextInfo_1;
 	float v7 = 0;
-	if (spr->b1_unknown20516 != screentxtlen || textcheck(spr->m_ScreenText))
+	if (spr->m_screenTextInfo_2 != screentxtlen || textcheck(spr->m_ScreenText))
 		v7 = 1.0 * 0.75;
 	else
 		v7 = 60.0 / diff;
-	if (spr->b1_unknown20517 + diff * v7 < g_numFramesRun
-		|| spr->b1_unknown20516 == 0)
+	if (spr->m_screenTextInfo_3 + diff * v7 < g_numFramesRun
+		|| spr->m_screenTextInfo_2 == 0)
 	{
-		if (spr->b1_unknown20515 == screentxtlen)
+		if (spr->m_screenTextInfo_1 == screentxtlen)
 		{
 			spr->m_ScreenText[0] = '\0';
 			spr->m_playerTextOnScreen[0] = '\0';
 			return false;
 		}
-		spr->b1_unknown20515 = spr->b1_unknown20516;
-		for (int i = spr->b1_unknown20516; i < screentxtlen && !spr->m_ScreenText[spr->b1_unknown20516]; ++i)
-			++spr->b1_unknown20516;
+		spr->m_screenTextInfo_1 = spr->m_screenTextInfo_2;
+		for (int i = spr->m_screenTextInfo_2; i < screentxtlen && !spr->m_ScreenText[spr->m_screenTextInfo_2]; ++i)
+			++spr->m_screenTextInfo_2;
 		strcpy(spr->m_playerTextOnScreen, spr->m_ScreenText);
-		spr->m_playerTextOnScreen[spr->b1_unknown20516] = 0;
-		spr->b1_unknown20517 = g_numFramesRun;
+		spr->m_playerTextOnScreen[spr->m_screenTextInfo_2] = 0;
+		spr->m_screenTextInfo_3 = g_numFramesRun;
 	}
 	return true;
 }
