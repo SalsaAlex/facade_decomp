@@ -60,12 +60,12 @@ int __declspec(dllexport) AnimEngineWinMain(HINSTANCE p1, HINSTANCE p2, char* p3
 	classinfo.hCursor = LoadCursorA(0, IDC_ARROW);
 	classinfo.hbrBackground = NULL;
 	classinfo.lpszMenuName = NULL;
-	classinfo.lpszClassName = "Façade";
+	classinfo.lpszClassName = "FaÃ§ade";
 	if (!RegisterClass(&classinfo))
 		return NULL;
 
 	const int winflags = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME;
-	_set_g_hMainAppWindow(CreateWindowEx(NULL, "Façade", "Façade", winflags, NULL, NULL, 1024, 768, NULL, NULL, p1, NULL));
+	_set_g_hMainAppWindow(CreateWindowEx(NULL, "FaÃ§ade", "FaÃ§ade", winflags, NULL, NULL, 1024, 768, NULL, NULL, p1, NULL));
 	if (!g_hMainAppWindow)
 		return NULL;
 
