@@ -1,0 +1,43 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "facade_decomp_x86dbg",
+            "displayName": "facade_decomp_x86dbg",
+            "description": "Using compilers for Visual Studio 17 2022 (x64_x86 architecture)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out_cmake/dbg/",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out_cmake/dbg/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
+            "name": "facade_decomp_x86rel",
+            "displayName": "facade_decomp_x86rel",
+            "description": "Using compilers for Visual Studio 17 2022 (x64_x86 architecture)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out_cmake/rel/",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out_cmake/rel/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "facade_decomp_x86dbg",
+            "displayName": "facade_decomp_x86dbg",
+            "configurePreset": "facade_decomp_x86dbg",
+            "configuration": "Debug"
+        },
+        {
+            "name": "facade_decomp_x86rel",
+            "displayName": "facade_decomp_x86rel",
+            "configurePreset": "facade_decomp_x86rel",
+            "configuration": "Release"
+        }
+    ]
+}
