@@ -20,9 +20,9 @@ public:
 
 
 private:
-	int unknown001 = 0;
-	bool unknown002 = false;
-	bool unknown003 = false;
+	int m_iTimeKnocked = 0;
+	bool m_bOpening = false;
+	bool m_bClosing = false;
 
 protected:
 

@@ -58,16 +58,22 @@ void Sprite::InitSprite(ESpriteID spriteid,
         if (m_iNumModelPoints > MDL_MAXPOINTS)
             ShouldntBeHere("ERROR: Too many model points in sprite!");
         int j, k, m, n, ii, jj;
-        for (j = 0; m_modelquadlines && m_modelquadlines[j].unknown001[0] != DATA_NULLVAL; ++j)
+        for (j = 0; m_modelquadlines && m_modelquadlines[j].mdlinfoindex[0] != DATA_NULLVAL; ++j)
         {
             if (j >= 1175)
-                goto LABEL_41;
+            {
+                animengine_assert(0);
+                return;
+            }
         }
         m_iNumQuadLines = j;
         for (k = 0; m_modelquadpoly && m_modelquadpoly[k].mdlinfoindex[0] != DATA_NULLVAL; ++k)
         {
             if (k >= 1175)
-                goto LABEL_41;
+            {
+                animengine_assert(0);
+                return;
+            }
         }
         m_iNumQuadPolys = k;
         //for (m = 0; m_characterarms && m_characterarms[m] != DATA_NULLVAL; ++m)
@@ -92,7 +98,7 @@ void Sprite::InitSprite(ESpriteID spriteid,
         //        goto LABEL_41;
         //}
         //m_iNumOutlineConnectors = jj;
-        b1_unknown20299.InitController(&m_Rot.m_y, -1000, 1000, false);
+        m_yawController.InitController(&m_Rot.m_y, -1000, 1000, false);
         switch (m_eObjectType)
         {
         case eObjectType_Door:
@@ -118,24 +124,24 @@ void Sprite::InitSprite(ESpriteID spriteid,
 
 void Sprite::UpdateSprite()
 {
-    if (g_numFramesRun > 1) b1_unknown20299.UpdateController();
+    if (g_numFramesRun > 1) m_yawController.UpdateController();
 
-    if ((m_iSpriteFrame != b1_unknown20295 || b1_unknown20298)
-        && --b1_unknown20297 <= 0)
+    if ((m_iSpriteFrame != m_iFrameAnimInfo_2 || m_iFrameAnimInfo_5)
+        && --m_iFrameAnimInfo_4 <= 0)
     {
-        if (m_iSpriteFrame == b1_unknown20295)
+        if (m_iSpriteFrame == m_iFrameAnimInfo_2)
         {
-            animengine_assert(b1_unknown20298 != 0);
-            m_iSpriteFrame = b1_unknown20294;
+            animengine_assert(m_iFrameAnimInfo_5 != 0);
+            m_iSpriteFrame = m_iFrameAnimInfo_1;
         }
         else
         {
-            if (m_iSpriteFrame >= b1_unknown20295)
+            if (m_iSpriteFrame >= m_iFrameAnimInfo_2)
                 m_iSpriteFrame--;
             else
                 m_iSpriteFrame++;
         }
-        b1_unknown20297 = b1_unknown20296;
+        m_iFrameAnimInfo_4 = m_iFrameAnimInfo_3;
     }
 
     if (GetClickedThisFrame())
@@ -160,7 +166,7 @@ void Sprite::UpdateSprite()
 void Sprite::SetDrawMe(bool option)
 {
     m_bDrawMe = option;
-    if (m_bDrawMe &&  a1_unknown00008)
+    if (m_bDrawMe &&  m_bDrawOption_1)
     {
         ETextureFilmstrip strip = GetPanelSpriteTextureFilmstrip();
         if (strip != eTextureFilmstrip_NOTATEXTURE)
@@ -237,10 +243,7 @@ XYZPointf Sprite::GetModelPointPosition(int mdlpointindex)
 
     return mdlpointpos;
 }
-ETextureFilmstrip Sprite::GetPanelSpriteTextureFilmstrip()
-{
-    return m_modelquadpoly[0].m_eFilmstrip;
-}
+
 void Sprite::SetPanelSpriteTextureFilmstrip(ETextureFilmstrip filmstrip)
 {
     animengine_assert(filmstrip < eTextureFilmstrip_Max);
@@ -249,11 +252,11 @@ void Sprite::SetPanelSpriteTextureFilmstrip(ETextureFilmstrip filmstrip)
 void Sprite::SetTextureFrameAnimation(int a1, int a2, int a3, bool a4)
 {
     m_iSpriteFrame = a1;
-    b1_unknown20294 = a1;
-    b1_unknown20295 = a2;
-    b1_unknown20296 = a3;
-    b1_unknown20297 = a3;
-    b1_unknown20298 = a4;
+    m_iFrameAnimInfo_1 = a1;
+    m_iFrameAnimInfo_2 = a2;
+    m_iFrameAnimInfo_3 = a3;
+    m_iFrameAnimInfo_4 = a3;
+    m_iFrameAnimInfo_5 = a4;
 }
 void Sprite::SetScreenText(char* text, bool option)
 {
@@ -265,15 +268,15 @@ void Sprite::SetScreenText(char* text, bool option)
     if (option)
     {
         strcpy(m_ScreenText, text);
-        b1_unknown20515 = 0;
-        b1_unknown20516 = 0;
+        m_screenTextInfo_1 = 0;
+        m_screenTextInfo_2 = 0;
     }
     else
     {
         strcat(m_ScreenText, " ");
         strcat(m_ScreenText, text);
     }
-    b1_unknown20517 = 0;
+    m_screenTextInfo_3 = 0;
 }
 
 bool Sprite::GetAmIHoldingSprite(Sprite* spr)
@@ -285,10 +288,7 @@ bool Sprite::GetAmIHoldingSprite(Sprite* spr)
     }
     return false;
 }
-Sprite** Sprite::GetHeldSpritesList()
-{
-    return m_pSpritesBeingHeld;
-}
+
 int Sprite::GetNumHeldSprites()
 {
     int count;
@@ -427,10 +427,7 @@ void Sprite::DropAllSprites()
         m_pSpritesBeingHeld[i] = nullptr;
     }
 }
-Sprite* Sprite::GetSpriteHoldingMe()
-{
-    return m_pSpriteHoldingMe;
-}
+
 void Sprite::SetSpriteHoldingMe(Sprite* sprite)
 {
     if (sprite == this)
@@ -445,15 +442,7 @@ void Sprite::SetSpriteHoldingMe(Sprite* sprite)
 
     m_pSpriteHoldingMe = sprite;
 }
-bool Sprite::GetAmIStillGrabDropAnimating()
-{
-    return m_bGettingGrabbed || m_bGettingDropped;
-}
 
-XYZPointf* Sprite::Get2DBoundingBox()
-{
-    return m_2dbboxpoints;
-}
 void Sprite::Set2DBoundingBox(float xmin, float ymin, float xmax, float ymax, float z)
 {
     m_2dbboxpoints[0] = XYZPointf(xmin, ymin, z);
@@ -470,25 +459,19 @@ void Sprite::AddSurface(int i1, int i2, int i3, int i4, ESurfacePickupAngle surf
         return;
     }
 
-    m_surfaces[m_iNumSurfaces].unknown001[0] = i1;
-    m_surfaces[m_iNumSurfaces].unknown001[1] = i2;
-    m_surfaces[m_iNumSurfaces].unknown001[2] = i3;
-    m_surfaces[m_iNumSurfaces].unknown001[3] = i4;
-    m_surfaces[m_iNumSurfaces].pickupangle = surfpickangle;
-    m_surfaces[m_iNumSurfaces].numsprites = 0;
+    spritesurface_t* surf = &m_surfaces[m_iNumSurfaces];
+
+    surf->unknown001[0] = i1;
+    surf->unknown001[1] = i2;
+    surf->unknown001[2] = i3;
+    surf->unknown001[3] = i4;
+    surf->pickupangle = surfpickangle;
+    surf->numsprites = 0;
     for (int i = 0; i < 5; ++i)
-        m_surfaces[m_iNumSurfaces].sprites[i] = 0;
+        surf->sprites[i] = 0;
     ++m_iNumSurfaces;
 }
 
-spritesurface_t* Sprite::GetSurfaceListPtr()
-{
-    return m_surfaces;
-}
-int Sprite::GetNumSurfaces()
-{
-    return m_iNumSurfaces;
-}
 void Sprite::AddSpriteToSurface(int surfindex, Sprite* spr)
 {
     animengine_assert(spr != 0);
@@ -499,15 +482,17 @@ void Sprite::AddSpriteToSurface(int surfindex, Sprite* spr)
         return;
     }
 
-    if (m_surfaces[surfindex].numsprites >= 5)
+    spritesurface_t* surf = &m_surfaces[surfindex];
+
+    if (surf->numsprites >= 5)
     {
         ShouldntBeHere("Surface is full, cannot add sprite to surface");
         return;
     }
 
-    for (int i = 0; i < m_surfaces[surfindex].numsprites; ++i)
+    for (int i = 0; i < surf->numsprites; ++i)
     {
-        if (m_surfaces[surfindex].sprites[i] == spr)
+        if (surf->sprites[i] == spr)
         {
             ShouldntBeHere("sprite is already on surface");
             return;
@@ -515,10 +500,10 @@ void Sprite::AddSpriteToSurface(int surfindex, Sprite* spr)
     }
 
     XZRectf surfrect;
-    surfrect.m_xmin = m_surfaces[surfindex].points1[0].m_x;
-    surfrect.m_zmin = m_surfaces[surfindex].points1[0].m_z;
-    surfrect.m_xmax = m_surfaces[surfindex].points1[2].m_x;
-    surfrect.m_zmax = m_surfaces[surfindex].points1[2].m_z;
+    surfrect.m_xmin = surf->points1[0].m_x;
+    surfrect.m_zmin = surf->points1[0].m_z;
+    surfrect.m_xmax = surf->points1[2].m_x;
+    surfrect.m_zmax = surf->points1[2].m_z;
 
     XZRectf sprrect;
     sprrect.m_xmax = spr->GetPosition().m_x;
@@ -526,10 +511,9 @@ void Sprite::AddSpriteToSurface(int surfindex, Sprite* spr)
     sprrect.m_zmax = spr->GetPosition().m_z;
     sprrect.m_zmin = surfrect.m_zmax;
 
-    float v1 = m_surfaces[surfindex].points1[0].m_y - spr->GetPosition().m_y;
     bool rectsintersect = DoXZRectsIntersect(surfrect, sprrect);
 
-    if (!rectsintersect || fabs(v1) > 50)
+    if (!rectsintersect || fabs(surf->points1[0].m_y - spr->GetPosition().m_y) > 50)
         dprintf("WARNING: %s to surface is not near surface", spr->GetName());
 
     m_surfaces[surfindex].sprites[m_surfaces[surfindex].numsprites++] = spr;

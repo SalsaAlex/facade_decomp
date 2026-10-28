@@ -238,8 +238,8 @@ void PerformSetObjectRotation(ESpriteID spriteid, float x, float y, float z)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_OBJECT);
 	Sprite* spr = g_spriteMgr.GetSpritePtrByID(spriteid);
-	if (spr->b1_unknown20299.GetIsMoving())
-		spr->b1_unknown20299.StopMoving();
+	if (spr->m_yawController.GetIsMoving())
+		spr->m_yawController.StopMoving();
 	spr->SetRotation(XYZPointf(x, y, z));
 }
 
@@ -307,7 +307,7 @@ void PerformGetAllObjectStates(ObjStateSensePacket* statesensepacket)
 	{
 		Sprite* spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
 		statesensepacket[i].objectID = (ESpriteID)i;
-		statesensepacket[i].state = spr->c1_unknown00001;
+		statesensepacket[i].state = spr->m_iDrinkLevel;
 	}
 }
 void PerformGetAllObjectStagingRotations(ObjSensePacket* sensepacket)

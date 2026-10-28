@@ -131,6 +131,7 @@ Controller g_PlayerRotController;
 
 Controller g_autoTurnController;
 float g_autoTurnAmount;
+float g_prevAutoTurnValue;
 
 
 
@@ -757,8 +758,6 @@ static void UpdateCursor()
 {
 	static int g_lastObjCursorNotice = -99999;
 
-	//undone
-
 	bool spriteinteractedwith = false;
 	bool canknock = false;
 
@@ -781,7 +780,23 @@ static void UpdateCursor()
 	if (g_CursorSprite->GetNumHeldSprites() > 0
 		&& g_numFramesRun > g_lastObjCursorNotice + 210)
 	{
-		//undone
+		XYZPointf gracepos = g_GraceSprite->GetPosition();
+		XYZPointf trippos = g_TripSprite->GetPosition();
+
+		bool ingraceface = IsPointVisibleToPlayer(gracepos, false) && player_grace_dist < 200 && IsCursorOverFace(g_GraceSprite, true);
+		bool intripface = IsPointVisibleToPlayer(trippos, false) && player_trip_dist < 200 && IsCursorOverFace(g_TripSprite, true);
+		
+		if (ingraceface || intripface)
+		{
+			Sprite* held = g_CursorSprite->GetHeldSpritesList()[0];
+			if (held->m_eObjectType != eObjectType_Drink || held->m_iDrinkLevel <= 0)
+			{
+				dprintf("%s held in character's face\n", held->m_name);
+				g_lastObjCursorNotice = g_numFramesRun;
+				held->b1_unknown20584 = 4;
+				held->m_pInteractor = g_PlayerSprite;
+			}
+		}
 	}
 
 	float cursorxpos = ((g_mousePosition[0] - g_windowWidth / 2) / 5.f);
@@ -1080,7 +1095,7 @@ static void UpdateCursor()
 					if (!sprlist[0]->GetAmIStillGrabDropAnimating()
 						&& sprlist[0]->m_eObjectType == eObjectType_Drink)
 					{
-						if (sprlist[0]->c1_unknown00001 > 0 && !((DrinkSprite*)sprlist[0])->IsSipping())
+						if (sprlist[0]->m_iDrinkLevel > 0 && !((DrinkSprite*)sprlist[0])->IsSipping())
 						{
 							//v60 = 1; //unused
 							nextcursorcontext = eCursorContext_sip;
@@ -1184,7 +1199,12 @@ static void UpdateCinematography()
 
 	if (g_autoTurnController.GetIsMoving())
 	{
-		//undone
+		float Val = g_autoTurnController.GetVal();
+		XYZPointf playerrot = g_PlayerSprite->GetRotation();
+		playerrot.m_y += (Val - g_prevAutoTurnValue);
+		g_PlayerSprite->SetRotation(playerrot);
+		g_prevAutoTurnValue = Val;
+		g_frameWhenLastCinematographyMove = g_numFramesRun;
 	}
 	else if (g_bRequestAutoFraming && !IsPlayerMoving()
 		|| GetSecondsSinceFrame(g_frameWhenLastCinematographyMove) >= 5
@@ -1193,6 +1213,7 @@ static void UpdateCinematography()
 	{
 		//undone
 	}
+
 	g_bRequestAutoFraming = false;
 }
 
@@ -1899,6 +1920,11 @@ static HPALETTE CreateWinGLPalette(HDC devicecontext)
 
 }
 
+static void ErrorMessage(const char* msg) {
+	dprintf("Error: %s", msg);
+	MessageBox(g_hMainAppWindow, msg, "Error Message", 0x50030u);
+}
+
 //UNDONE
 LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -2081,16 +2107,16 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		break;
 	case WM_DESTROY:
 		dprintf("\n### AnimEngine cleaning up\n");
-		//StopAllMP3s();
-		//if (g_bAblDisconnect)
-		//	ErrorMessage(
-		//		"We're sorry, Facade is having trouble running, possibly because other applications are running, or some ot"
-		//		"her factor limiting the CPU available.\n"
-		//		"\n"
-		//		"Please try running Facade again, after closing other applications or restarting.\n"
-		//		"\n"
-		//		"Also visit www.interactivestory.net for bug fixes and patches."
-		//	);
+		StopAllMP3s();
+		if (g_bAblDisconnect)
+			ErrorMessage(
+				"We're sorry, Facade is having trouble running, possibly because other applications are running, or some ot"
+				"her factor limiting the CPU available.\n"
+				"\n"
+				"Please try running Facade again, after closing other applications or restarting.\n"
+				"\n"
+				"Also visit www.interactivestory.net for bug fixes and patches."
+			);
 
 		OutputEventLog(true);
 		dprintf("Deallocating globals");

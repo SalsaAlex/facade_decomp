@@ -9,9 +9,9 @@ DoorSprite::DoorSprite()
 }
 void DoorSprite::InitDoorSprite()
 {
-	unknown001 = 0;
-	unknown002 = false;
-	unknown003 = false;
+	m_iTimeKnocked = 0;
+	m_bOpening = false;
+	m_bClosing = false;
 }
 
 extern void UpdateFrontDoorCollisionZone(bool dooropen);
@@ -20,14 +20,14 @@ void DoorSprite::UpdateSprite()
 {
 	Sprite::UpdateSprite();
 
-	if (b1_unknown20299.GetTarget() == 30
-		&& b1_unknown20299.GetVal() < 30
-		&& b1_unknown20299.GetVal() > 10)
+	if (m_yawController.GetTarget() == 30
+		&& m_yawController.GetVal() < 30
+		&& m_yawController.GetVal() > 10)
 	{
 		UpdateFrontDoorCollisionZone(false);
-		if (!this->unknown003)
+		if (!m_bClosing)
 		{
-			this->unknown003 = true;
+			m_bClosing = true;
 			PlayGlobalSound((EGlobalSounds)(rand2(0, 1) + eGlobalSound_closedoor1));
 		}
 	}
@@ -39,7 +39,7 @@ void DoorSprite::UpdateSprite()
 		if (IsKnockPossible())
 		{
 			PlayGlobalSound((EGlobalSounds)rand2(eGlobalSound_doorknock1, eGlobalSound_doorknock3));
-			this->unknown001 = g_numFramesRun;
+			m_iTimeKnocked = g_numFramesRun;
 			AddEventInfoToLog(eEventLogType_DoInteraction, eSpriteID_player, nullptr, false, g_spriteMgr.GetSpriteIDBySpritePtr(this), 0);
 		}
 		else if (!IsKnockOccurring())
@@ -59,10 +59,10 @@ void DoorSprite::UpdateSprite()
 
 void DoorSprite::OpenDoor(Sprite* actor, float speed)
 {
-	b1_unknown20299.SetTargetByRate(-65, speed, eControllerType_unknown02, -DATA_NULLVAL);
+	m_yawController.SetTargetByRate(-65, speed, eControllerType_unknown02, -DATA_NULLVAL);
 	PlayGlobalSound((EGlobalSounds)((int)eGlobalSound_opendoor1 + rand2(0, 1)));
 	UpdateFrontDoorCollisionZone(true);
-	unknown002 = true;
+	m_bOpening = true;
 	AddEventInfoToLog(eEventLogType_EnterInteraction,
 		g_spriteMgr.GetSpriteIDBySpritePtr(actor),
 		nullptr, false,
@@ -71,8 +71,8 @@ void DoorSprite::OpenDoor(Sprite* actor, float speed)
 }
 void DoorSprite::CloseDoor(Sprite* actor, float speed)
 {
-	b1_unknown20299.SetTargetByRate(30, speed, eControllerType_unknown02, -DATA_NULLVAL);
-	unknown003 = false;
+	m_yawController.SetTargetByRate(30, speed, eControllerType_unknown02, -DATA_NULLVAL);
+	m_bClosing = false;
 	AddEventInfoToLog(eEventLogType_StopInteraction,
 		g_spriteMgr.GetSpriteIDBySpritePtr(actor),
 		nullptr, false,
@@ -82,7 +82,7 @@ void DoorSprite::CloseDoor(Sprite* actor, float speed)
 
 bool DoorSprite::IsKnockOccurring()
 {
-	return g_numFramesRun < unknown001 + 60;
+	return g_numFramesRun < m_iTimeKnocked + 60;
 }
 bool DoorSprite::IsKnockPossible()
 {

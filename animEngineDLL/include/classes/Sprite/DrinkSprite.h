@@ -14,11 +14,12 @@ public:
 	void SetDrinkType(EDrink type);
 
 	void PlayerSipDrink();
+	void ChrSipDrink(Sprite* sipper);
 
 	bool IsSipping();
 
 private:
-	int unknown;
+	int m_iPlayerSipAmnt;
 
 protected:
 
