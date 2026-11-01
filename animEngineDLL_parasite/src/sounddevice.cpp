@@ -169,13 +169,13 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 	s_soundbufferdesc.dwFlags = soundflags | (DSBCAPS_LOCSOFTWARE | DSBCAPS_STATIC | DSBCAPS_GLOBALFOCUS);
 	s_soundbufferdesc.dwBufferBytes = mminfo2.cksize;
 	s_soundbufferdesc.lpwfxFormat = &s_waveformatdesc;
-	if (0 > g_ppDS->CreateSoundBuffer(&s_soundbufferdesc, &g_SoundBuffers[soundindex].dsoundbuffer, NULL))
+	if (0 < g_ppDS->CreateSoundBuffer(&s_soundbufferdesc, &g_SoundBuffers[soundindex].dsoundbuffer, NULL))
 	{
 		free(rawdata);
 		return -1;
 	}
 
-	if (S_OK != g_SoundBuffers[soundindex].dsoundbuffer->Lock(
+	if (0 < g_SoundBuffers[soundindex].dsoundbuffer->Lock(
 		0,
 		mminfo2.cksize,
 		&dsoundmemorymap1,
@@ -190,7 +190,7 @@ int DSound_Load_WAV(const char* filename, uint32_t soundflags)
 	memcpy(dsoundmemorymap1, rawdata, lockedsize1);
 	memcpy(dsoundmemorymap2, &rawdata[lockedsize1], lockedsize2);
 
-	if (0 > g_SoundBuffers[soundindex].dsoundbuffer->Unlock(
+	if (0 < g_SoundBuffers[soundindex].dsoundbuffer->Unlock(
 		&dsoundmemorymap1,
 		lockedsize1,
 		dsoundmemorymap2,
