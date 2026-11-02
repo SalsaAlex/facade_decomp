@@ -15,8 +15,8 @@ void PerformSetMouthShape(ESpriteID spriteid, int mouthshape);
 
 void PerformGetEyelidHeightR(ESpriteID spriteid, float& height);
 void PerformGetEyelidHeightL(ESpriteID spriteid, float& height);
-void PerformSetEyelidHeightR(ESpriteID spriteid, float height);
-void PerformSetEyelidHeightL(ESpriteID spriteid, float height);
+void PerformSetEyelidHeightR(ESpriteID spriteid, float height, float unused);
+void PerformSetEyelidHeightL(ESpriteID spriteid, float height, float unused);
 
 void PerformGetBrowShapeR(ESpriteID spriteid, int& browshape);
 void PerformGetBrowShapeL(ESpriteID spriteid, int& browshape);
@@ -49,9 +49,9 @@ void PerformGetArmGestureBases(ESpriteID actor, int& i1out, int& i2out, int& i3o
 
 void PerformGetEyesMove(ESpriteID spriteid, float& x, float& y);
 
-void PerformGetObjectPickupPosition(ESpriteID holder, ESpriteID object, float& x, float& y, float& z);
+void PerformGetObjectPickupPosition(ESpriteID obj, ESpriteID holder, float& x, float& y, float& z);
 
-void PerformSetPerformanceInfo(ESpriteID spriteid, void* perfinfo);
+void PerformSetPerformanceInfo(ESpriteID spriteid, perfinfo_animapi_input* perfinfo);
 void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info);
 
 void PerformPushMultipleAnimationScripts(ESpriteID actor, int script1Index, int script2Index, int script3Index, int script4Index, EAnimLayer layer);
@@ -72,7 +72,7 @@ void PerformDoPickupObjGestureAnimation(ESpriteID spriteid, EGestureBodyPart bod
 void PerformDoFullExpressionBaseAnimation(ESpriteID actor, EFullExpressionMood mood, EFullExpressionBase base, ESpriteID obj1, ESpriteID obj2);
 void PerformDoPutdownObjGestureAnimation(ESpriteID spriteid, int i1, int i2, int i3, int i4, float x, float y, float z, int i6);
 
-void PerformMiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, int i1, int i2);
+void PerformMiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, int i1, float f1);
 
 void PerformGetMyCopyOfAllAnimCues(int animcueindex, AnimCueSensePacket* animcuepacket);
 void PerformGetMyCopyOfAllObjectActivations(int index, ObjectActivationSensePacket* objectactivationpacket);

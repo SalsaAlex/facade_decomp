@@ -293,10 +293,10 @@ void CharacterSprite::SetBlinkBehavior(EBlinkBehavior behavior, bool b1)
 void CharacterSprite::SetEyesMove(float f1, float f2)
 {
 	float target = 0.02;
-	if (unknown067_1161 == 2)
+	if (m_eCurrentGazeSpeed == 2)
 		target = 0.04;
 
-	if (!unknown067_1161)
+	if (!m_eCurrentGazeSpeed)
 		target = 0.01;
 
 	if (m_Controller5.GetIsMoving())
@@ -319,11 +319,25 @@ void CharacterSprite::SetEyesToLookAtPlayer()
 	XYZPointf xydelta = GetEyeXYDeltaForLookAtUser(m_pHeadSprite->unknownrot1.m_y - 180.0, m_pHeadSprite->unknownrot1.m_x);
 	SetEyesMove((xydelta.m_x + 50.0) / 100.0, (xydelta.m_y + 50.0) / 100.0);
 }
-void CharacterSprite::SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float i2)
+void CharacterSprite::SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float f2)
 {
 	if (b1)
 	{
-		//undone
+		float v1;
+		if (rand100(50))
+			v1 = randFloat2(-40.0, -30.0, 1000.0);
+		else
+			v1 = randFloat2(30.0, 40.0, 1000.0);
+
+		if (b2)
+			v1 = randFloat2(-10.0, 10.0, 1000.0);
+		m_Controller21.SetTargetByFrames(v1, 30, eControllerType_unknown02);
+		unknown067_1173 = f1;
+		float v3 = randFloat2(20.0, 40.0, 1000.0) + unknown067_1173;
+		m_Controller22.SetTargetByFrames(v3, 30, eControllerType_unknown02);
+		unknown067_1174 = i1;
+		unknown067_1175 = f2;
+		unknown067_1176 = FloatToInt(30*f2);
 	}
 	else
 	{
@@ -336,7 +350,24 @@ void CharacterSprite::SetEyeballQuiver(float f1, float f2, float f3)
 	animengine_assert(f1 >= 0);
 	animengine_assert(f3 > 0);
 
-	//undone
+	if (f1 > 0.0)
+	{
+		if (unknown067_1179 == 0)
+		{
+			unknown067_1177 = 0;
+			unknown067_1180 = 0;
+		}
+		unknown067_1178 = f1;
+		unknown067_1179 = FrameRateAdjust(f3, 1);
+		unknown067_1181 = FloatToInt(30*f2);
+	}
+	else
+	{
+		unknown067_1177 = 0;
+		unknown067_1178 = 0;
+		unknown067_1179 = 0;
+		unknown067_1181 = 0;
+	}
 }
 void CharacterSprite::SetEyelidHeight(float f1, bool b1, bool b2, bool b3)
 {
@@ -365,7 +396,40 @@ void CharacterSprite::SetBriefEyelidHeight(float f1, float f2, bool b1, bool b2)
 
 void CharacterSprite::SetGazeTrackingSprite(Sprite* sprite, EGazeSpeed speed, EGazeType type, EAlterHeadCock cock)
 {
-	//undone
+	m_pCurrentGazeTarget = sprite;
+	m_eCurrentGazeSpeed = speed;
+	m_eCurrentGazeType = type;
+	unknown067_1163 = -DATA_NULLVAL;
+	unknown067_1165 = 0;
+	unknown067_1170 = 0.0;
+
+	if (g_numFramesRun < 1 || sprite == this)
+		return;
+
+	SetEyeballLookAway(0, 0, 0.0, 1, 2.0);
+	m_headRotYControl.StopMoving();
+	m_Controller4.StopMoving();
+
+	bool iscoygaze = m_eCurrentGazeType == eGazeType_coyL || m_eCurrentGazeType == eGazeType_coyR;
+
+	if (!charsprite_bool1 
+		|| !sprite 
+		|| iscoygaze 
+		|| type == eGazeType_eyesOnly || type == eGazeType_eyesOnlyAvert 
+		|| cock != eAlterHeadCock_none)
+	{
+		float targetval = 0;
+		if (cock == 1)
+		{
+			targetval = rand2(-5, 5);
+		}
+		else if (cock == 2)
+		{
+			targetval = PickFrom2(rand2(-10, -5), rand2(5, 10), -DATA_NULLVAL);
+		}
+
+		m_headRotCockControl.SetTargetByFrames(targetval, rand2(60, 90), eControllerType_unknown02);
+	}
 }
 void CharacterSprite::SetGazeTrackingPoint(XYZPointf point, EGazeSpeed speed, EGazeType type, EAlterHeadCock cock)
 {
@@ -507,7 +571,7 @@ XYZPointf CharacterSprite::GetHeadPlusTorsoRotation()
 
 Sprite* CharacterSprite::GetGazeTracking()
 {
-	return unknown067_1160;
+	return m_pCurrentGazeTarget;
 }
 
 void CharacterSprite::GetCurrentBrowRLowerEmphasis(int&, int&)

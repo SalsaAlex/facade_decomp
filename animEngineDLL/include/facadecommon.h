@@ -63,6 +63,8 @@
 
 #define DATA_NULLVAL 666
 
+#define MAX_CURSORPOSHISTORY 30
+
 
 template <typename T>
 class XTPoint
@@ -315,6 +317,7 @@ extern textureentry_t g_TextureFilmstrips[eTextureFilmstrip_Max];
 #include "classes/Sprite/CharacterSprite.h"
 #include "classes/SpriteMgr.h"
 #include "classes/SoundMgr.h"
+#include "classes/MP3Manager.h"
 
 #define MAX_PANELS 200
 
@@ -362,6 +365,9 @@ extern SoundMgr g_soundMgr;
 extern SoundSource g_soundSource;
 extern int g_soundSourceID;
 
+extern MP3Manager* g_pMP3Manager_0;
+extern MP3Manager* g_pMP3Manager_1;
+
 extern EBaseScreenMessage g_baseScreenMessage;
 
 #define GENDER_MALE 0
@@ -384,6 +390,8 @@ extern uint32_t g_SkipFramesCounter;
 extern uint32_t g_whenNewPlayerTextEntered;
 extern uint32_t g_lastFrameGotAblRequest;
 
+extern XYZPointf g_cursorPositionHistory[MAX_CURSORPOSHISTORY];
+
 extern char g_launchErrorString[52];
 extern char g_curTextInput[32];
 extern char g_curTextCharInput;
@@ -397,6 +405,8 @@ extern int g_introEventCtr;
 
 extern int g_textDisplayState;
 
+extern bool g_bPhoneCallBehaviorSubparts[ePhoneCallBehavior_max][10];
+
 extern int g_framesWhenLastSentPlayerTypedCue;
 extern int g_frameWhenLastCinematographyMove;
 extern int g_framePlayerLastMoved;
@@ -407,6 +417,8 @@ extern float g_introTimings[8 + 1];
 extern float g_introBaseTimings[8][6];
 extern float g_initialIntroDelay;
 extern float g_startTitleFadeIn;
+
+extern EGlobalSounds g_phoneAnsM_latestGlobalSound;
 
 extern int g_quitAppCountdown;
 
@@ -435,11 +447,6 @@ extern bool g_bDoneTension1bMusic;
 extern bool g_bExactPointDecel;
 extern bool g_bExactRotDecel;
 extern bool g_bFacadeHasBeenRunMultipleTimes;
-
-extern bool g_bIgnoreArmLSetPerf;
-extern bool g_bIgnoreArmRSetPerf;
-extern bool g_bIgnoreGazeSetPerf;
-extern bool g_bIgnoreNextWalkAbort[2];
 
 extern bool g_bIsAblConnected;
 extern bool g_bJimDoran;
@@ -498,7 +505,9 @@ float NormalizeNeg180to180(float ang);
 float Normalize0to360(float ang);
 
 int rand2(int min, int max);
+float randFloat2(float min, float max, float factor);
 bool rand100(int val);
+int PickFrom2(int val1, int val2, int factor);
 
 bool PlayGlobalSound(EGlobalSounds sound);
 void StopAllGlobalSounds();
@@ -513,6 +522,7 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr);
 void ClipFloatToRange(float& value, float min, float max);
 
 float GetSecsSinceTicks(int ticks);
+int GetRandomFramesFromSecPercs(int min, int max);
 
 float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
@@ -531,6 +541,7 @@ bool IsSpriteWithinCharCone(Sprite* spr1, Sprite* spr2, float fov, float mindist
 bool IsPointWithinCharCone(XYZPointf point, Sprite* sprite, float fov, float mindist, float maxdist);
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
 bool IsPlayerOutsideApt();
+bool IsCursorWiggling();
 void PlayerEnteredText();
 
 float ConvertWorldDegreesToRadians(float ang);

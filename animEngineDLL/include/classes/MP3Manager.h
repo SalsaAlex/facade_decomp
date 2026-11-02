@@ -23,8 +23,6 @@ public:
 
 	void ToggleMute(); //unused
 
-private:
-
 	HRESULT PlayAudio(const char* path);
 	void CheckVisibility();
 

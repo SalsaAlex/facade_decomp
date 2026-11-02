@@ -12,6 +12,14 @@ static int g_whichSoundtrack = -1;
 static EMusicName g_curMusicType;
 static bool g_bUnused;
 
+static MP3Manager g_MP3Manager_0;
+static MP3Manager g_MP3Manager_1;
+
+static bool g_bIgnoreNextWalkAbort[2] = { false, false };
+static bool g_bIgnoreArmRSetPerf[2];
+static bool g_bIgnoreArmLSetPerf[2];
+static bool g_bIgnoreGazeSetPerf[2];
+
 extern void GetAccessToRequestBuffer(const char* name);
 extern void AblBufferPostSemaphore();
 
@@ -65,13 +73,59 @@ static void EndTripCarryingPlayer()
 	//undone
 }
 
-static void StartMP3(const char* filepath, int, int)
+static void StartMP3(const char* filepath, int vol, int fadevol)
 {
-	//undone
+	MP3Manager* pChosenManager;
+	dprintf("Starting %s\n", filepath);
+	if (g_pMP3Manager_0)
+	{
+		if (g_pMP3Manager_1)
+		{
+			g_pMP3Manager_0->StopAllMP3();
+			pChosenManager = g_pMP3Manager_0;
+			g_pMP3Manager_0 = g_pMP3Manager_1;
+			g_pMP3Manager_1 = pChosenManager;
+		}
+		else
+		{
+			g_pMP3Manager_1 = &g_MP3Manager_0;
+			pChosenManager = &g_MP3Manager_0;
+		}
+	}
+	else
+	{
+		g_pMP3Manager_0 = &g_MP3Manager_1;
+		pChosenManager = &g_MP3Manager_1;
+	}
+	pChosenManager->PlayFromMP3File(filepath);
+	if (fadevol <= 0)
+	{
+		pChosenManager->SetVolume(vol);
+	}
+	else
+	{
+		pChosenManager->SetVolume(0.0);
+		pChosenManager->m_fFade_TargetVol = vol;
+		pChosenManager->m_fFade_Factor = pChosenManager->m_fFade_TargetVol / (float)fadevol;
+		if (pChosenManager != g_pMP3Manager_0)
+		{
+			g_pMP3Manager_0->m_fFade_TargetVol = 0.0;
+			g_pMP3Manager_0->m_fFade_Factor = -g_pMP3Manager_0->m_fVolume / (float)fadevol;
+		}
+	}
 }
 static void FadeOutCurrentMP3(int time)
 {
-	//undone
+	if (g_pMP3Manager_0)
+	{
+		g_pMP3Manager_0->m_fFade_TargetVol = 0.0;
+		g_pMP3Manager_0->m_fFade_Factor = -g_pMP3Manager_0->m_fVolume / (double)time;
+		dprintf("Fading out current mp3\n");
+	}
+	else
+	{
+		dprintf("No mp3 to fade out\n");
+	}
 }
 
 
@@ -137,76 +191,90 @@ void PerformGetMouthShape(ESpriteID spriteid, int& mouthshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	mouthshape = spr->m_pHeadSprite->GetMouthShape();
 }
 void PerformSetMouthShape(ESpriteID spriteid, int mouthshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	spr->m_pHeadSprite->SetMouthShape(mouthshape, -1);
 }
 
 void PerformGetEyelidHeightR(ESpriteID spriteid, float& height)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	height = spr->m_eyelidHeightR.GetVal();
 }
 void PerformGetEyelidHeightL(ESpriteID spriteid, float& height)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	height = spr->m_eyelidHeightL.GetVal();
 }
-void PerformSetEyelidHeightR(ESpriteID spriteid, float height)
+void PerformSetEyelidHeightR(ESpriteID spriteid, float height, float unused)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	animengine_assert(height >= 0 && height <= 1);
+	spr->SetEyelidHeight(height, true, true, true);
 }
-void PerformSetEyelidHeightL(ESpriteID spriteid, float height)
+void PerformSetEyelidHeightL(ESpriteID spriteid, float height, float unused)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	animengine_assert(height >= 0 && height <= 1);
+	spr->SetEyelidHeight(height, true, true, true);
 }
 
 void PerformGetBrowShapeR(ESpriteID spriteid, int& browshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	browshape = spr->m_pHeadSprite->GetBrowR();
 }
 void PerformGetBrowShapeL(ESpriteID spriteid, int& browshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	browshape = spr->m_pHeadSprite->GetBrowL();
 }
 void PerformSetBrowShapeR(ESpriteID spriteid, int browshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	spr->m_pHeadSprite->SetBrowR(browshape, -1);
 }
 void PerformSetBrowShapeL(ESpriteID spriteid, int browshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	spr->m_pHeadSprite->SetBrowL(browshape, -1);
 }
 
 void PerformGetEyesShape(ESpriteID spriteid, int& eyeshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	eyeshape = spr->m_pHeadSprite->GetEyesShape();
 }
 void PerformSetEyesShape(ESpriteID spriteid, int eyeshape)
 {
 	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* spr = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
-	//	undone
+	
+	spr->m_pHeadSprite->SetEyesShape(eyeshape, -1);
 }
 
 void PerformGetObjectPosition(ESpriteID spriteid, float& x, float& y, float& z)
@@ -254,7 +322,27 @@ void PerformSetGazeTracking(ESpriteID gazetracker, ESpriteID gazetracked, float 
 {
 	animengine_assert(gazetracker <= eSpriteID_LAST_CHARACTER);
 	CharacterSprite* character = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(gazetracker);
-	//undone
+	
+	int entry = gazetracker != eSpriteID_grace;
+	if (!b1)
+		g_bIgnoreGazeSetPerf[entry] = true;
+
+	if (g_bIgnoreGazeSetPerf[entry] && b1)
+		return;
+
+	if (gazetracked == eSpriteID_NOTASPRITE)
+	{
+		character->SetGazeTrackingPoint(XYZPointf(x, y, z), gazespeed, gazetype, headcock);
+	}
+	else
+	{
+		animengine_assert(gazetracked <= eSpriteID_NUMOBJECTS);
+
+		Sprite* spr = nullptr;
+		if (gazetracked != gazetracker)
+			spr = g_spriteMgr.GetSpritePtrByID(gazetracked);
+		character->SetGazeTrackingSprite(spr, gazespeed, gazetype, headcock);
+	}
 }
 
 void PerformSetObjectToHold(ESpriteID holder, int i1, ESpriteID victim)
@@ -269,11 +357,49 @@ void PerformSetObjectToHold(ESpriteID holder, int i1, ESpriteID victim)
 
 void PerformGetAllObjectPickupRotations(ESpriteID spriteid, ObjSensePacket* sensepacket)
 {
-	//	undone
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	Sprite* actor = g_spriteMgr.GetSpritePtrByID(spriteid);
+	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_elevatorButton; ++i)
+	{
+		XZPointf xz;
+		float rot;
+
+		Sprite* obj = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+		if (i < eSpriteID_LAST_AGENT || i > eSpriteID_luxTable)
+			obj->GetPickupPositionAndRotation(xz, rot);
+		else
+			obj->GetSurfaceDropPositionAndRotation(0, xz, rot);
+
+		sensepacket[i].objectID = (ESpriteID)i;
+		sensepacket[i].x = 0;
+		sensepacket[i].y = rot;
+		sensepacket[i].z = 0;
+	}
 }
 void PerformGetAllObjectPickupPositions(ESpriteID spriteid, ObjSensePacket* sensepacket)
 {
-	//	undone
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	Sprite* actor = g_spriteMgr.GetSpritePtrByID(spriteid);
+	for (int i = eSpriteID_FIRST_OBJECT; i <= eSpriteID_elevatorButton; ++i)
+	{
+		XZPointf xz;
+		float rot;
+
+		Sprite* obj = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+		if (i < eSpriteID_LAST_AGENT || i > eSpriteID_luxTable)
+			obj->GetPickupPositionAndRotation(xz, rot);
+		else
+			obj->GetSurfaceDropPositionAndRotation(0,xz, rot);
+
+		//sanity check
+		animengine_assert(xz.m_x > -10000 && xz.m_x < 10000 
+			&& xz.m_z > -10000 && xz.m_z < 10000);
+
+		sensepacket[i].objectID = (ESpriteID)i;
+		sensepacket[i].x = xz.m_x;
+		sensepacket[i].y = actor->GetPosition().m_y;
+		sensepacket[i].z = xz.m_z;
+	}
 }
 void PerformGetAllObjectRotations(ObjSensePacket* sensepacket)
 {
@@ -316,7 +442,39 @@ void PerformGetAllObjectStagingRotations(ObjSensePacket* sensepacket)
 }
 void PerformGetAllHeldObjects(HeldObjectSensePacket* heldpacket)
 {
-	//	undone
+	for (int i = 0; i < eSpriteID_NUMOBJECTS+1; ++i)
+	{
+		heldpacket[i].objectID = eSpriteID_NOTASPRITE;
+		heldpacket[i].characterID = eSpriteID_NOTASPRITE;
+	}
+
+	int packet_iter = 0;
+
+	for (int i = eSpriteID_FIRST_CHARACTER; i <= eSpriteID_LAST_CHARACTER; ++i)
+	{
+		Sprite* spr;
+		if (i == eSpriteID_player)
+			spr = g_spriteMgr.GetSpritePtrByID(eSpriteID_elevatorButton);
+		else
+			spr = g_spriteMgr.GetSpritePtrByID((ESpriteID)i);
+
+		int numheldsprites = spr->GetNumHeldSprites();
+		Sprite** heldspritelist = spr->GetHeldSpritesList();
+		for (int j = 0; j < numheldsprites; ++j)
+		{
+			heldpacket[packet_iter].characterID = (ESpriteID)i;
+			heldpacket[packet_iter].objectID = g_spriteMgr.GetSpriteIDBySpritePtr(heldspritelist[j]);
+			if (i == eSpriteID_player)
+				heldpacket[packet_iter].attachPointID = 0;
+			else
+				heldpacket[packet_iter].attachPointID = spr->GetNthHeldSpriteAttachModelPoint(j);
+
+			heldpacket[packet_iter].objectCategory = heldspritelist[j]->m_eObjectType;
+			packet_iter++;
+			if (packet_iter >= 49)
+				return;
+		}
+	}
 }
 
 void PerformGetArmGestureBases(ESpriteID actor, int& i1out, int& i2out, int& i3out)
@@ -326,17 +484,35 @@ void PerformGetArmGestureBases(ESpriteID actor, int& i1out, int& i2out, int& i3o
 
 void PerformGetEyesMove(ESpriteID spriteid, float& x, float& y)
 {
-	//	undone
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+	((CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid))->GetEyesMove(x, y);
 }
 
-void PerformGetObjectPickupPosition(ESpriteID holder, ESpriteID object, float& x, float& y, float& z)
+void PerformGetObjectPickupPosition(ESpriteID obj, ESpriteID holder, float& x, float& y, float& z)
 {
-	//	undone
+	animengine_assert(obj >= eSpriteID_ashtray && obj <= eSpriteID_trinket8);
+	animengine_assert(holder <= eSpriteID_LAST_CHARACTER);
+
+	XZPointf xz;
+	float rot;
+
+	g_spriteMgr.GetSpritePtrByID(obj)->GetPickupPositionAndRotation(xz, rot);
+
+	x = xz.m_x;
+	y = g_spriteMgr.GetSpritePtrByID(holder)->GetPosition().m_y;
+	z = xz.m_z;
 }
 
-void PerformSetPerformanceInfo(ESpriteID spriteid, void* perfinfo)
+void PerformSetPerformanceInfo(ESpriteID spriteid, perfinfo_animapi_input* perfinfo)
 {
-	//	undone
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+
+	((CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid))->SetPerformanceInfo(perfinfo);
+
+	int entry = spriteid != eSpriteID_grace;
+	g_bIgnoreArmRSetPerf[entry] = false;
+	g_bIgnoreArmLSetPerf[entry] = false;
+	g_bIgnoreGazeSetPerf[entry] = false;
 }
 void PerformSetAnimEngineInfo(ESetAnimEngineInfoType type, int info)
 {
@@ -473,7 +649,16 @@ void PerformPushMultipleAnimationScripts(ESpriteID actor, int script1Index, int 
 }
 void PerformPushPoseScript(ESpriteID spriteid, EBodyPoseConfig config)
 {
-	//	undone
+	animengine_assert(config <= eBodyPoseConfig_charged);
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+
+	CharacterSprite* dramaactor = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
+
+	if (g_ablrequestbuffer->CheckForCallbacksPending(eAblRequestType_CallbackWhenAnimationDone, spriteid, 0))
+		ShouldntBeHere("Error:  Abl wants to push anim/pose before a previous anim/pose is done");
+	if (dramaactor->GetLocomoting())
+		ShouldntBeHere("Error: Abl is trying to push pose script while locomoting!");
+	dramaactor->StartBodyPosing(config);
 }
 
 void PerformMusic(EMusicAction action, EMusicName name)
@@ -589,7 +774,23 @@ void PerformPlaySoundEffect(EGlobalSounds sound)
 
 void PerformReactiveWalkStep(uint32_t unknown, ESpriteID actor, ESpriteID spriteid, bool stop)
 {
-	//	undone
+	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
+	animengine_assert(spriteid <= eSpriteID_LAST_OBJECT);
+
+	CharacterSprite* dramaactor = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
+
+	if (g_ablrequestbuffer->CheckForCallbacksPending(eAblRequestType_CallbackWhenAnimationDone, actor, 0))
+		ShouldntBeHere("Error:  Abl wants to reactive walkstep before a previous anim/pose is done");
+	if (g_ablrequestbuffer->HasQueuedAnimOrPose(actor))
+		ShouldntBeHere("Error:  Abl wants to reactive walkstep while a queued up anim/pose is waiting to start");
+	if (stop)
+	{
+		dramaactor->StopLocomotion(false);
+	}
+	else
+	{
+		dramaactor->DoLocomotion(XYZPointf(0, 0, 0), -DATA_NULLVAL, g_spriteMgr.GetSpritePtrByID(spriteid), eWalkType_normal);
+	}
 }
 void PerformWalkStep(uint32_t unknown, ESpriteID actor, EWalkType type, float x, float y, float z, float f1, float& xout, float& yout, float& zout)
 {
@@ -598,7 +799,12 @@ void PerformWalkStep(uint32_t unknown, ESpriteID actor, EWalkType type, float x,
 
 void PerformAbortWalkStep(ESpriteID walkstepper)
 {
-	//	undone
+	animengine_assert(walkstepper <= eSpriteID_LAST_CHARACTER);
+
+	if (g_bIgnoreNextWalkAbort[walkstepper != eSpriteID_grace])
+		g_bIgnoreNextWalkAbort[walkstepper != eSpriteID_grace] = false;
+	else
+		((CharacterSprite*)g_spriteMgr.GetSpritePtrByID(walkstepper))->StopLocomotion(false);
 }
 void PerformAbortAnimationScripts(ESpriteID actor, EAnimLayer layer)
 {
@@ -651,9 +857,130 @@ void PerformDoPutdownObjGestureAnimation(ESpriteID spriteid, int i1, int i2, int
 	//	undone
 }
 
-void PerformMiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, int i1, int i2)
+void PerformMiscLittleAction(ESpriteID spriteid, EMiscLittleAction action, int i1,  float f1)
 {
-	//	undone
+	animengine_assert(spriteid <= eSpriteID_LAST_CHARACTER);
+
+	CharacterSprite* actor = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(spriteid);
+	switch (action)
+	{
+	case eMiscLittleAction_eyeLookAway:
+		actor->SetEyeballLookAway(true, false, 0.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeLookAwayAndUp:
+		actor->SetEyeballLookAway(true, false, -60.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeLookAwayAndWayUp:
+		actor->SetEyeballLookAway(true, false, -100.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeLookAwayAndDown:
+		actor->SetEyeballLookAway(true, false, 40.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeLookAwayAndWayDown:
+		actor->SetEyeballLookAway(true, false, 130.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeLookUp:
+		actor->SetEyeballLookAway(true, true, -120.0, i1, f1);
+		break;
+	case eMiscLittleAction_eyeQuiver:
+		animengine_assert(i1 <= 100);
+		actor->SetEyeballQuiver(i1 / 1000.0, f1, 0.20943333);
+		break;
+	case eMiscLittleAction_headQuiver:
+		animengine_assert(i1 <= 100);
+		actor->SetHeadQuiver(i1 / 10.0, f1, 0.31415001);
+		break;
+	case eMiscLittleAction_briefEyelidHeight:
+		animengine_assert(i1 <= 100);
+		actor->SetBriefEyelidHeight(i1 / 100.0, f1, true, true);
+		break;
+	case eMiscLittleAction_wink:
+		actor->SetBriefEyelidHeight(0, 0.40000001, false, true);
+		break;
+	case eMiscLittleAction_blinkTwice:
+		actor->SetBlinkBehavior(eBlinkBehavior_blinkTwice, true);
+		break;
+	case eMiscLittleAction_blinkFlutter:
+		actor->SetBlinkBehavior(eBlinkBehavior_blinkFlutter, true);
+		break;
+	case eMiscLittleAction_blinkFaster:
+		actor->SetBlinkBehavior(eBlinkBehavior_blinkFaster, true);
+		break;
+	case eMiscLittleAction_raiseEyebrows:
+		actor->StartHeadEmphasis(4, false, 0.0, -1, i1);
+		break;
+	case eMiscLittleAction_lowerEyebrows:
+		actor->StartHeadEmphasis(5, false, 0.0, -1, i1);
+		break;
+	case eMiscLittleAction_facialModNone:
+	case eMiscLittleAction_facialModSerious:
+	case eMiscLittleAction_facialModHappy:
+	case eMiscLittleAction_facialModAnxious:
+	case eMiscLittleAction_facialModAnxiousMed:
+	case eMiscLittleAction_facialModAnxiousHigh:
+	case eMiscLittleAction_facialModAnnoyed:
+	case eMiscLittleAction_facialModAngry:
+	case eMiscLittleAction_facialModFurious:
+	case eMiscLittleAction_facialModSurprised:
+	case eMiscLittleAction_facialModImpatient:
+		actor->DoFullExpressionMod(action, f1);
+		break;
+	case eMiscLittleAction_turnHead:
+		actor->StartHeadEmphasis(2, false, i1, f1 * 30, 0);
+		break;
+	case eMiscLittleAction_turnHeadAndBriefHold:
+		actor->StartHeadEmphasis(2, false, i1, f1 * 30, fabs(i1) >= 15 ? 60 : 30);
+		break;
+	case eMiscLittleAction_turnHeadAndLongHold:
+		actor->StartHeadEmphasis(2, false, i1, f1 * 30, 30 * rand2(3, 4));
+		break;
+	case eMiscLittleAction_turnHeadAndVeryLongHold:
+		actor->StartHeadEmphasis(2, false, i1, f1 * 30, 30 * rand2(6, 8));
+		break;
+	case eMiscLittleAction_tiltHead:
+		actor->StartHeadEmphasis(1, false, i1, f1 * 30, 0);
+		break;
+	case eMiscLittleAction_tiltHeadAndBriefHold:
+		actor->StartHeadEmphasis(1, false, i1, f1 * 30, 90);
+		break;
+	case eMiscLittleAction_cockHead:
+		actor->StartHeadEmphasis(3, false, i1, f1 * 30, 0);
+		break;
+	case eMiscLittleAction_breathe:
+		actor->SetBreathingBehavior((ELayerAltIndex)i1);
+		break;
+	case eMiscLittleAction_lookAtEightball:
+		actor->SetGazeTrackingSprite(actor, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);
+		actor->SetEyeballLookAway(false, false, 0.0, 1, 2.0);
+		actor->m_headRotYControl.SetTargetByFrames(-6, 30, eControllerType_unknown02);
+		actor->m_headRotTiltControl.SetTargetByFrames(11, 30, eControllerType_unknown02);
+		AddEventInfoToLog(eEventLogType_DoInteraction, eSpriteID_trip, nullptr, false, eSpriteID_eightball, 0);
+		break;
+	case eMiscLittleAction_clearThroat:
+		actor->SetGazeTrackingSprite(actor, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);
+		actor->SetEyeballLookAway(false, false, 0.0, 1, 2.0);
+		float target;
+		if (actor->charsprite_bool1)
+			target = randFloat2(3.0, 10.0, 1000.0);
+		else
+			target = randFloat2(-10.0, -3.0, 1000.0);
+		actor->m_headRotYControl.SetTargetByFrames(target, 30, eControllerType_unknown02);
+		target = randFloat2(1.0, 2.0, 1000.0);
+		actor->m_headRotTiltControl.SetTargetByFrames(target, 30, eControllerType_unknown02);
+		break;
+	case eMiscLittleAction_temporaryAnnoyedSpouseGlance:
+		Sprite* glancetarget = g_spriteMgr.GetSpritePtrByID((ESpriteID)actor->charsprite_bool1);
+		if (actor->m_pCurrentGazeTarget != glancetarget)
+		{
+			actor->m_pSavedGazeTarget = actor->m_pCurrentGazeTarget;
+			actor->m_pSavedGazeSpeed = actor->m_eCurrentGazeSpeed;
+			actor->m_pSavedGazeType = actor->m_eCurrentGazeType;
+			actor->SetGazeTrackingSprite(glancetarget, eGazeSpeed_med, eGazeType_eyesOnly, eAlterHeadCock_subtle);
+			actor->unknown067_1170 = rand2(15, 30);
+			actor->DoFullExpressionMod(eMiscLittleAction_facialModAnnoyed, actor->unknown067_1170 / 30.0);
+		}
+		break;
+	}
 }
 
 void PerformGetMyCopyOfAllAnimCues(int animcueindex, AnimCueSensePacket* animcuepacket)

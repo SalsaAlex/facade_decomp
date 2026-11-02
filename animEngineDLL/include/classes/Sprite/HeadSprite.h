@@ -3,22 +3,44 @@
 
 class CharacterSprite;
 
-struct head_facedata_t
+struct animset_t
 {
 	char name[64];
 	void* faceanimdata;
 };
+struct FaceAnimSet
+{
+	animset_t sets[35];
+	int numsets;
+	int info;
+};
+struct FaceFeatureMorph
+{
+	int unknown[278];
+};
 
-#define MAX_LBROW 35
-#define MAX_RBROW 35
-#define MAX_MOUTHSHAPE 35
-#define MAX_MOUTHVISEME 35
-#define MAX_EYESSHAPE 35
 #define MAX_HEADEXPRESSION 50
 
 class HeadSprite : public Sprite								//proof: libnativeAnimInterface.jnilib:__const_coal:00206780
 {
 public:
+
+	void StartFaceAnimMorph(FaceFeatureMorph* morph, FaceAnimSet* animset, int animindex, float f1, bool b1, float f2);
+
+	void TweakHeadExpressionRotations(float val);
+
+	void SetEyeExpressionIndex(int i1, bool option);
+	void SetHeadExpressionIndex(int i1, bool option, int i2);
+	void SetEyesShape(int i1, float val);
+	void SetMouthShape(int i1, float val);
+	void SetMouthViseme(int i1, float val);
+	void SetBrowR(int i1, float val);
+	void SetBrowL(int i1, float val);
+
+	int GetEyesShape() { return m_EyeShapeMorphInfo; };
+	int GetMouthShape() { return m_MouthShapeMorphInfo; };
+	int GetBrowR(){ return m_BrowRMorphInfo; };
+	int GetBrowL(){ return m_BrowLMorphInfo; };
 
 	CharacterSprite* owner;
 	XYZPointf headrot;
@@ -28,25 +50,30 @@ public:
 	float unknown008;
 	float unknown009;
 	XYZPointf unknownrot1;
-	float unknown010[140];
-	head_facedata_t m_LBrowData[MAX_LBROW];
-	int m_iNumLBrowData;
-	int m_iLBrowInfo;
-	head_facedata_t m_RBrowData[MAX_RBROW];
-	int m_iNumRBrowData;
-	int m_iRBrowInfo;
-	head_facedata_t m_MouthShapeData[MAX_MOUTHSHAPE];
-	int m_iNumMouthShapeData;
-	int m_iMouthShapeInfo;
-	head_facedata_t m_MouthVisemeData[MAX_MOUTHVISEME];
-	int m_iNumMouthVisemeData;
-	int m_iMouthVisemeInfo;
-	head_facedata_t m_EyesShapeData[MAX_EYESSHAPE];
-	int m_iNumEyesShapeData;
-	int m_iEyesShapeInfo;
-	head_facedata_t m_HeadExpressionData[MAX_HEADEXPRESSION];
+	float unknown010[10];
+	void* m_pCurrentHeadExprPtr;
+	int m_iCurrentHeadExprIndex;
+	float unknown010a[9];
+	void* m_pCurrentEyeExprPtr;
+	int m_iCurrentEyeExprIndex;
+	float unknown010b[117];
+	FaceAnimSet m_LBrowData;
+	FaceAnimSet m_RBrowData;
+	FaceAnimSet m_MouthShapeData;
+	FaceAnimSet m_MouthVisemeData;
+	FaceAnimSet m_EyesShapeData;
+	animset_t m_HeadExpressionData[MAX_HEADEXPRESSION];
 	int m_iNumHeadExpressionData;
-	int unknown011[1395];
+	FaceFeatureMorph m_BrowLMorph;
+	int m_BrowLMorphInfo;
+	FaceFeatureMorph m_BrowRMorph;
+	int m_BrowRMorphInfo;
+	FaceFeatureMorph m_MouthShapeMorph;
+	int m_MouthShapeMorphInfo;
+	FaceFeatureMorph m_MouthVisemeMorph;
+	int m_MouthVisemeMorphInfo;
+	FaceFeatureMorph m_EyeShapeMorph;
+	int m_EyeShapeMorphInfo;
 
 private:
 protected:

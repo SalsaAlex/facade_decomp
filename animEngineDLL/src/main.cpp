@@ -37,8 +37,6 @@ enum ECursorContext
 
 ECursorContext g_cursorContext;
 
-#define MAX_CURSORPOSHISTORY 30
-
 int g_startTime;
 
 int g_mousePosition[2];
@@ -54,8 +52,6 @@ HANDLE g_ablRequestBufferMutexHandle;
 Sprite* g_PlayerSprite;
 Sprite* g_CursorSprite;
 Sprite* g_cursorContextSprite;
-
-XYZPointf g_cursorPositionHistory[MAX_CURSORPOSHISTORY];
 
 bool g_bDisplayDialogText;
 
@@ -1329,7 +1325,10 @@ static void UpdateAndRenderWorld()
 }
 static void UpdateMP3Fades()
 {
-
+	if (g_pMP3Manager_0)
+		g_pMP3Manager_0->UpdateFades();
+	if (g_pMP3Manager_1)
+		g_pMP3Manager_1->UpdateFades();
 }
 static void LoadingMessage()
 {
@@ -2022,6 +2021,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_EDITGRACEFACE:		EditCharacterFace(g_GraceSprite); return 0;
 	case WM_EDITTRIPSCRIPT:		EditCharacterScript(g_TripSprite); return 0;
 	case WM_EDITTRIPFACE:		EditCharacterFace(g_TripSprite); return 0;
+	//case WM_GRAPHNOTIFY:		HandleGraphEvent(); return 0;
 	case WM_QUERYNEWPALETTE:
 		returncode = S_OK;
 		if (s_hPalette)
@@ -2241,5 +2241,14 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 void StopAllMP3s()
 {
-	//undone
+	if (g_pMP3Manager_0)
+	{
+		g_pMP3Manager_0->StopAllMP3();
+		g_pMP3Manager_0 = nullptr;
+	}
+	if (g_pMP3Manager_1)
+	{
+		g_pMP3Manager_1->StopAllMP3();
+		g_pMP3Manager_1 = nullptr;
+	}
 }

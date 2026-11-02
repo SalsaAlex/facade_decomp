@@ -65,11 +65,18 @@ uint32_t g_lastFrameGotAblRequest = 0;
 
 uint32_t g_whenNewPlayerTextEntered = -DATA_NULLVAL;
 
+MP3Manager* g_pMP3Manager_0;
+MP3Manager* g_pMP3Manager_1;
 
 HWND g_hMainAppWindow;
 HWND g_scriptDialogHWnd;
 HWND g_faceDialogHWnd;
 
+XYZPointf g_cursorPositionHistory[MAX_CURSORPOSHISTORY];
+
+EGlobalSounds g_phoneAnsM_latestGlobalSound;
+
+bool g_bPhoneCallBehaviorSubparts[ePhoneCallBehavior_max][10];
 
 
 int g_playerGender;
@@ -314,10 +321,39 @@ int rand2(int min, int max)
 	
 	return min + rand() % (max - min + 1);
 }
+float randFloat2(float min, float max, float factor)
+{
+	return rand2(min * factor, max * factor) / factor;
+}
 bool rand100(int val)
 {
 	animengine_assert(val <= 100);
 	return rand() % 100 < val;
+}
+int PickFrom2(int val1, int val2, int factor)
+{
+	int v2; // eax
+	int v1; // [esp+50h] [ebp-8h]
+	int returnval; // [esp+54h] [ebp-4h]
+
+	returnval = factor;
+	v1 = 0;
+	while (returnval == factor)
+	{
+		if (++v1 >= 10)
+			break;
+		v2 = rand() % 2;
+		if (v2)
+		{
+			if (v2 == 1)
+				returnval = val2;
+		}
+		else
+		{
+			returnval = val1;
+		}
+	}
+	return returnval;
 }
 
 bool PlayGlobalSound(EGlobalSounds sound)
@@ -473,6 +509,10 @@ void ClipFloatToRange(float& value, float min, float max)
 float GetSecsSinceTicks(int ticks)
 {
 	return (GetTickCount() - ticks) / 1000.f;
+}
+int GetRandomFramesFromSecPercs(int min, int max)
+{
+	return rand2(min, max) / 100.0 * 30.0;
 }
 
 float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2)
@@ -664,6 +704,13 @@ bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset)
 bool IsPlayerOutsideApt() {
 	return g_PlayerSprite->GetPosition().m_x < -150
 		&& g_PlayerSprite->GetPosition().m_y > 120;
+}
+bool IsCursorWiggling() {
+	float cursormovefreq = 0.0;
+	for (int i = 0; i < MAX_CURSORPOSHISTORY-1; ++i)
+		cursormovefreq = GetXYDistanceBetweenPoints(g_cursorPositionHistory[i], g_cursorPositionHistory[i + 1])
+		+ cursormovefreq;
+	return cursormovefreq > 200.0;
 }
 void PlayerEnteredText()
 {

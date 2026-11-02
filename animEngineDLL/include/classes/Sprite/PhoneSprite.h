@@ -15,10 +15,8 @@ public:
 
 	void SetBehavior(EPhoneCallBehavior behavior);
 
-
-private:
 	EPhoneCallBehavior m_eBehavior;
-	int unknown;
+	int m_iTickCallInitiated;
 
 protected:
 

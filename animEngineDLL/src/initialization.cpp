@@ -751,12 +751,12 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 	g_GraceSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 160));
 	g_GraceSprite->SetHeadRotation(XYZPointf(0, 50, 0));
 
-	//g_GraceSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
-	//g_GraceSprite->m_GestureFxnMgr6.StartGestureFxn(0, 43, 0);
-	//g_GraceSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, 0);
-	//g_GraceSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, 0);
-	//g_GraceSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, 0);
-	//g_GraceSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, 0);
+	g_GraceSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, false);
+	g_GraceSprite->m_GestureFxnMgr6.StartGestureFxn(0, 43, false);
+	g_GraceSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, false);
+	g_GraceSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, false);
+	g_GraceSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, false);
+	g_GraceSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, false);
 
 	if (spr != g_GraceSprite)
 		g_GraceSprite->SetGazeTrackingSprite(g_PlayerSprite, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);
@@ -775,12 +775,12 @@ void InitTransRotScale(CharacterSprite* spr, bool b1)
 	g_TripSprite->m_pHeadSprite->SetPosition(XYZPointf(0, -5, 170));
 	g_TripSprite->SetHeadRotation(XYZPointf(0, 0, 0));
 
-	//g_TripSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, 0);
-	//g_TripSprite->m_GestureFxnMgr6.StartGestureFxn(0, 44, 0);
-	//g_TripSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, 0);
-	//g_TripSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, 0);
-	//g_TripSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, 0);
-	//g_TripSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, 0);
+	g_TripSprite->m_GestureFxnMgr1.StartGestureFxn(0, 1, false);
+	g_TripSprite->m_GestureFxnMgr6.StartGestureFxn(0, 44, false);
+	g_TripSprite->m_GestureFxnMgr7.StartGestureFxn(0, 1, false);
+	g_TripSprite->m_GestureFxnMgr8.StartGestureFxn(0, 1, false);
+	g_TripSprite->m_GestureFxnMgr9.StartGestureFxn(0, 1, false);
+	g_TripSprite->m_GestureFxnMgr10.StartGestureFxn(0, 1, false);
 
 	if (spr != g_TripSprite)
 		g_TripSprite->SetGazeTrackingSprite(g_PlayerSprite, eGazeSpeed_med, eGazeType_normal, eAlterHeadCock_subtle);

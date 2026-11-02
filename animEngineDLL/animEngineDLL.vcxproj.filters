@@ -299,5 +299,11 @@
     <ClCompile Include="src\classes\GestureFxnMgr.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
+    <ClCompile Include="src\classes\Sprite\HeadSprite.cpp">
+      <Filter>Source Files\classes\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\AnimMgr.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
