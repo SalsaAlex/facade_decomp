@@ -561,6 +561,24 @@ void GetGridXZFromWorldXZ(float worldx, float worldz,
 	outgridz = worldz / 15.f + 45.f;
 }
 
+bool IsSpriteWithinCharCone(Sprite* spr1, Sprite* spr2, float fov, float mindist, float maxdist)
+{
+	return IsPointWithinCharCone(spr1->GetPosition(), spr2, fov, mindist, maxdist);
+}
+bool IsPointWithinCharCone(XYZPointf point, Sprite* sprite, float fov, float mindist, float maxdist)
+{
+	XYZPointf sprpos = sprite->GetPosition();
+	XYZPointf sprrot = sprite->GetRotation();
+
+	float dist = GetXZDistanceBetweenPoints(sprpos, point);
+	if (dist < mindist || dist > maxdist)
+		return false;
+
+	float angle = GetXZAngleBetweenPoints(sprpos, point);
+
+	return fabs(NormalizeNeg180to180(angle - sprrot.m_y)) <= fov;
+}
+
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset)
 {
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();

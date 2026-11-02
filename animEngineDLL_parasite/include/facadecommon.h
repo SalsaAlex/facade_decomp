@@ -352,6 +352,9 @@ DEFINE_HOOKEDARRAYVAR(panelmdlinfos_t, g_panelModelInfo, 0x1039CF10)
 DEFINE_HOOKEDARRAYVAR(panelmdlquadpolys_t, g_panelModelQuadPolys, 0x103A5250)
 DEFINE_HOOKEDVAR(CharacterSprite*, g_GraceSprite, 0x1097947C)
 DEFINE_HOOKEDVAR(CharacterSprite*, g_TripSprite, 0x10979480)
+DEFINE_HOOKEDVAR(float, g_tripCarryDist, 0x1069853C)
+DEFINE_HOOKEDVAR(float, g_playerCarriedAngleOffset, 0x106984E8)
+DEFINE_HOOKEDVAR(float, g_tripCarryAngleOffset, 0x106984F0)
 DEFINE_HOOKEDVAR(Sprite*, g_PlayerSprite, 0x10979474)
 DEFINE_HOOKEDVAR(Sprite*, g_CursorSprite, 0x10979478)
 DEFINE_HOOKEDARRAYVAR(SpriteMgr, g_spriteMgr, 0x1083F640)
@@ -453,6 +456,9 @@ DEFINE_HOOKEDVAR(bool, g_bDisplayDialogText, 0x10979471)
 #define g_panelModelQuadPolys				_g_panelModelQuadPolys()
 #define g_GraceSprite						_g_GraceSprite()
 #define g_TripSprite						_g_TripSprite()
+#define g_tripCarryDist						_g_tripCarryDist()
+#define g_playerCarriedAngleOffset			_g_playerCarriedAngleOffset()
+#define g_tripCarryAngleOffset				_g_tripCarryAngleOffset()
 #define g_PlayerSprite						_g_PlayerSprite()
 #define g_CursorSprite						_g_CursorSprite()
 #define g_spriteMgr							_g_spriteMgr()
@@ -595,6 +601,9 @@ void GetXYBoundingBoxOf4Points(const XYZPointf* a2, XYZPointf* a3);
 bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2);
 void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);
+
+bool IsSpriteWithinCharCone(Sprite* spr1, Sprite* spr2, float fov, float mindist, float maxdist);
+bool IsPointWithinCharCone(XYZPointf point, Sprite* sprite, float fov, float mindist, float maxdist);
 
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
 bool IsPlayerOutsideApt();

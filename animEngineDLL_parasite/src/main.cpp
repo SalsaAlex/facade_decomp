@@ -1477,8 +1477,8 @@ static void UpdatePlayerNavigation() {
 	float playerrotleft_limit = FrameRateAdjust(1.5, 1);
 	float playerrotright_limit = FrameRateAdjust(-1.5, 1);
 
-	const float playerrot_factor = FrameRateAdjust(0.09, 1);
-	const float playermove_factor = FrameRateAdjust(0.09, 1);
+	float playerrot_factor = FrameRateAdjust(0.09, 1);
+	float playermove_factor = FrameRateAdjust(0.09, 1);
 	if (GetAsyncKeyState(VK_CONTROL) < 0)
 	{
 		playermovforward_limit = FrameRateAdjust(6.0, 1);
@@ -1487,25 +1487,52 @@ static void UpdatePlayerNavigation() {
 		playerrotright_limit = FrameRateAdjust(-2.4, 1);
 	}
 
-	bool bVeryNearCharacter = false;
+	_set_g_bVeryNearCharacter(false);
 	bool dramaActorInView = false;
 	bool dramaActorInTightView = false;
-	for (int i = 0; i < 2 && !bVeryNearCharacter; ++i)
+	for (int i = 0; i < 2 && !g_bVeryNearCharacter; ++i)
 	{
-		//undone
+		CharacterSprite* actor;
+		if (i != 0)
+			actor = g_TripSprite;
+		else
+			actor = g_GraceSprite;
+
+		if (!IsSpriteWithinCharCone(actor, g_PlayerSprite, 30, 0, 150))
+			continue;
+
+		dramaActorInView = true;
+
+		if (!IsSpriteWithinCharCone(i ? g_TripSprite : g_GraceSprite, g_PlayerSprite, 20, 0, 100))
+			continue;
+
+		dramaActorInTightView = true;
+		if (i == 0 && g_GraceSprite->GetLocomoting()
+			|| i == 1 && g_TripSprite->GetLocomoting())
+		{
+			_set_g_bVeryNearCharacter(true);
+		}
+
+		if (IsSpriteWithinCharCone(i == 0 ? g_GraceSprite : g_TripSprite, g_PlayerSprite, 20, 0, 40))
+			_set_g_bVeryNearCharacter(true);
 	}
 
 	if (dramaActorInView)
 	{
 		if (g_bVeryNearCharacter)
 		{
-			//undone
+			playermovforward_limit /= 8.0;
+			playerrot_factor /= 4.0;
+			playermove_factor /= 4.0;
 		}
 		else if (dramaActorInTightView)
 		{
-			//undone
+			playermovforward_limit /= 3.0;
+			playerrot_factor /= 2.0;
+			playermove_factor /= 2.0;
 		}
-		//undone
+		playerrotleft_limit /= 1.5;
+		playerrotright_limit /= 1.5;
 	}
 
 	if (g_bPlayerRotateLeft || g_bPlayerRotateRight)
@@ -1551,12 +1578,54 @@ static void UpdatePlayerNavigation() {
 
 	if (g_bSeatedOnCouch && g_playerTransAmt != 0.0)
 	{
-		//undone
+		XYZPointf point = XYZPointf(83, 94, playerpos.m_z);
+		if (point.m_z <= -400)
+			point.m_z = -400;
+
+		float yawtarget = playerrot.m_y;
+		if (yawtarget >= 240)
+		{
+			if (yawtarget <= 300.0)
+				yawtarget += 1.0;
+			else
+				yawtarget = rand2(290, 300);
+		}
+		else
+		{
+			yawtarget = rand2(240, 250);
+		}
+		StartPlayerMoveControllers(point, yawtarget, 3.0, 0);
+		_set_g_AutoMovePlayerStatus(1);
+		AddEventInfoToLog(eEventLogType_StopInteraction, eSpriteID_player, nullptr, false, eSpriteID_couch, 0);
+		return;
 	}
 
 	if (g_bTripCarry)
 	{
-		//undone
+		XYZPointf playerpos_1 = g_PlayerSprite->GetPosition();
+
+		XYZPointf trippos = g_TripSprite->GetPosition();
+		XYZPointf triprot = g_TripSprite->GetRotation();
+
+		if (g_tripCarryDist == 0.0)
+		{
+			_set_g_tripCarryDist(GetXZDistanceBetweenPoints(trippos, playerpos_1));
+
+			float angleoffs = GetXZAngleBetweenPoints(trippos, playerpos_1);
+			float normangleoffs = Normalize0to360(angleoffs);
+
+			_set_g_playerCarriedAngleOffset(Normalize0to360(g_PlayerSprite->GetRotation().m_y - normangleoffs + 180));
+			_set_g_tripCarryAngleOffset(Normalize0to360(normangleoffs - triprot.m_y));
+		}
+		float yaw = Normalize0to360(g_tripCarryAngleOffset + triprot.m_y);
+		XYZPointf playertargetpos = PointAtAngleAndDist(trippos, yaw, g_tripCarryDist);
+		playertargetpos.m_y = playerpos_1.m_y;
+		g_PlayerSprite->SetPosition(playertargetpos, -1.0);
+		yaw += 180 + g_playerCarriedAngleOffset;
+		g_PlayerSprite->SetRotation(XYZPointf(0, yaw, 0));
+		_set_g_playerTransAmt(0.0);
+		_set_g_playerRotAmt(0.0);
+		ClearNavigationFlags();
 	}
 
 	if (g_bPlayerMoveForwards || g_bPlayerMoveBackwards)
@@ -1898,7 +1967,15 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 				_set_g_prevPlayerPosition(g_PlayerSprite->GetPosition());
 				_set_g_prevPlayerRotation(g_PlayerSprite->GetRotation());
 
-				//undone
+				g_GraceSprite->unknown042[1] = g_GraceSprite->unknown042[0];
+				g_GraceSprite->unknown042[0] = g_GraceSprite->GetPosition();
+				g_GraceSprite->unknown042[3] = g_GraceSprite->unknown042[2];
+				g_GraceSprite->unknown042[2] = g_GraceSprite->GetRotation();
+
+				g_TripSprite->unknown042[1] = g_TripSprite->unknown042[0];
+				g_TripSprite->unknown042[0] = g_TripSprite->GetPosition();
+				g_TripSprite->unknown042[3] = g_TripSprite->unknown042[2];
+				g_TripSprite->unknown042[2] = g_TripSprite->GetRotation();
 			}
 			s_frameTimeAccum += GetTickCount() - tickcount_atstart;
 			s_framesSinceLastStatistic++;
