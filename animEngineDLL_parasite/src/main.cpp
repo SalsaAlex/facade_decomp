@@ -2187,6 +2187,8 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x100AF220, GetXYBoundingBoxOf4Points);
 	HookFunc((void*)0x100B0950, DoXZRectsIntersect);
 	HookFunc((void*)0x10063840, GetGridXZFromWorldXZ);
+	HookFunc((void*)0x100B0D20, IsSpriteWithinCharCone);
+	HookFunc((void*)0x100B0DC0, IsPointWithinCharCone);
 	HookFunc((void*)0x10045680, IsPointVisibleToPlayer);
 	HookFunc((void*)0x10052770, IsPlayerOutsideApt);
 	HookFunc((void*)0x1009DB60, PlayerEnteredText);
