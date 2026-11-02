@@ -187,7 +187,7 @@ public:
 	int unknown039[14];
 	int unknown040[14];
 	int unknown041[14];
-	int unknown042[12];
+	XYZPointf unknown042[4];
 	Controller m_Controller23;
 	float unknown043;
 	Controller m_Controller24;

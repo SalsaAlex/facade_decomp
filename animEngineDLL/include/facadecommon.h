@@ -466,7 +466,6 @@ extern bool g_bSeatedOnCouch;
 extern bool g_bShouldRenderThisFrame;
 extern bool g_bTextCharWasPressed;
 extern bool g_bTripCarry;
-extern bool g_bVeryNearCharacter;
 extern bool g_bWriteOutput;
 
 extern bool g_mouseLButtonClicked;
@@ -528,6 +527,8 @@ bool DoXZRectsIntersect(XZRectf rect1, XZRectf rect2);
 void GetGridXZFromWorldXZ(float worldx, float worldz,
 	float& outgridx, float& outgridz);
 
+bool IsSpriteWithinCharCone(Sprite* spr1, Sprite* spr2, float fov, float mindist, float maxdist);
+bool IsPointWithinCharCone(XYZPointf point, Sprite* sprite, float fov, float mindist, float maxdist);
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
 bool IsPlayerOutsideApt();
 void PlayerEnteredText();

@@ -799,7 +799,44 @@ static void CreditsScreenMessage() {
 #undef CREDITS_DRAW_MSG
 }
 static void EndGameMenuScreenMessage() {
-	//undone
+
+	static int tempMsgCnt = 0;
+	extern char g_eventLogFilename[100]; //eventLogging.cpp
+
+	g_bPlayerInputActive = false;
+
+	bool cursor_on_viewstageplay_button = ISCURSORINBOUNDS(-38, 44, -8, 0);
+
+	if (cursor_on_viewstageplay_button && g_mouseLButtonClicked && tempMsgCnt <= 0)
+	{
+		ShellExecute(g_hMainAppWindow, "open", g_eventLogFilename, NULL, NULL, TRUE);
+		tempMsgCnt = 60;
+	}
+
+	if (tempMsgCnt > 0)
+	{
+		--tempMsgCnt;
+		DrawArbitraryScreenText("Opening Generated Stageplay...", -12, 0, 200, 7, 0, eColor_R1_G1_B2, eColor_black);
+	}
+	else
+	{
+		DrawArbitraryScreenText("View Your Generated Stageplay", -13, 0, 200, 7, 0, cursor_on_viewstageplay_button ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+	}
+
+	bool cursor_on_replay_button = ISCURSORINBOUNDS(-20, 26, -15, -7);
+	if (cursor_on_replay_button && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_Replay;
+	DrawArbitraryScreenText("Replay Façade", 7, -15, 200, 7, 0, cursor_on_replay_button ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+
+	bool cursor_on_credits_button = ISCURSORINBOUNDS(-20, 26, -38, -30);
+	if (cursor_on_credits_button && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_Credits;
+	DrawArbitraryScreenText("About Façade", 7.5, -30, 200, 7, 0, cursor_on_credits_button ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+
+	bool cursor_on_exit_button = ISCURSORINBOUNDS(-10, 16, -53, -45);
+	if (cursor_on_exit_button && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_TipJar;
+	DrawArbitraryScreenText("Exit", 19, -45, 200, 7, 0, cursor_on_exit_button ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 }
 static void ReplayScreenMessage() {
 	g_bPlayerInputActive = false;
@@ -860,9 +897,68 @@ static void TipJarScreenMessage() {
 		6, 
 		0, 
 		eColor_white, eColor_black);
+	verticaltextcursor -= 6*3;
 
+	glEnable(GL_TEXTURE_2D);
+		DRAWTEXTUREDBOX(-20, -35, -4, 40, 35, eTextureFilmstrip_TipJar);
+	glDisable(GL_TEXTURE_2D);
 
-	//unfinished
+	bool cursor_in_button1 = ISCURSORINBOUNDS(-20, 26, verticaltextcursor-30, verticaltextcursor);
+	if (cursor_in_button1)
+	{
+		glLoadIdentity();
+		glTranslatef(-20.5, -35.5, -4.5);
+			glBegin(GL_QUADS);
+				glVertex3f(0, 0, 0);
+				glVertex3f(41, 0, 0);
+				glVertex3f(41, 36, 0);
+				glVertex3f(0, 36, 0);
+			glEnd();
+		glLoadIdentity();
+	}
+
+	verticaltextcursor -= 6 * 5;
+	DrawArbitraryScreenText("A very small team developed Façade over five years, primarily self-funded.", -41, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("Help us recoup our expenses, and fund another independent production!", 
+		-38.0, 
+		verticaltextcursor, 
+		300,
+		5,
+		0,
+		eColor_white,
+		eColor_black);
+	verticaltextcursor -= 5*2;
+	DrawArbitraryScreenText("A dollar here and euro there really adds up - we need your support.",
+		-36.0,
+		verticaltextcursor,
+		300,
+		5,
+		0,
+		eColor_white,
+		eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("Help make the new genre of interactive drama a reality.", 
+		-25, 
+		verticaltextcursor, 
+		300, 
+		5, 
+		0, 
+		eColor_white,
+		eColor_black);
+
+	verticaltextcursor = -77;
+
+	bool cursor_in_givetipbutton = ISCURSORINBOUNDS(-15, 21, verticaltextcursor - 8, verticaltextcursor);
+	if( (cursor_in_givetipbutton || cursor_in_button1) && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_LaunchingTipJar;
+	DrawArbitraryScreenText("Give a Tip", 12, verticaltextcursor, 200, 7, 0, cursor_in_givetipbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+	
+	verticaltextcursor = -92.0;
+	bool cursor_in_exitbutton = ISCURSORINBOUNDS(-10, 16, verticaltextcursor - 8, verticaltextcursor);
+	if (cursor_in_exitbutton && g_mouseLButtonClicked)
+		g_quitAppCountdown = 1;
+	DrawArbitraryScreenText("Exit", 19, verticaltextcursor, 200, 7, 0, cursor_in_exitbutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 }
 static void LaunchingTipJarScreenMessage() {
 	if (g_bQuittingApp)
@@ -886,7 +982,119 @@ static void LaunchingTipJarScreenMessage() {
 	glDisable(GL_TEXTURE_2D);
 }
 static void AboutScreenMessage() {
-	//undone
+	static int button1ctr = 0, button2ctr = 0, button3ctr = 0;
+
+	g_bPlayerInputActive = false;
+	float verticaltextcursor = 30;
+	DrawArbitraryScreenText("To get information and updates about Façade,", -15, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("including hints, patches, articles, and the making of Façade,", -28.0, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("or to send us feedback, visit the Façade website at", -20.0, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5*2;
+
+	bool cursor_in_button1 = ISCURSORINBOUNDS(-25, 31, verticaltextcursor - 8, verticaltextcursor);
+	if (cursor_in_button1
+		&& g_mouseLButtonClicked
+		&& button1ctr == 0
+		&& button2ctr == 0
+		&& button3ctr == 0)
+	{
+		button1ctr = 90;
+		ShellExecute(g_hMainAppWindow, "open", "http://www.interactivestory.net", NULL, NULL, TRUE);
+	}
+
+	if (button1ctr != 0)
+	{
+		--button1ctr;
+		DrawArbitraryScreenText("Opening interactivestory.net in your browser...", -30, verticaltextcursor, 200, 7, 0, eColor_R1_G1_B2, eColor_black);
+	}
+	else
+	{
+		DrawArbitraryScreenText("interactivestory.net", 1, verticaltextcursor, 200, 7, 0, cursor_in_button1 ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+	}
+
+	verticaltextcursor = -10.0;
+
+	DrawArbitraryScreenText("To play more independent interactive projects released", -30, -10, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("under the [auto mata] label, visit", -5, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+
+	SetColorFromIndex(eColor_white);
+	glEnable(GL_TEXTURE_2D);
+		DRAWTEXTUREDBOX(45, -25, -4, 20, 20, eTextureFilmstrip_LabelLogo);
+	glDisable(GL_TEXTURE_2D);
+
+	bool cursor_in_button2 = ISCURSORINBOUNDS(45, 65, -25, -5);
+	if (cursor_in_button2)
+	{
+		glLoadIdentity();
+		glTranslatef(44.5, -25.5, -4);
+		SetColorFromIndex(eColor_white);
+			glBegin(GL_QUADS);
+				glVertex3f(0.0, 0.0, 0.0);
+				glVertex3f(21, 0.0, 0.0);
+				glVertex3f(21, 21, 0.0);
+				glVertex3f(0.0, 21, 0.0);
+			glEnd();
+		glLoadIdentity();
+	}
+	verticaltextcursor -= 5;
+
+	bool cursor_in_button3 = ISCURSORINBOUNDS(-20, 26, verticaltextcursor - 8, verticaltextcursor);
+	if ((cursor_in_button3 || cursor_in_button2)
+		&& g_mouseLButtonClicked
+		&& button1ctr == 0
+		&& button2ctr == 0
+		&& button3ctr == 0)
+	{
+		button2ctr = 90;
+		ShellExecute(g_hMainAppWindow, "open", "http://www.auto-mata.org", NULL, NULL, TRUE);
+	}
+
+	if (button2ctr != 0)
+	{
+		--button2ctr;
+		DrawArbitraryScreenText("Opening auto-mata.org in your browser...", -25, verticaltextcursor, 200, 7, 0, eColor_R1_G1_B2, eColor_black);
+	}
+	else
+	{
+		DrawArbitraryScreenText("auto-mata.org", 7.0, verticaltextcursor, 200, 7.0, 0.0, cursor_in_button3 ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+	}
+
+	verticaltextcursor = -40.0;
+	DrawArbitraryScreenText("To discuss interactive drama/story/game/art with us", -21, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5;
+	DrawArbitraryScreenText("and other researchers and artists, visit the group blog", -22, verticaltextcursor, 300, 5, 0, eColor_white, eColor_black);
+	verticaltextcursor -= 5*2;
+
+	bool cursor_in_button4 = ISCURSORINBOUNDS(-25, 31, verticaltextcursor - 8, verticaltextcursor);
+	if (cursor_in_button4
+		&& g_mouseLButtonClicked
+		&& button1ctr == 0
+		&& button2ctr == 0
+		&& button3ctr == 0)
+	{
+		button3ctr = 90;
+		ShellExecute(g_hMainAppWindow, "open", "http://www.grandtextauto.org", NULL, NULL, TRUE);
+	}
+	if (button3ctr != 0)
+	{
+		--button3ctr;
+		DrawArbitraryScreenText("Opening grandtextauto.org in your browser...", -26.0, verticaltextcursor, 200, 7, 0, eColor_R1_G1_B2, eColor_black);
+	}
+	else
+	{
+		DrawArbitraryScreenText("grandtextauto.org", 3, verticaltextcursor, 200, 7, 0, cursor_in_button4 ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
+	}
+
+	verticaltextcursor = -85.0;
+
+	bool cursor_in_menubutton = ISCURSORINBOUNDS(-20, 26, verticaltextcursor - 8, verticaltextcursor);
+	if (cursor_in_menubutton && g_mouseLButtonClicked)
+		g_baseScreenMessage = eBaseScreenMessage_EndGameMenu;
+	DrawArbitraryScreenText("Back to Menu", 8, verticaltextcursor, 200, 7, 0, cursor_in_menubutton ? eColor_R1_G1_B9 : eColor_R06_G08_B10, eColor_black);
 }
 static void PlayerChoosesName() {
 	static int choice = 0;
