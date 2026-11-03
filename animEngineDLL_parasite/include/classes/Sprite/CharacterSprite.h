@@ -43,7 +43,7 @@ public:
 	void GetEyesMove(float& f1, float& f2);
 
 	void SetEyesToLookAtPlayer();
-	void SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float i2);
+	void SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float f2);
 	void SetEyeballQuiver(float f1, float f2, float f3);
 	void SetEyelidHeight(float f1, bool b1, bool b2, bool b3);
 	void SetBriefEyelidHeight(float f1, float f2, bool b1, bool b2);
@@ -125,7 +125,7 @@ public:
 	void DoLocomotion(XYZPointf point, float f1, Sprite* spr, EWalkType type);
 	void StopLocomotion(bool option);
 
-	void DoFullExpression(EFullExpressionMood mood, EFullExpressionBase base, Sprite* spr1, Sprite *spr2, int i1, bool b1);
+	void DoFullExpression(EFullExpressionMood mood, EFullExpressionBase base, Sprite* spr1, Sprite* spr2, int i1, bool b1);
 	void DoFullExpressionMod(EMiscLittleAction action, float f1);
 
 	void StopDialog();
@@ -364,28 +364,28 @@ public:
 	float unknown067_1157;
 	int unknown067_1158;
 	float unknown067_1159;
-	Sprite* unknown067_1160;
-	float unknown067_1161;
-	int unknown067_1162;
+	Sprite* m_pCurrentGazeTarget;
+	EGazeSpeed m_eCurrentGazeSpeed;
+	EGazeType m_eCurrentGazeType;
 	float unknown067_1163;
 	float unknown067_1164;
 	bool unknown067_1165;
 	float unknown067_1166;
-	float unknown067_1167;
-	float unknown067_1168;
-	float unknown067_1169;
-	float unknown067_1170;
+	Sprite* m_pSavedGazeTarget;
+	EGazeSpeed m_pSavedGazeSpeed;
+	EGazeType m_pSavedGazeType;
+	int unknown067_1170;
 	float unknown067_1171;
 	float unknown067_1172;
 	float unknown067_1173;
-	float unknown067_1174;
+	int unknown067_1174;
 	float unknown067_1175;
-	float unknown067_1176;
+	int unknown067_1176;
 	float unknown067_1177;
 	float unknown067_1178;
 	float unknown067_1179;
 	float unknown067_1180;
-	float unknown067_1181;
+	int unknown067_1181;
 	float unknown067_1182;
 	float unknown067_1183;
 	float unknown067_1184;
@@ -983,9 +983,7 @@ public:
 	float unknown067_1778;
 	float unknown067_1779;
 	float unknown067_1780;
-	float unknown067_1781;
-	float unknown067_1782;
-	float unknown067_1783;
+	XYZPointf unknown067_1781;
 	float unknown067_1784;
 	float unknown067_1785;
 	int unknown067_1786;

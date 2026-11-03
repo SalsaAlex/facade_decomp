@@ -19,10 +19,10 @@ public:
 
 private:
 	EPhoneCallBehavior m_eBehavior;
-	int unknown001;
-	int unknown002;
-	int unknown003;
-	int unknown004;
+	int m_iTickCallInitiated;
+	EPhoneCallBehavior m_eAltBehavior;
+	int m_iTickVar1;
+	int m_iTickVar2;
 
 protected:
 

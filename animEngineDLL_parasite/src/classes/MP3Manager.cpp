@@ -65,7 +65,7 @@ void MP3Manager::SetVolume(float vol)
 
 void MP3Manager::UpdateFades()
 {
-	float newvol;
+	float newvol = m_fVolume;
 	if (m_fFade_Factor != 0.0)
 	{
 		newvol = (m_fVolume + m_fFade_Factor);

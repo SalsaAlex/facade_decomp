@@ -12,7 +12,9 @@ enum EPhoneCallBehavior //is originally just PhoneCallBehavior but will keep the
 	ePhoneCallBehavior_answeringMachineOutgoing,
 	ePhoneCallBehavior_answeringMachineMessage,
 	ePhoneCallBehavior_tripsMomAnsweringMachine,
-	ePhoneCallBehavior_gracesDadAnsweringMachine
+	ePhoneCallBehavior_gracesDadAnsweringMachine,
+
+	ePhoneCallBehavior_max,
 };
 
 #endif // ENUM_PHONECALLBEHAVIOR_H

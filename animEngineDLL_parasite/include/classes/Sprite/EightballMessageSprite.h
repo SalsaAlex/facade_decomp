@@ -12,8 +12,8 @@ public:
 	void UpdateSprite() override;
 
 private:
-	int unknown001;
-	int unknown002;
+	int m_iEightballMessageIndex;
+	int m_iLastEightballMessageIndex;
 
 protected:
 

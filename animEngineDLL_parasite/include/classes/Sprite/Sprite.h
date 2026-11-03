@@ -174,7 +174,7 @@ public:
 	// padding byte
 	int a1_unknown00002 = 0;
 	float a1_unknown00003 = 1;
-	float a1_unknown00004 = 0;
+	float m_fFixedDepth = 0;
 	bool a1_unknown00005 = 0;
 	// padding byte
 	// padding byte

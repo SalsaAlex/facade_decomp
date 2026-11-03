@@ -1578,8 +1578,8 @@ static bool PrepareRenderPoints(Sprite* spr, CharacterSprite* character, HeadSpr
 				GetSubjectivePosition(pos, spr->m_renderPoints1[i], f1, !(spr->a1_unknown00010 && !option));
 				if (cursor_holding_us && !spr->GetAmIStillGrabDropAnimating())
 					spr->m_renderPoints1[i].m_z = -8.0;
-				if (spr->a1_unknown00004 != 0.0)
-					spr->m_renderPoints1[i].m_z = spr->a1_unknown00004;
+				if (spr->m_fFixedDepth != 0.0)
+					spr->m_renderPoints1[i].m_z = spr->m_fFixedDepth;
 			}
 		}
 

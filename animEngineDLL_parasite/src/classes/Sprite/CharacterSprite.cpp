@@ -24,14 +24,14 @@ static XYZPointf GetEyeXYDeltaForLookAtUser(float yaw, float pitch)
 	{  v14 = valv14; v13 = valv13; v12 = valv12; v11 = valv11; }
 
 
-				     //min max	//v14 v13 v12 v11
-	if SWITCHCASE(		0, 10,		0,	2,	0, 0)
-	else if SWITCHCASE(10, 20,		2,	3,	0, 0)
-	else if SWITCHCASE(20, 30,		3,	5,	0, 0)
-	else if SWITCHCASE(30, 40,		5,	8,	0, 0)
-	else if SWITCHCASE(40, 50,		8,	13, 0, 2)
-	else if SWITCHCASE(50, 60,		13, 16, 2, 6)
-	else if SWITCHCASE(60, 70,		16, 20, 6, 6)
+	//min max	//v14 v13 v12 v11
+	if SWITCHCASE(0, 10, 0, 2, 0, 0)
+	else if SWITCHCASE(10, 20, 2, 3, 0, 0)
+	else if SWITCHCASE(20, 30, 3, 5, 0, 0)
+	else if SWITCHCASE(30, 40, 5, 8, 0, 0)
+	else if SWITCHCASE(40, 50, 8, 13, 0, 2)
+	else if SWITCHCASE(50, 60, 13, 16, 2, 6)
+	else if SWITCHCASE(60, 70, 16, 20, 6, 6)
 	else { ShouldntBeHere("bug"); }
 
 	if (yaw < 0.0)
@@ -40,7 +40,7 @@ static XYZPointf GetEyeXYDeltaForLookAtUser(float yaw, float pitch)
 		v13 = -v13;
 	}
 
-	if (pitch < -15){
+	if (pitch < -15) {
 		v10 = 25;
 		v9 = 25;
 	}
@@ -72,7 +72,7 @@ static XYZPointf GetEyeXYDeltaForLookAtUser(float yaw, float pitch)
 		v10 = -18;
 		v9 = -25;
 	}
-	else{
+	else {
 		v10 = -25;
 		v9 = -25;
 	}
@@ -92,10 +92,10 @@ static XYZPointf GetEyeXYDeltaForLookAtUser(float yaw, float pitch)
 }
 
 
-void CharacterSprite::InitCharacterSprite(float f1, float f2, float f3, 
-	float f4, float f5, float f6, 
-	float f7, float f8, float f9, 
-	float f10, float f11, float f12, float f13, float f14, 
+void CharacterSprite::InitCharacterSprite(float f1, float f2, float f3,
+	float f4, float f5, float f6,
+	float f7, float f8, float f9,
+	float f10, float f11, float f12, float f13, float f14,
 	ESpriteID id)
 {
 	animengine_assert(g_GraceSprite != nullptr);
@@ -113,10 +113,10 @@ void CharacterSprite::InitCharacterSprite(float f1, float f2, float f3,
 	m_Controller11.InitController(&m_pHeadSprite->unknown010[14], f5, f6, false);
 	m_Controller12.InitController(&m_pHeadSprite->unknown010[17], f9, f10, false);
 	m_Controller13.InitController(&m_pHeadSprite->unknown010[19], f11, f12, false);
-	m_Controller14.InitController(&m_pHeadSprite->unknown010[15], f13, f14,0);
-	m_Controller15.InitController(&m_pHeadSprite->unknown010[16], f13, f14,0);
+	m_Controller14.InitController(&m_pHeadSprite->unknown010[15], f13, f14, 0);
+	m_Controller15.InitController(&m_pHeadSprite->unknown010[16], f13, f14, 0);
 	m_Controller16.InitController(&m_pHeadSprite->unknown010[20], f7, f8, 0);
-	m_Controller17.InitController(&m_pHeadSprite->unknown010[28], f9, f10,0);
+	m_Controller17.InitController(&m_pHeadSprite->unknown010[28], f9, f10, 0);
 	m_Controller18.InitController(&m_pHeadSprite->unknown010[30], f11, f12, 0);
 	m_Controller19.InitController(&m_pHeadSprite->unknown010[26], f13, f14, 0);
 	m_Controller20.InitController(&m_pHeadSprite->unknown010[27], f13, f14, 0);
@@ -293,10 +293,10 @@ void CharacterSprite::SetBlinkBehavior(EBlinkBehavior behavior, bool b1)
 void CharacterSprite::SetEyesMove(float f1, float f2)
 {
 	float target = 0.02;
-	if (unknown067_1161 == 2)
+	if (m_eCurrentGazeSpeed == 2)
 		target = 0.04;
 
-	if (!unknown067_1161)
+	if (!m_eCurrentGazeSpeed)
 		target = 0.01;
 
 	if (m_Controller5.GetIsMoving())
@@ -319,11 +319,25 @@ void CharacterSprite::SetEyesToLookAtPlayer()
 	XYZPointf xydelta = GetEyeXYDeltaForLookAtUser(m_pHeadSprite->unknownrot1.m_y - 180.0, m_pHeadSprite->unknownrot1.m_x);
 	SetEyesMove((xydelta.m_x + 50.0) / 100.0, (xydelta.m_y + 50.0) / 100.0);
 }
-void CharacterSprite::SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float i2)
+void CharacterSprite::SetEyeballLookAway(bool b1, bool b2, float f1, int i1, float f2)
 {
 	if (b1)
 	{
-		//undone
+		float v1;
+		if (rand100(50))
+			v1 = randFloat2(-40.0, -30.0, 1000.0);
+		else
+			v1 = randFloat2(30.0, 40.0, 1000.0);
+
+		if (b2)
+			v1 = randFloat2(-10.0, 10.0, 1000.0);
+		m_Controller21.SetTargetByFrames(v1, 30, eControllerType_unknown02);
+		unknown067_1173 = f1;
+		float v3 = randFloat2(20.0, 40.0, 1000.0) + unknown067_1173;
+		m_Controller22.SetTargetByFrames(v3, 30, eControllerType_unknown02);
+		unknown067_1174 = i1;
+		unknown067_1175 = f2;
+		unknown067_1176 = FloatToInt(30 * f2);
 	}
 	else
 	{
@@ -336,7 +350,24 @@ void CharacterSprite::SetEyeballQuiver(float f1, float f2, float f3)
 	animengine_assert(f1 >= 0);
 	animengine_assert(f3 > 0);
 
-	//undone
+	if (f1 > 0.0)
+	{
+		if (unknown067_1179 == 0)
+		{
+			unknown067_1177 = 0;
+			unknown067_1180 = 0;
+		}
+		unknown067_1178 = f1;
+		unknown067_1179 = FrameRateAdjust(f3, 1);
+		unknown067_1181 = FloatToInt(30 * f2);
+	}
+	else
+	{
+		unknown067_1177 = 0;
+		unknown067_1178 = 0;
+		unknown067_1179 = 0;
+		unknown067_1181 = 0;
+	}
 }
 void CharacterSprite::SetEyelidHeight(float f1, bool b1, bool b2, bool b3)
 {
@@ -365,7 +396,40 @@ void CharacterSprite::SetBriefEyelidHeight(float f1, float f2, bool b1, bool b2)
 
 void CharacterSprite::SetGazeTrackingSprite(Sprite* sprite, EGazeSpeed speed, EGazeType type, EAlterHeadCock cock)
 {
-	//undone
+	m_pCurrentGazeTarget = sprite;
+	m_eCurrentGazeSpeed = speed;
+	m_eCurrentGazeType = type;
+	unknown067_1163 = -DATA_NULLVAL;
+	unknown067_1165 = 0;
+	unknown067_1170 = 0.0;
+
+	if (g_numFramesRun < 1 || sprite == this)
+		return;
+
+	SetEyeballLookAway(0, 0, 0.0, 1, 2.0);
+	m_headRotYControl.StopMoving();
+	m_Controller4.StopMoving();
+
+	bool iscoygaze = m_eCurrentGazeType == eGazeType_coyL || m_eCurrentGazeType == eGazeType_coyR;
+
+	if (!charsprite_bool1
+		|| !sprite
+		|| iscoygaze
+		|| type == eGazeType_eyesOnly || type == eGazeType_eyesOnlyAvert
+		|| cock != eAlterHeadCock_none)
+	{
+		float targetval = 0;
+		if (cock == 1)
+		{
+			targetval = rand2(-5, 5);
+		}
+		else if (cock == 2)
+		{
+			targetval = PickFrom2(rand2(-10, -5), rand2(5, 10), -DATA_NULLVAL);
+		}
+
+		m_headRotCockControl.SetTargetByFrames(targetval, rand2(60, 90), eControllerType_unknown02);
+	}
 }
 void CharacterSprite::SetGazeTrackingPoint(XYZPointf point, EGazeSpeed speed, EGazeType type, EAlterHeadCock cock)
 {
@@ -507,7 +571,7 @@ XYZPointf CharacterSprite::GetHeadPlusTorsoRotation()
 
 Sprite* CharacterSprite::GetGazeTracking()
 {
-	return unknown067_1160;
+	return m_pCurrentGazeTarget;
 }
 
 void CharacterSprite::GetCurrentBrowRLowerEmphasis(int&, int&)
@@ -1057,8 +1121,8 @@ void CharacterSprite::PossiblyDoCorrespondingLittleActionsForDialog(int i1)
 		PerformMiscLittleAction(m_eID, eMiscLittleAction_tiltHead, -10, 1.0);
 		PerformMiscLittleAction(m_eID, eMiscLittleAction_briefEyelidHeight, 0, 0.5);
 	}
-	else if (m_eID == eSpriteID_trip	&& (i1 == 281 || i1 == 286 || i1 == 266 || i1 == 300)
-		||	m_eID == eSpriteID_grace	&& (i1 == 175 || i1 == 181 || i1 == 187 || i1 == 188 || i1 == 167))
+	else if (m_eID == eSpriteID_trip && (i1 == 281 || i1 == 286 || i1 == 266 || i1 == 300)
+		|| m_eID == eSpriteID_grace && (i1 == 175 || i1 == 181 || i1 == 187 || i1 == 188 || i1 == 167))
 	{
 		PerformMiscLittleAction(m_eID, eMiscLittleAction_tiltHead, 1, 1.0);
 		PerformMiscLittleAction(m_eID, eMiscLittleAction_briefEyelidHeight, 0, 0.3);
@@ -1077,18 +1141,18 @@ const char* CharacterSprite::GetFullExpressionBaseName(EFullExpressionBase base)
 {
 	switch (base)
 	{
-		case eFEBase_pleasant:	return "pleasant";
-		case eFEBase_smile:		return "smile";
-		case eFEBase_impatient: return "impatient";
-		case eFEBase_hopeful:	return "hopeful";
-		case eFEBase_skeptical: return "skeptical";
-		case eFEBase_serious:	return "serious";
-		case eFEBase_frown:		return "frown";
-		case eFEBase_surprised: return "surprised";
-		case eFEBase_shocked:	return "shocked";
-		default: 
-			ShouldntBeHere("unknown full expression in GetFullExpressionName()");
-			return nullptr;
+	case eFEBase_pleasant:	return "pleasant";
+	case eFEBase_smile:		return "smile";
+	case eFEBase_impatient: return "impatient";
+	case eFEBase_hopeful:	return "hopeful";
+	case eFEBase_skeptical: return "skeptical";
+	case eFEBase_serious:	return "serious";
+	case eFEBase_frown:		return "frown";
+	case eFEBase_surprised: return "surprised";
+	case eFEBase_shocked:	return "shocked";
+	default:
+		ShouldntBeHere("unknown full expression in GetFullExpressionName()");
+		return nullptr;
 	}
 }
 const char* CharacterSprite::GetFullExpressionMoodName(EFullExpressionMood mood)

@@ -6,6 +6,10 @@ class AnimMgr
 public:
 	virtual ~AnimMgr() = default;
 
+	void PushLayeredScript(int i1, int i2, int i3, int i4);
+
+	bool IsLayerDone(int layer);
+
 	int unknown[80935];
 
 private:

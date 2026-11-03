@@ -2,7 +2,8 @@
 #include "classes/AblRequestBuffer.h"
 #include "ABLRequestsPerform_impl.h"
 
-static bool g_ToldAblPlayerInfo = false;
+DEFINE_HOOKEDVAR(bool, g_ToldAblPlayerInfo, 0x101FF0D8)
+#define g_ToldAblPlayerInfo _g_ToldAblPlayerInfo()
 
 extern bool IsAblConnected();
 extern void GetAccessToRequestBuffer(const char* name);
@@ -106,7 +107,7 @@ int AblRequestBuffer::PerformAllRequests()
 
 	if (!g_ToldAblPlayerInfo && IsAblConnected() && g_playerNameID >= 0)
 	{
-		g_ToldAblPlayerInfo = true;
+		_set_g_ToldAblPlayerInfo(true);
 		AblBufferPostSemaphore();
         bool playerentered = AblCallbackAPI_PlayerGestured(ePlayerGesture_playerInfoEntered, g_playerNameID, g_playerGender);
 		GetAccessToRequestBuffer("PerformAllRequests playergestured");
@@ -203,6 +204,23 @@ bool AblRequestBuffer::DoesAnimNeedToWaitForLocomotionToFinish(ESpriteID sprite,
 {
 	//undone
 	return false;
+}
+bool AblRequestBuffer::HasQueuedAnimOrPose(ESpriteID id)
+{
+    for (int i = 0; i < REQUESTBUFFERSIZE; ++i)
+    {
+        AblRequest* req = &this->m_pAblRequests[i];
+        if (req->active == 1
+            && req->unknown001 == id
+            && req->unknown006 == eAnimLayer_base
+            && (req->type == eAblRequestType_PushMultipleAnimationScripts
+                || req->type == eAblRequestType_PushAnimationUScript
+                || req->type == eAblRequestType_PushPoseScript))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 int AblRequestBuffer::GetFreeRequestPtr(AblRequest*& out)
@@ -366,11 +384,11 @@ int AblRequestBuffer::PerformRequest(int reqindex, bool abortonly)
             ++performs;
             break;
         case eAblRequestType_SetEyelidHeightL:
-            PerformSetEyelidHeightL(req->unknown001, req->unknown010/*, req->unknown016*/);
+            PerformSetEyelidHeightL(req->unknown001, req->unknown010, req->unknown016);
             ++performs;
             break;
         case eAblRequestType_SetEyelidHeightR:
-            PerformSetEyelidHeightR(req->unknown001, req->unknown010/*, req->unknown016*/);
+            PerformSetEyelidHeightR(req->unknown001, req->unknown010, req->unknown016);
             ++performs;
             break;
         case eAblRequestType_SetBrowShapeL:
@@ -438,7 +456,7 @@ int AblRequestBuffer::PerformRequest(int reqindex, bool abortonly)
             ++performs;
             break;
         case eAblRequestType_SetPerformanceInfo:
-            PerformSetPerformanceInfo(req->unknown001, &req->unknown021);
+            PerformSetPerformanceInfo(req->unknown001, &req->perfinfo);
             ++performs;
             break;
         case eAblRequestType_AddEventInfoToLog:

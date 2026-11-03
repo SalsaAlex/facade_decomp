@@ -22,7 +22,6 @@
 #include "ABLRequestsPerform_impl.h"
 
 #define DISABLE_ABLTIMEOUT
-#define MAX_CURSORPOSHISTORY 30
 
 enum ECursorContext
 {
@@ -40,7 +39,6 @@ DEFINE_HOOKEDVAR(ECursorContext, g_cursorContext, 0x10200704)
 DEFINE_HOOKEDARRAYVAR(int, g_mousePosition, 0x1083F5E8)
 DEFINE_HOOKEDVAR(HGLRC, g_hGLContext, 0x109782FC)
 DEFINE_HOOKEDVAR(Sprite*, g_cursorContextSprite, 0x102006FC)
-DEFINE_HOOKEDARRAYVAR(XYZPointf, g_cursorPositionHistory, 0x10200590)
 DEFINE_HOOKEDVAR(float, g_curFps, 0x101F6F10)
 DEFINE_HOOKEDVAR(int, g_millisecondsToSleep, 0x101F6F1C)
 DEFINE_HOOKEDVAR(int, g_renderEveryNthFrame, 0x101F6F14)
@@ -70,7 +68,6 @@ DEFINE_HOOKEDVAR(bool, g_bAblDisconnect, 0x10979484)
 #define g_mousePosition							_g_mousePosition()
 #define g_hGLContext							_g_hGLContext()
 #define g_cursorContextSprite					_g_cursorContextSprite()
-#define g_cursorPositionHistory					_g_cursorPositionHistory()
 #define g_curFps								_g_curFps()
 #define g_millisecondsToSleep					_g_millisecondsToSleep()
 #define g_renderEveryNthFrame					_g_renderEveryNthFrame()
@@ -1204,7 +1201,10 @@ static void UpdateAndRenderWorld()
 }
 static void UpdateMP3Fades()
 {
-
+	if (g_pMP3Manager_0)
+		g_pMP3Manager_0->UpdateFades();
+	if (g_pMP3Manager_1)
+		g_pMP3Manager_1->UpdateFades();
 }
 static void LoadingMessage()
 {
@@ -1872,6 +1872,11 @@ static HPALETTE CreateWinGLPalette(HDC devicecontext)
 
 }
 
+static void ErrorMessage(const char* msg) {
+	dprintf("Error: %s", msg);
+	MessageBox(g_hMainAppWindow, msg, "Error Message", 0x50030u);
+}
+
 //UNDONE
 LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -1894,6 +1899,7 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_EDITGRACEFACE:		EditCharacterFace(g_GraceSprite); return 0;
 	case WM_EDITTRIPSCRIPT:		EditCharacterScript(g_TripSprite); return 0;
 	case WM_EDITTRIPFACE:		EditCharacterFace(g_TripSprite); return 0;
+	//case WM_GRAPHNOTIFY:		HandleGraphEvent(); return 0;
 	case WM_QUERYNEWPALETTE:
 		returncode = S_OK;
 		if (s_hPalette)
@@ -2063,16 +2069,16 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		break;
 	case WM_DESTROY:
 		dprintf("\n### AnimEngine cleaning up\n");
-		//StopAllMP3s();
-		//if (g_bAblDisconnect)
-		//	ErrorMessage(
-		//		"We're sorry, Facade is having trouble running, possibly because other applications are running, or some ot"
-		//		"her factor limiting the CPU available.\n"
-		//		"\n"
-		//		"Please try running Facade again, after closing other applications or restarting.\n"
-		//		"\n"
-		//		"Also visit www.interactivestory.net for bug fixes and patches."
-		//	);
+		StopAllMP3s();
+		if (g_bAblDisconnect)
+			ErrorMessage(
+				"We're sorry, Facade is having trouble running, possibly because other applications are running, or some ot"
+				"her factor limiting the CPU available.\n"
+				"\n"
+				"Please try running Facade again, after closing other applications or restarting.\n"
+				"\n"
+				"Also visit www.interactivestory.net for bug fixes and patches."
+			);
 
 		OutputEventLog(true);
 		dprintf("Deallocating globals");
@@ -2113,7 +2119,16 @@ LRESULT CALLBACK mainloop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
 void StopAllMP3s()
 {
-	//undone
+	if (g_pMP3Manager_0)
+	{
+		g_pMP3Manager_0->StopAllMP3();
+		_set_g_pMP3Manager_0(nullptr);
+	}
+	if (g_pMP3Manager_1)
+	{
+		g_pMP3Manager_1->StopAllMP3();
+		_set_g_pMP3Manager_1(nullptr);
+	}
 }
 
 
@@ -2217,6 +2232,61 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x1009E370, DrawArbitraryScreenText);
 	HookFunc((void*)0x100B01E0, RotateArrayOfPoints);
 	HookFunc((void*)0x10090250, RotateModel);
+
+	//ABLRequestsPerform_impl.h
+	//HookFunc((void*)0x10008440, PerformCallbackWhenFullExpressionMoodDone);
+	//HookFunc((void*)0x10008210, PerformCallbackWhenFullExpressionBaseDone);
+	//HookFunc((void*)0x10007790, PerformCallbackWhenGestureDone);
+	//HookFunc((void*)0x10004420, PerformCallbackWhenAnimationDone);
+	//HookFunc((void*)0x1000A220, PerformCallbackWhenWalkIsDone);
+	HookFunc((void*)0x1000D8D0, PerformGetMouthShape);
+	//HookFunc((void*)0x10008F10, PerformSetMouthShape);
+	HookFunc((void*)0x1000D220, PerformGetEyelidHeightR);
+	HookFunc((void*)0x1000D010, PerformGetEyelidHeightL);
+	//HookFunc((void*)0x10008A90, PerformSetEyelidHeightR);
+	//HookFunc((void*)0x100088C0, PerformSetEyelidHeightL);
+	HookFunc((void*)0x1000D680, PerformGetBrowShapeR);
+	HookFunc((void*)0x1000D430, PerformGetBrowShapeL);
+	//HookFunc((void*)0x10008DB0, PerformSetBrowShapeR);
+	//HookFunc((void*)0x10008C50, PerformSetBrowShapeL);
+	HookFunc((void*)0x1000DB20, PerformGetEyesShape);
+	//HookFunc((void*)0x10009070, PerformSetEyesShape);
+	HookFunc((void*)0x1000C640, PerformGetObjectPosition);
+	HookFunc((void*)0x10003DB0, PerformSetObjectPosition);
+	HookFunc((void*)0x1000C8A0, PerformGetObjectRotation);
+	HookFunc((void*)0x10003F60, PerformSetObjectRotation);
+	HookFunc((void*)0x1000CDC0, PerformGetGazeTracking);
+	HookFunc((void*)0x10008650, PerformSetGazeTracking);
+	HookFunc((void*)0x10009CF0, PerformSetObjectToHold);
+	HookFunc((void*)0x1000EEA0, PerformGetAllObjectPickupRotations);
+	HookFunc((void*)0x1000EB10, PerformGetAllObjectPickupPositions);
+	HookFunc((void*)0x1000E4D0, PerformGetAllObjectRotations);
+	HookFunc((void*)0x1000E240, PerformGetAllObjectPositions);
+	HookFunc((void*)0x1000F190, PerformGetAllObjectStates);
+	//HookFunc((void*)0x1000E740, PerformGetAllObjectStagingRotations);
+	HookFunc((void*)0x1000F3A0, PerformGetAllHeldObjects);
+	//HookFunc((void*)0x1000DFA0, PerformGetArmGestureBases);
+	HookFunc((void*)0x1000DD80, PerformGetEyesMove);
+	HookFunc((void*)0x1000CB10, PerformGetObjectPickupPosition);
+	HookFunc((void*)0x1000C1F0, PerformSetPerformanceInfo);
+	HookFunc((void*)0x1000B110, PerformSetAnimEngineInfo);
+	//HookFunc((void*)0x10004160, PerformPushMultipleAnimationScripts);
+	//HookFunc((void*)0x10004C90, PerformPushPoseScript);
+	HookFunc((void*)0x1000AA20, PerformMusic);
+	HookFunc((void*)0x1000A910, PerformPlaySoundEffect);
+	//HookFunc((void*)0x1000A4A0, PerformReactiveWalkStep);
+	//HookFunc((void*)0x10009FF0, PerformWalkStep);
+	//HookFunc((void*)0x1000A6F0, PerformAbortWalkStep);
+	//HookFunc((void*)0x100046A0, PerformAbortAnimationScripts);
+	//HookFunc((void*)0x10004ED0, PerformDoGestureAnimation);
+	//HookFunc((void*)0x100061C0, PerformDoPickupObjGestureAnimation);
+	//HookFunc((void*)0x10007FA0, PerformDoFullExpressionBaseAnimation);
+	//HookFunc((void*)0x10006CB0, PerformDoPutdownObjGestureAnimation);
+	HookFunc((void*)0x10009350, PerformMiscLittleAction);
+	//HookFunc((void*)0x1000F730, PerformGetMyCopyOfAllAnimCues);
+	//HookFunc((void*)0x1000FB10, PerformGetMyCopyOfAllObjectActivations);
+	//HookFunc((void*)0x1000F8C0, PerformResetMyCopyOfAllAnimCues);
+	//HookFunc((void*)0x1000FC90, PerformResetMyCopyOfAllObjectActivations);
 
 	return 1;
 }

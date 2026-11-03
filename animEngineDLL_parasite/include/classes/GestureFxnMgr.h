@@ -1,12 +1,28 @@
 #ifndef GESTUREFXNMGR_H
 #define GESTUREFXNMGR_H
 
+enum EGestureFxnMsg
+{
+	eGestureFxnMsg_unknown000 = 0,
+};
+
 class GestureFxnMgr
 {
 public:
 	virtual ~GestureFxnMgr() = default;
 
 	void StartGestureFxn(int, int, bool);
+
+	bool StandardBodyGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardArmLGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardArmRGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardEyesMoveGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardBrowLGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardBrowRGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardMouthGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardEyesShapeGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardHeadGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
+	bool StandardArmsBothGestureHandler(CharacterSprite* actor, EGestureFxnMsg msg, int msginfo);
 
 	int unknown[692];
 };

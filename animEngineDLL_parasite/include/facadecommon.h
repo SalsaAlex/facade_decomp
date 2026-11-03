@@ -65,6 +65,8 @@
 
 #define DATA_NULLVAL 666
 
+#define MAX_CURSORPOSHISTORY 30
+
 
 template <typename T>
 class XTPoint
@@ -317,6 +319,7 @@ DEFINE_HOOKEDARRAYVAR(textureentry_t, g_TextureFilmstrips, 0x1082D5B4)
 #include "classes/Sprite/CharacterSprite.h"
 #include "classes/SpriteMgr.h"
 #include "classes/SoundMgr.h"
+#include "classes/MP3Manager.h"
 
 #define MAX_PANELS 200
 
@@ -361,6 +364,8 @@ DEFINE_HOOKEDARRAYVAR(SpriteMgr, g_spriteMgr, 0x1083F640)
 DEFINE_HOOKEDARRAYVAR(SoundMgr, g_soundMgr, 0x10978420)
 DEFINE_HOOKEDARRAYVAR(SoundSource, g_soundSource, 0x1083F8C0)
 DEFINE_HOOKEDVAR(int, g_soundSourceID, 0x109782F4)
+DEFINE_HOOKEDVAR(MP3Manager*, g_pMP3Manager_0, 0x10698830)
+DEFINE_HOOKEDVAR(MP3Manager*, g_pMP3Manager_1, 0x10698834)
 DEFINE_HOOKEDVAR(EBaseScreenMessage, g_baseScreenMessage, 0x106988D4)
 DEFINE_HOOKEDVAR(int, g_playerGender, 0x10979488)
 DEFINE_HOOKEDVAR(int, g_playerNameID, 0x101F6F18)
@@ -376,6 +381,7 @@ DEFINE_HOOKEDVAR(uint32_t, g_numFramesRun, 0x1083F62C)
 DEFINE_HOOKEDVAR(uint32_t, g_SkipFramesCounter, 0x1097945C)
 DEFINE_HOOKEDVAR(uint32_t, g_whenNewPlayerTextEntered, 0x101C6F9C)
 DEFINE_HOOKEDVAR(uint32_t, g_lastFrameGotAblRequest, 0x101FF0E4)
+DEFINE_HOOKEDARRAYVAR(XYZPointf, g_cursorPositionHistory, 0x10200590)
 DEFINE_HOOKEDARRAYVAR(char, g_launchErrorString, 0x1083F5F0)
 DEFINE_HOOKEDARRAYVAR(char, g_curTextInput, 0x109782D0)
 DEFINE_HOOKEDVAR(char, g_curTextCharInput, 0x10978400)
@@ -385,6 +391,7 @@ DEFINE_HOOKEDVAR(int, g_AutoMovePlayerStatus, 0x10698550)
 DEFINE_HOOKEDVAR(int, g_ticksIntroStarted, 0x101C7618)
 DEFINE_HOOKEDVAR(int, g_introEventCtr, 0x101C7614)
 DEFINE_HOOKEDVAR(int, g_textDisplayState, 0x1069A170)
+DEFINE_HOOKEDARRAYVAR(bool, g_bPhoneCallBehaviorSubparts, 0x103B2094);
 DEFINE_HOOKEDVAR(int, g_framesWhenLastSentPlayerTypedCue, 0x101FF0E0)
 DEFINE_HOOKEDVAR(int, g_frameWhenLastCinematographyMove, 0x102004A8)
 DEFINE_HOOKEDVAR(int, g_framePlayerLastMoved, 0x10200450)
@@ -394,6 +401,7 @@ DEFINE_HOOKEDARRAYVAR(float, g_introTimings, 0x1069A13C)
 DEFINE_HOOKEDARRAYVAR(float, g_introBaseTimings, 0x101C7554)
 DEFINE_HOOKEDVAR(float, g_initialIntroDelay, 0x101C761C)
 DEFINE_HOOKEDVAR(float, g_startTitleFadeIn, 0x1069A164)
+DEFINE_HOOKEDVAR(EGlobalSounds, g_phoneAnsM_latestGlobalSound, 0x101C6B90)
 DEFINE_HOOKEDVAR(int, g_quitAppCountdown, 0x101F6EC8)
 DEFINE_HOOKEDARRAYVAR(float, g_triangleFanSineCache, 0x102004C0)
 DEFINE_HOOKEDARRAYVAR(float, g_triangleFanCosineCache, 0x10200514)
@@ -412,10 +420,10 @@ DEFINE_HOOKEDVAR(bool, g_bDoneTension1bMusic, 0x101FF0E9)
 DEFINE_HOOKEDVAR(bool, g_bExactPointDecel, 0x10200444)
 DEFINE_HOOKEDVAR(bool, g_bExactRotDecel, 0x10200445)
 DEFINE_HOOKEDVAR(bool, g_bFacadeHasBeenRunMultipleTimes, 0x10979490)
-DEFINE_HOOKEDVAR(bool, g_bIgnoreArmLSetPerf, 0x101FEC20)
-DEFINE_HOOKEDVAR(bool, g_bIgnoreArmRSetPerf, 0x101FD598)
-DEFINE_HOOKEDVAR(bool, g_bIgnoreGazeSetPerf, 0x101FEC24)
-DEFINE_HOOKEDVAR(bool*, g_bIgnoreNextWalkAbort, 0x101F90A8)
+DEFINE_HOOKEDARRAYVAR(bool, g_bIgnoreArmLSetPerf, 0x101FEC20)
+DEFINE_HOOKEDARRAYVAR(bool, g_bIgnoreArmRSetPerf, 0x101FD598)
+DEFINE_HOOKEDARRAYVAR(bool, g_bIgnoreGazeSetPerf, 0x101FEC24)
+DEFINE_HOOKEDARRAYVAR(bool, g_bIgnoreNextWalkAbort, 0x101F90A8)
 DEFINE_HOOKEDVAR(bool, g_bIsAblConnected, 0x10180D90)
 DEFINE_HOOKEDVAR(bool, g_bJimDoran, 0x101FF0E8)
 DEFINE_HOOKEDVAR(bool, g_bKnowScriptNames, 0x1069A760)
@@ -465,6 +473,8 @@ DEFINE_HOOKEDVAR(bool, g_bDisplayDialogText, 0x10979471)
 #define g_soundMgr							_g_soundMgr()
 #define g_soundSource						_g_soundSource()
 #define g_soundSourceID						_g_soundSourceID()
+#define g_pMP3Manager_0						_g_pMP3Manager_0()
+#define g_pMP3Manager_1						_g_pMP3Manager_1()
 #define g_baseScreenMessage					_g_baseScreenMessage()
 #define g_playerGender						_g_playerGender()
 #define g_playerNameID						_g_playerNameID()
@@ -480,6 +490,7 @@ DEFINE_HOOKEDVAR(bool, g_bDisplayDialogText, 0x10979471)
 #define g_SkipFramesCounter					_g_SkipFramesCounter()
 #define g_whenNewPlayerTextEntered			_g_whenNewPlayerTextEntered()
 #define g_lastFrameGotAblRequest			_g_lastFrameGotAblRequest()
+#define g_cursorPositionHistory				_g_cursorPositionHistory()
 #define g_launchErrorString					_g_launchErrorString()
 #define g_curTextInput						_g_curTextInput()
 #define g_curTextCharInput					_g_curTextCharInput()
@@ -489,6 +500,7 @@ DEFINE_HOOKEDVAR(bool, g_bDisplayDialogText, 0x10979471)
 #define g_ticksIntroStarted					_g_ticksIntroStarted()
 #define g_introEventCtr						_g_introEventCtr()
 #define g_textDisplayState					_g_textDisplayState()
+#define g_bPhoneCallBehaviorSubparts		_g_bPhoneCallBehaviorSubparts()
 #define g_framesWhenLastSentPlayerTypedCue	_g_framesWhenLastSentPlayerTypedCue()
 #define g_frameWhenLastCinematographyMove	_g_frameWhenLastCinematographyMove()
 #define g_framePlayerLastMoved				_g_framePlayerLastMoved()
@@ -498,6 +510,7 @@ DEFINE_HOOKEDVAR(bool, g_bDisplayDialogText, 0x10979471)
 #define g_introBaseTimings					_g_introBaseTimings()
 #define g_initialIntroDelay					_g_initialIntroDelay()
 #define g_startTitleFadeIn					_g_startTitleFadeIn()
+#define g_phoneAnsM_latestGlobalSound		_g_phoneAnsM_latestGlobalSound()
 #define g_quitAppCountdown					_g_quitAppCountdown()
 #define g_triangleFanSineCache				_g_triangleFanSineCache()
 #define g_triangleFanCosineCache			_g_triangleFanCosineCache()
@@ -573,7 +586,9 @@ float NormalizeNeg180to180(float ang);
 float Normalize0to360(float ang);
 
 int rand2(int min, int max);
+float randFloat2(float min, float max, float factor);
 bool rand100(int val);
+int PickFrom2(int val1, int val2, int factor);
 
 bool PlayGlobalSound(EGlobalSounds sound);
 void StopAllGlobalSounds();
@@ -588,6 +603,7 @@ XZRectf ComputeSingleCollisionRectForSprite(Sprite* spr);
 void ClipFloatToRange(float& value, float min, float max);
 
 float GetSecsSinceTicks(int ticks);
+int GetRandomFramesFromSecPercs(int min, int max);
 
 float GetXYDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
 float GetXZDistanceBetweenPoints(XYZPointf p1, XYZPointf p2);
@@ -607,6 +623,7 @@ bool IsPointWithinCharCone(XYZPointf point, Sprite* sprite, float fov, float min
 
 bool IsPointVisibleToPlayer(XYZPointf point, bool addoffset);
 bool IsPlayerOutsideApt();
+bool IsCursorWiggling();
 void PlayerEnteredText();
 
 float ConvertWorldDegreesToRadians(float ang);

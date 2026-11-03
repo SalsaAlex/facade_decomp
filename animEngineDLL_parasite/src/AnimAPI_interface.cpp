@@ -372,7 +372,7 @@ void AnimAPI_SetPerformanceInfo(ESpriteID actor, perfinfo_animapi_input input)
 {
 	GET_ABLREQUEST(eAblRequestType_SetPerformanceInfo);
 
-	//undone
+	memcpy(&req->perfinfo, &input, sizeof(perfinfo_animapi_input));
 
 	AblBufferPostSemaphore();
 }
@@ -419,7 +419,7 @@ int AnimAPI_GetAllHeldObjects(void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllHeldObjects);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown400, sizeof(req->unknown400));
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -431,7 +431,7 @@ int AnimAPI_GetAllObjectPickupPositions(ESpriteID actor, void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPickupPositions);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown106, sizeof(req->unknown106));
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -443,7 +443,7 @@ int AnimAPI_GetAllObjectPickupRotations(ESpriteID actor, void* dest)
 	GET_ABLREQUEST_RET(eAblRequestType_GetAllObjectPickupRotations);
 	WAIT_ABLREQUEST();
 
-	//undone
+	memcpy(dest, &req->unknown106, sizeof(req->unknown106));
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -515,7 +515,7 @@ int AnimAPI_GetBrowShapeL(ESpriteID actor, int* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetBrowShapeL);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown007;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -527,7 +527,7 @@ int AnimAPI_GetBrowShapeR(ESpriteID actor, int* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetBrowShapeR);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown007;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -539,7 +539,7 @@ int AnimAPI_GetEyelidHeightL(ESpriteID actor, float* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetEyelidHeightL);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown010;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -551,7 +551,7 @@ int AnimAPI_GetEyelidHeightR(ESpriteID actor, float* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetEyelidHeightR);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown010;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -563,7 +563,8 @@ int AnimAPI_GetEyesMove(ESpriteID actor, float* a1, float* a2)
 	GET_ABLREQUEST_RET(eAblRequestType_GetEyesMove);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown009;
+	*a2 = req->unknown010;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -575,7 +576,7 @@ int AnimAPI_GetEyesShape(ESpriteID actor, int* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetEyesShape);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown007;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -587,7 +588,7 @@ int AnimAPI_GetGazeTracking(ESpriteID actor, int* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetGazeTracking);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown000;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -599,7 +600,7 @@ int AnimAPI_GetMouthShape(ESpriteID actor, int* a1)
 	GET_ABLREQUEST_RET(eAblRequestType_GetMouthShape);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*a1 = req->unknown007;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
@@ -630,12 +631,14 @@ int AnimAPI_GetMyCopyOfAllObjectActivations(ESpriteID actor, void* dest)
 
 	return 0;
 }
-int AnimAPI_GetObjectPickupPosition(ESpriteID actor, ESpriteID object, float* x, float* y, float* z)
+int AnimAPI_GetObjectPickupPosition(ESpriteID obj, ESpriteID actor, float* x, float* y, float* z)
 {
 	GET_ABLREQUEST_RET(eAblRequestType_GetObjectPickupPosition);
 	WAIT_ABLREQUEST();
 
-	//undone
+	*x = req->unknown009;
+	*y = req->unknown010;
+	*z = req->unknown011;
 
 	req->active = 0;
 	AblBufferPostSemaphore();
