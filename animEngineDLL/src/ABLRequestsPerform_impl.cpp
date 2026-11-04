@@ -64,13 +64,44 @@ static void StartTitleSequence()
 	g_introEventCtr = 0;
 }
 
+extern void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option); //main.cpp
 static void StartTripCarryingPlayer()
 {
 	//undone
+	XYZPointf playerpos = g_PlayerSprite->GetPosition();
+	XYZPointf playerrot = g_PlayerSprite->GetRotation();
+	playerpos.m_y = 94.8;
+
+	g_bSeatedOnCouch = false;
+
+	if (g_TripSprite->GetLocomoting())
+		g_TripSprite->StopLocomotion(true);
+
+	XYZPointf point1 = PointAtAngleAndDist(playerpos, playerrot.m_y + 180, 50);
+	point1.m_y = g_TripSprite->GetPosition().m_y;
+
+	g_TripSprite->SetPosition(point1);
+	g_TripSprite->SetRotation(playerrot);
+
+	XYZPointf point2 = PointAtAngleAndDist(point1, playerrot.m_y, 40.0);
+	point2.m_y = playerpos.m_y;
+
+	StartPlayerMoveControllers(point2, playerrot.m_y + 160, 7.0, 0);
+	g_AutoMovePlayerStatus = 2;
+	g_tripCarryDist = 0.0;
 }
 static void EndTripCarryingPlayer()
 {
 	//undone
+	XYZPointf trippos = g_TripSprite->GetPosition();
+	float tripyaw = g_TripSprite->GetRotation().m_y;
+
+	XYZPointf point = PointAtAngleAndDist(trippos, tripyaw, 120.0);
+	point.m_y = g_PlayerSprite->GetPosition().m_y;
+
+	StartPlayerMoveControllers(point, randFloat2(-10.0, 10.0, 1000.0) + tripyaw, 7.0, 0);
+	g_AutoMovePlayerStatus = 3;
+	g_bTripCarry = false;
 }
 
 static void StartMP3(const char* filepath, int vol, int fadevol)
@@ -131,13 +162,39 @@ static void FadeOutCurrentMP3(int time)
 
 bool PerformCallbackWhenFullExpressionMoodDone(ESpriteID actor, AblRequest* request)
 {
-	//	undone
+	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
+
+	CharacterSprite* dramaactor = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
+	if (dramaactor->AreWeDoingFullExpression())
+		return false;
+
+	extern bool (*AblCallbackAPI_FullExpressionMoodFinished)(ESpriteID, bool); //AblRequestBuffer.cpp
+
+	AblBufferPostSemaphore();
+	int result = AblCallbackAPI_FullExpressionMoodFinished(actor, true);
+	GetAccessToRequestBuffer("PerformAllRequests PerformCallbackWhenFullExpressionMoodDone");
+	g_ablrequestbuffer->SaveRequestInTrace(request);
+	if (result == 0)
+		dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
 
 	return true;
 }
 bool PerformCallbackWhenFullExpressionBaseDone(ESpriteID actor, AblRequest* request)
 {
-	//	undone
+	animengine_assert(actor <= eSpriteID_LAST_CHARACTER);
+
+	CharacterSprite* dramaactor = (CharacterSprite*)g_spriteMgr.GetSpritePtrByID(actor);
+	if (dramaactor->AreWeDoingFullExpression())
+		return false;
+
+	extern bool (*AblCallbackAPI_FullExpressionBaseFinished)(ESpriteID, bool); //AblRequestBuffer.cpp
+
+	AblBufferPostSemaphore();
+	int result = AblCallbackAPI_FullExpressionBaseFinished(actor, true);
+	GetAccessToRequestBuffer("PerformAllRequests PerformCallbackWhenFullExpressionBaseDone");
+	g_ablrequestbuffer->SaveRequestInTrace(request);
+	if (result == 0)
+		dprintf("ERROR: ASSERTFAIL_ABL_CALLBACK_CONFUSION");
 
 	return true;
 }

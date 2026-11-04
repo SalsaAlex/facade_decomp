@@ -250,7 +250,7 @@ static void ProcessAblRequests(bool clear) {
 
 }
 
-static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
+void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
 {
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf playerrot = g_PlayerSprite->GetRotation();

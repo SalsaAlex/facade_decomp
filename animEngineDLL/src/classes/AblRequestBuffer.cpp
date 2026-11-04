@@ -10,6 +10,8 @@ extern void AblBufferPostSemaphore();
 
 bool (*AblCallbackAPI_PlayerGestured)(int, int, int) = nullptr;
 bool (*AblCallbackAPI_PlayerEnteredText)(const char*) = nullptr;
+bool (*AblCallbackAPI_FullExpressionMoodFinished)(ESpriteID, bool) = nullptr;
+bool (*AblCallbackAPI_FullExpressionBaseFinished)(ESpriteID, bool) = nullptr;
 
 
 static bool IsTherePlayerTextToSendToAbl(){
@@ -28,6 +30,8 @@ void AblRequestBuffer::InitBuffer(void* mappedmemptr, bool resetmemory)
     HMODULE nativeanimint = LoadLibrary("nativeaniminterface.dll");
     AblCallbackAPI_PlayerGestured = (bool(*)(int, int, int))GetProcAddress(nativeanimint, "?AblCallbackAPI_PlayerGestured@@YA_NHHH@Z");
     AblCallbackAPI_PlayerEnteredText = (bool(*)(const char*))GetProcAddress(nativeanimint, "?AblCallbackAPI_PlayerEnteredText@@YA_NQAD@Z");
+    AblCallbackAPI_FullExpressionMoodFinished = (bool(*)(ESpriteID, bool))GetProcAddress(nativeanimint, "?AblCallbackAPI_FullExpressionMoodFinished@@YA_NH_N@Z");
+    AblCallbackAPI_FullExpressionBaseFinished = (bool(*)(ESpriteID, bool))GetProcAddress(nativeanimint, "?AblCallbackAPI_FullExpressionBaseFinished@@YA_NH_N@Z");
 
 	if (resetmemory)
 	{

@@ -420,6 +420,8 @@ extern float g_startTitleFadeIn;
 
 extern EGlobalSounds g_phoneAnsM_latestGlobalSound;
 
+extern float g_tripCarryDist;
+
 extern int g_quitAppCountdown;
 
 #define TRICIRCLE_ITERATIONS 21
