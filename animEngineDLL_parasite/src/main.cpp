@@ -148,7 +148,7 @@ static void ProcessAblRequests(bool clear) {
 
 }
 
-static void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
+void StartPlayerMoveControllers(XYZPointf point, float f1, float f2, bool option)
 {
 	XYZPointf playerpos = g_PlayerSprite->GetPosition();
 	XYZPointf playerrot = g_PlayerSprite->GetRotation();
@@ -2232,6 +2232,14 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID lpReserved)
 	HookFunc((void*)0x1009E370, DrawArbitraryScreenText);
 	HookFunc((void*)0x100B01E0, RotateArrayOfPoints);
 	HookFunc((void*)0x10090250, RotateModel);
+
+	//zone.h
+	HookFunc((void*)0x10061950, CreateNewZone);
+	HookFunc((void*)0x10061A20, AddRectToZone);
+	HookFunc((void*)0x10062710, IsRectWithinZone);
+	HookFunc((void*)0x10061B50, ModifyZoneRect);
+	HookFunc((void*)0x10062810, IsPointWithinZone);
+	HookFunc((void*)0x100975F0, GetZoneIDForRoomZone);
 
 	//ABLRequestsPerform_impl.h
 	//HookFunc((void*)0x10008440, PerformCallbackWhenFullExpressionMoodDone);
